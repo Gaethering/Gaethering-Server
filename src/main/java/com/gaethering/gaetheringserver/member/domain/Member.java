@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.member.domain;
 import com.gaethering.gaetheringserver.core.domain.BaseTimeEntity;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
 import com.gaethering.gaetheringserver.member.type.MemberStatus;
+import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

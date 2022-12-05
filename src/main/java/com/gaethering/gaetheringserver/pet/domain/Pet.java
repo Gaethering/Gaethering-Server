@@ -1,5 +1,6 @@
-package com.gaethering.gaetheringserver.member.domain;
+package com.gaethering.gaetheringserver.pet.domain;
 
+import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import java.time.LocalDate;
 import javax.persistence.Column;
