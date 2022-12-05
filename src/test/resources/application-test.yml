@@ -47,5 +47,6 @@ default:
 dir: test-dir
 
 test-path: http://127.0.0.1:8001
+test-port: 8001
 
 api-prefix: /api

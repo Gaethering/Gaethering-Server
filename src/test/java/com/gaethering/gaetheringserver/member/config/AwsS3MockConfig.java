@@ -20,9 +20,15 @@ public class AwsS3MockConfig {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    @Value("${test-path}")
+    private String testPath;
+
+    @Value("${test-port}")
+    private int testPort;
+
     @Bean
     public S3Mock s3Mock() {
-        return new S3Mock.Builder().withPort(8001).withInMemoryBackend().build();
+        return new S3Mock.Builder().withPort(testPort).withInMemoryBackend().build();
     }
 
     @Primary
@@ -31,7 +37,7 @@ public class AwsS3MockConfig {
         s3Mock.start();
 
         AwsClientBuilder.EndpointConfiguration endpoint =
-            new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8001", region);
+            new AwsClientBuilder.EndpointConfiguration(testPath, region);
 
         AmazonS3 client = AmazonS3ClientBuilder
             .standard()
