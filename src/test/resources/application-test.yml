@@ -12,3 +12,24 @@ spring :
     properties:
       hibernate:
         format_sql: true
+
+cloud:
+  aws:
+    credentials:
+      access-key: test
+      secret-key: test
+    s3:
+      bucket: test-bucket
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+dir: test-dir
+default:
+  image-url: http://127.0.0.1:8001/test-bucket/test-dir/4a95753d-1827-43c5-b9a0-2359186aedec.png
+
+test-path: http://127.0.0.1:8001
+
+api-prefix: /api

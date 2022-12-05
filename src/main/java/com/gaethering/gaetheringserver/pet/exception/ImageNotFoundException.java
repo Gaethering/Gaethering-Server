@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.pet.exception;
 
-import com.gaethering.modulemember.exception.errorcode.PetErrorCode;
+import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
 
 public class ImageNotFoundException extends PetException {
 
