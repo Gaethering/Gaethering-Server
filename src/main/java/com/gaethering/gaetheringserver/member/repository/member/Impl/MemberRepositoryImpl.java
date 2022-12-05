@@ -2,7 +2,7 @@ package com.gaethering.gaetheringserver.member.repository.member.Impl;
 
 import static com.gaethering.gaetheringserver.member.domain.QMember.member;
 import static com.gaethering.gaetheringserver.member.domain.QMemberProfile.memberProfile;
-import static com.gaethering.gaetheringserver.member.domain.QPet.pet;
+import static com.gaethering.gaetheringserver.pet.domain.QPet.pet;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.repository.member.CustomMemberRepository;
