@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 @Repository
 @RequiredArgsConstructor
 public abstract class Querydsl4RepositorySupport {
+
     private final PathBuilder<?> builder;
     private EntityManager entityManager;
     private Querydsl querydsl;

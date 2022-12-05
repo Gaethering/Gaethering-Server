@@ -10,4 +10,8 @@ public class GaetheringServerApplication {
         SpringApplication.run(GaetheringServerApplication.class, args);
     }
 
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
+
 }

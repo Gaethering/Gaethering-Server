@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.pet.service;
+package com.gaethering.gaetheringserver.util;
 
 import org.springframework.web.multipart.MultipartFile;
 

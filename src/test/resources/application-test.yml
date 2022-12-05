@@ -13,6 +13,21 @@ spring :
       hibernate:
         format_sql: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gaethering@gmail.com
+    password: test
+    properties:
+      mail:
+        smtp:
+          starttls.enable: true
+          auth: true
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
 cloud:
   aws:
     credentials:
@@ -26,9 +41,10 @@ cloud:
     stack:
       auto: false
 
-dir: test-dir
 default:
   image-url: http://127.0.0.1:8001/test-bucket/test-dir/4a95753d-1827-43c5-b9a0-2359186aedec.png
+
+dir: test-dir
 
 test-path: http://127.0.0.1:8001
 

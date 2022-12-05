@@ -4,6 +4,7 @@ import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.exception.ImageNotFoundException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
+import com.gaethering.gaetheringserver.util.ImageUploader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,8 @@ public class PetServiceImpl implements PetService {
     private final String defaultImageUrl;
 
     public PetServiceImpl(ImageUploader imageUploadService,
-                          PetRepository petRepository,
-                          @Value("${default.image-url}") String defaultImageUrl) {
+        PetRepository petRepository,
+        @Value("${default.image-url}") String defaultImageUrl) {
         this.imageUploadService = imageUploadService;
         this.petRepository = petRepository;
         this.defaultImageUrl = defaultImageUrl;
@@ -33,7 +34,7 @@ public class PetServiceImpl implements PetService {
         }
 
         Pet pet = petRepository.findById(id)
-                .orElseThrow(PetNotFoundException::new);
+            .orElseThrow(PetNotFoundException::new);
 
         if (!defaultImageUrl.equals(pet.getImageUrl())) {
             imageUploadService.removeImage(pet.getImageUrl());

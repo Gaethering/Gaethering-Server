@@ -14,34 +14,34 @@ import org.springframework.context.annotation.Primary;
 @TestConfiguration
 public class AwsS3MockConfig {
 
-	@Value("${cloud.aws.s3.bucket}")
-	private String bucket;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
-	@Value("${cloud.aws.region.static}")
-	private String region;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
-	@Bean
-	public S3Mock s3Mock() {
-		return new S3Mock.Builder().withPort(8001).withInMemoryBackend().build();
-	}
+    @Bean
+    public S3Mock s3Mock() {
+        return new S3Mock.Builder().withPort(8001).withInMemoryBackend().build();
+    }
 
-	@Primary
-	@Bean
-	public AmazonS3 amazonS3(S3Mock s3Mock){
-		s3Mock.start();
+    @Primary
+    @Bean
+    public AmazonS3 amazonS3(S3Mock s3Mock) {
+        s3Mock.start();
 
-		AwsClientBuilder.EndpointConfiguration endpoint =
-			new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8001", region);
+        AwsClientBuilder.EndpointConfiguration endpoint =
+            new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8001", region);
 
-		AmazonS3 client = AmazonS3ClientBuilder
-			.standard()
-			.withPathStyleAccessEnabled(true)
-			.withEndpointConfiguration(endpoint)
-			.withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-			.build();
-		client.createBucket(bucket);
+        AmazonS3 client = AmazonS3ClientBuilder
+            .standard()
+            .withPathStyleAccessEnabled(true)
+            .withEndpointConfiguration(endpoint)
+            .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
+            .build();
+        client.createBucket(bucket);
 
-		return client;
-	}
+        return client;
+    }
 
 }

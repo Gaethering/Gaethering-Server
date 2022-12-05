@@ -11,8 +11,8 @@ import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
-import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
@@ -129,7 +129,8 @@ class MemberProfileServiceTest {
         assertOtherProfile(profile, followerCount, followingCount);
     }
 
-    private void assertOwnProfile(OwnProfileResponse profile, Long followerCount, Long followingCount) {
+    private void assertOwnProfile(OwnProfileResponse profile, Long followerCount,
+        Long followingCount) {
         assertThat(profile.getEmail()).isEqualTo(member.getEmail());
         assertThat(profile.getNickname()).isEqualTo(member.getNickname());
         assertThat(profile.getPhoneNumber()).isEqualTo(member.getMemberProfile().getPhoneNumber());
@@ -143,7 +144,8 @@ class MemberProfileServiceTest {
         assertThat(profile.getFollowingCount()).isEqualTo(followingCount);
     }
 
-    private void assertOtherProfile(OtherProfileResponse profile, Long followerCount, Long followingCount) {
+    private void assertOtherProfile(OtherProfileResponse profile, Long followerCount,
+        Long followingCount) {
         assertThat(profile.getEmail()).isEqualTo(member.getEmail());
         assertThat(profile.getNickname()).isEqualTo(member.getNickname());
         assertThat(profile.getGender()).isEqualTo(member.getMemberProfile().getGender());

@@ -25,10 +25,11 @@ public class Heart {
     @JoinColumn(name = "post_id", updatable = false)
     private Post post;
 
-    public void setPost (Post post) {
+    public void setPost(Post post) {
         this.post = post;
     }
-    public void setMember (Member member) {
+
+    public void setMember(Member member) {
         this.member = member;
     }
 }

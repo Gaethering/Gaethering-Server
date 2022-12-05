@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.pet.service;
+package com.gaethering.gaetheringserver.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -28,8 +28,8 @@ public class ImageUploaderImpl implements ImageUploader {
 
     @Autowired
     public ImageUploaderImpl(AmazonS3 amazonS3,
-                             @Value("${cloud.aws.s3.bucket}") String bucket,
-                             @Value("${dir}") String dir) {
+        @Value("${cloud.aws.s3.bucket}") String bucket,
+        @Value("${dir}") String dir) {
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.dir = dir;
@@ -46,8 +46,8 @@ public class ImageUploaderImpl implements ImageUploader {
 
         try {
             amazonS3.putObject(new PutObjectRequest(
-                    bucket + "/" + dir, fileName, multipartFile.getInputStream(), objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+                bucket + "/" + dir, fileName, multipartFile.getInputStream(), objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         } catch (IOException e) {
             throw new FailedUploadImageException();
@@ -59,7 +59,7 @@ public class ImageUploaderImpl implements ImageUploader {
     @Override
     public void removeImage(String filename) {
         amazonS3.deleteObject(bucket,
-                dir + "/" + filename.substring(filename.lastIndexOf("/") + 1));
+            dir + "/" + filename.substring(filename.lastIndexOf("/") + 1));
     }
 
     private String createFileName(String filename) {
@@ -77,8 +77,8 @@ public class ImageUploaderImpl implements ImageUploader {
 
     private void validateFileExtension(String filename) {
         List<String> fileValidate = Stream.of(FileExtension.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
+            .map(Enum::name)
+            .collect(Collectors.toList());
 
         String idxFileName = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
 
