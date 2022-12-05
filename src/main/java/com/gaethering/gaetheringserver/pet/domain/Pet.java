@@ -58,4 +58,8 @@ public class Pet {
     public void setMember(Member member) {
         this.member = member;
     }
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
