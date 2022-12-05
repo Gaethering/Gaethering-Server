@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.member.exception.member;
+package com.gaethering.gaetheringserver.member.exception;
 
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 

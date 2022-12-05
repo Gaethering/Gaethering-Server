@@ -3,7 +3,7 @@ package com.gaethering.gaetheringserver.member.service;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
-import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
