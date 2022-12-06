@@ -12,6 +12,7 @@ import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.EmailSender;
 import com.gaethering.gaetheringserver.util.ImageUploader;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,8 @@ public class MemberServiceImpl implements MemberService {
             .email(signUpRequest.getEmail())
             .nickname(signUpRequest.getNickname())
             .password(passwordEncoder.encode(signUpRequest.getPassword()))
+            .name(signUpRequest.getName())
+            .birth(LocalDate.parse(signUpRequest.getBirth()))
             .role(MemberRole.ROLE_USER)
             .status(MemberStatus.ACTIVE)
             .isEmailAuth(signUpRequest.isEmailAuth())
@@ -79,7 +82,7 @@ public class MemberServiceImpl implements MemberService {
 
         Pet newPet = Pet.builder()
             .name(signUpRequest.getPetName())
-            .birth(signUpRequest.getPetBirth())
+            .birth(LocalDate.parse(signUpRequest.getPetBirth()))
             .gender(signUpRequest.getPetGender())
             .breed(signUpRequest.getBreed())
             .weight(signUpRequest.getWeight())
