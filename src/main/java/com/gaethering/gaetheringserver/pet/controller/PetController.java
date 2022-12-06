@@ -5,6 +5,8 @@ import com.gaethering.gaetheringserver.pet.service.PetServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PetController {
 
-	private PetServiceImpl petService;
+	private final PetServiceImpl petService;
 
 	@PatchMapping("/mypage/pets/{petId}/image")
 	public ResponseEntity<String> updatePetImage(@PathVariable("petId") Long id,
@@ -32,6 +34,5 @@ public class PetController {
 
 		return ResponseEntity.ok(petService.getPetProfile(id));
 	}
-
 
 }

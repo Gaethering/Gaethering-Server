@@ -28,7 +28,7 @@ public class PetProfileResponse {
 
 	private String imageUrl;
 
-	public static PetProfileResponse fromPet(Pet pet) {
+	public static PetProfileResponse fromEntity(Pet pet) {
 		return PetProfileResponse.builder()
 			.name(pet.getName())
 			.birth(pet.getBirth())
