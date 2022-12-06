@@ -1,11 +1,14 @@
 package com.gaethering.gaetheringserver.util;
 
+import com.gaethering.gaetheringserver.member.dto.LoginResponse;
+import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -55,6 +58,21 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
+    public LoginResponse createTokensByLogin(Authentication authentication) {
 
+        String email = authentication.getName();
+
+        String accessToken = createAccessToken(email, accessTokenValid);
+        String refreshToken = createRefreshToken(refreshTokenValid);
+
+        redisUtil.setDataExpire(email, refreshToken, refreshTokenValid);
+        return new LoginResponse(accessToken, refreshToken);
+    }
+    public ReissueTokenResponse reissueAccessToken(String email) {
+
+        String accessToken = createAccessToken(email, accessTokenValid);
+
+        return new ReissueTokenResponse(accessToken);
+    }
 }
 
