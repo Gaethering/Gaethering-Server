@@ -2,13 +2,18 @@ package com.gaethering.gaetheringserver.util;
 
 import com.gaethering.gaetheringserver.member.dto.LoginResponse;
 import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.member.exception.member.auth.TokenNotExistUserInfoException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +28,7 @@ public class JwtProvider {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private final RedisUtil redisUtil;
+    private final UserDetailsService userDetailsService;
 
     @Value("${spring.jwt.secret}")
     private String key;
@@ -58,6 +64,7 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
+
     public LoginResponse createTokensByLogin(Authentication authentication) {
 
         String email = authentication.getName();
@@ -68,11 +75,28 @@ public class JwtProvider {
         redisUtil.setDataExpire(email, refreshToken, refreshTokenValid);
         return new LoginResponse(accessToken, refreshToken);
     }
+
     public ReissueTokenResponse reissueAccessToken(String email) {
 
         String accessToken = createAccessToken(email, accessTokenValid);
 
         return new ReissueTokenResponse(accessToken);
     }
+
+    public Authentication getAuthentication(String accessToken) {
+        String email = getUserEmail(accessToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(userDetails, "",
+                userDetails.getAuthorities());
+    }
+
+    public String getUserEmail(String token) {
+        try {
+            return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
+        } catch (Exception e) {
+            throw new TokenNotExistUserInfoException(MemberErrorCode.CANNOT_FIND_USER_EMAIL_IN_TOKEN);
+        }
+    }
+
 }
 
