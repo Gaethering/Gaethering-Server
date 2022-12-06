@@ -18,7 +18,6 @@ import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
-import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -111,11 +110,11 @@ class MemberServiceTest {
             .passwordCheck("1234qwer!")
             .name("김진호")
             .phone("010-3230-2498")
-            .birth(LocalDate.of(2017, 02, 15))
+            .birth("2017-03-15")
             .gender(Gender.MALE)
             .isEmailAuth(true)
             .petName("뽀삐")
-            .petBirth(LocalDate.of(2022, 03, 15))
+            .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender(Gender.FEMALE)
