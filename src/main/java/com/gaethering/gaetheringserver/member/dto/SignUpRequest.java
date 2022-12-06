@@ -34,7 +34,23 @@ public class SignUpRequest {
     @JsonProperty("isEmailAuth")
     private boolean isEmailAuth;
 
-    @AssertTrue
+    @NotEmpty
+    private String petName;
+
+    private LocalDate petBirth;
+
+    private float weight;
+
+    private String breed;
+
+    private Gender petGender;
+
+    private String description;
+
+    @JsonProperty("isNeutered")
+    private boolean isNeutered;
+
+    @AssertTrue(message = "비밀번호가 일치하지 않습니다.")
     boolean isMatchPassword() {
         return this.password.equals(this.passwordCheck);
     }
