@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.pet.service;
 
 import com.gaethering.gaetheringserver.pet.domain.Pet;
+import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.exception.ImageNotFoundException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
@@ -28,7 +29,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public String updatePetImage(Long id, MultipartFile multipartFile) {
+    public void updatePetImage(Long id, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new ImageNotFoundException();
         }
@@ -40,9 +41,15 @@ public class PetServiceImpl implements PetService {
             imageUploadService.removeImage(pet.getImageUrl());
         }
 
-        String newImageUrl = imageUploadService.uploadImage(multipartFile);
-        pet.updateImage(newImageUrl);
+        pet.updateImage(imageUploadService.uploadImage(multipartFile));
+    }
 
-        return newImageUrl;
+    @Override
+    @Transactional(readOnly = true)
+    public PetProfileResponse getPetProfile(Long id) {
+        Pet pet = petRepository.findById(id)
+            .orElseThrow(PetNotFoundException::new);
+
+        return PetProfileResponse.fromPet(pet);
     }
 }
