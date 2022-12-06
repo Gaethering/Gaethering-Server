@@ -59,6 +59,10 @@ public class Pet {
         this.member = member;
     }
 
+    public void setRepresentative(boolean representative) {
+        isRepresentative = representative;
+    }
+
     public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }

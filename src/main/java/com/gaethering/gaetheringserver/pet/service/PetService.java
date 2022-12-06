@@ -6,4 +6,5 @@ public interface PetService {
 
     String updatePetImage(Long id, MultipartFile multipartFile);
 
+    boolean setRepresentativePet(String email, Long petId);
 }
