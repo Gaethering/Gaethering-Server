@@ -92,6 +92,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public LoginResponse login(LoginRequest request) {
 
         UsernamePasswordAuthenticationToken authenticationToken
@@ -104,6 +105,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public ReissueTokenResponse reissue(ReissueTokenRequest request) {
 
         if (!jwtProvider.validateToken(request.getRefreshToken())) {
