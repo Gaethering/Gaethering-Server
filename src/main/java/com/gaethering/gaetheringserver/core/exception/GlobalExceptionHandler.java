@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.core.exception;
 
 import com.gaethering.gaetheringserver.member.exception.MemberException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.member.exception.member.auth.MemberAuthException;
 import com.gaethering.gaetheringserver.pet.exception.PetException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,4 +48,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MemberAuthException.class)
+    public ResponseEntity<ErrorResponse> handleMemberAuthException(MemberAuthException e) {
+
+        ErrorResponse response = ErrorResponse.builder()
+                .code(e.getErrorCode().getCode())
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
 }
