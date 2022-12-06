@@ -4,9 +4,7 @@ import com.gaethering.gaetheringserver.member.dto.LoginResponse;
 import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.exception.member.auth.TokenNotExistUserInfoException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,6 +104,36 @@ public class JwtProvider {
             return headerAuth.substring(BEARER_PREFIX.length());
         }
         return null;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            if (redisUtil.hasKeyBlackList(token)) {
+                return false;
+            }
+
+            return !claims.getBody().getExpiration().before(new Date());
+
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+        }
+        return false;
+    }
+
+    public Long getExpiration(String accessToken) {
+        Date expiration = Jwts.parser().setSigningKey(key)
+                .parseClaimsJws(accessToken).getBody().getExpiration();
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 }
 
