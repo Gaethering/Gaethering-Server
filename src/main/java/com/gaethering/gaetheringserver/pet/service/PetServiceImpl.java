@@ -50,6 +50,6 @@ public class PetServiceImpl implements PetService {
         Pet pet = petRepository.findById(id)
             .orElseThrow(PetNotFoundException::new);
 
-        return PetProfileResponse.fromPet(pet);
+        return PetProfileResponse.fromEntity(pet);
     }
 }
