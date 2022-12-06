@@ -17,7 +17,7 @@ import com.gaethering.gaetheringserver.member.repository.member.MemberRepository
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
-import com.gaethering.gaetheringserver.util.ImageUploaderImpl;
+import com.gaethering.gaetheringserver.util.ImageUploader;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private ImageUploaderImpl imageUploader;
+    private ImageUploader imageUploader;
 
     @InjectMocks
     private MemberServiceImpl memberService;
