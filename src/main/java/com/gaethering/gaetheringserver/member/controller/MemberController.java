@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("${api-prefix}/members")
@@ -23,15 +25,15 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+    public ResponseEntity<SignUpResponse> signUp(
+        @RequestPart("image") MultipartFile multipartFile,
+        @RequestPart("data") @Valid SignUpRequest signUpRequest
+    ) {
 
-        SignUpResponse response = memberService.signUp(signUpRequest);
+        SignUpResponse response = memberService.signUp(multipartFile, signUpRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(SignUpResponse.builder()
-                .petName(response.getPetName())
-                .imageUrl(response.getImageUrl())
-                .build());
+            .body(response);
     }
 
     @PostMapping("/email-auth")
