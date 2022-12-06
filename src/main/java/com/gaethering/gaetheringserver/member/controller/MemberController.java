@@ -4,6 +4,7 @@ import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.service.MemberService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,15 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+    public ResponseEntity<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
 
-        memberService.signUp(signUpRequest);
+        SignUpResponse response = memberService.signUp(signUpRequest);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(SignUpResponse.builder()
+                .petName(response.getPetName())
+                .imageUrl(response.getImageUrl())
+                .build());
     }
 
     @PostMapping("/email-auth")
