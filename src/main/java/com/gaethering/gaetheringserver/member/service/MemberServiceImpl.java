@@ -15,6 +15,7 @@ import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.EmailSender;
 import com.gaethering.gaetheringserver.util.ImageUploader;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,9 +79,8 @@ public class MemberServiceImpl implements MemberService {
                 .phoneNumber(signUpRequest.getPhone())
                 .gender(Gender.valueOf(signUpRequest.getGender()))
                 .build())
+            .pets(new ArrayList<>())
             .build();
-
-        memberRepository.save(newMember);
 
         Pet newPet = Pet.builder()
             .name(signUpRequest.getPetName())
@@ -94,9 +94,10 @@ public class MemberServiceImpl implements MemberService {
             .isRepresentative(true)
             .build();
 
-        newPet.setMember(newMember);
+        newMember.addPet(newPet);
 
         petRepository.save(newPet);
+        memberRepository.save(newMember);
 
         return SignUpResponse.builder()
             .petName(newPet.getName())
