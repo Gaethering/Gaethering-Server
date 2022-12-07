@@ -28,6 +28,12 @@ spring :
     host: 127.0.0.1
     port: 6379
 
+  jwt:
+    secret: DIDtjrghks53qjsGJrudals13qjschldnjsWNS61eogksdkqjsghqkRnwlakfdjfk73sdfjhwe12S3kasetK7
+    valid:
+      accessToken: 600000
+      refreshToken: 600000
+
 cloud:
   aws:
     credentials:
