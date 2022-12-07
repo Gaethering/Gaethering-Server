@@ -13,6 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gaethering.gaetheringserver.config.SecurityConfig;
+import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.ProfilePetResponse;
@@ -29,6 +31,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
@@ -38,7 +42,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
-@WebMvcTest(MemberController.class)
+@WebMvcTest(controllers = MemberController.class, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+                classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
+})
 @ActiveProfiles("test")
 class MemberControllerTest {
 
