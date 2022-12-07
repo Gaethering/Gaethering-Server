@@ -13,5 +13,6 @@ public interface PetService {
 
     boolean setRepresentativePet(String email, Long petId);
 
-    PetRegisterResponse registerPet(String email, MultipartFile file, PetRegisterRequest petRegisterRequest);
+    PetRegisterResponse registerPet(String email, MultipartFile file,
+        PetRegisterRequest petRegisterRequest);
 }
