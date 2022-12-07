@@ -18,7 +18,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException {
 
-        log.error("UnAuthorized!!! " + accessDeniedException.getMessage());
+        log.info("UnAuthorized!!! " + accessDeniedException.getMessage());
         response.sendRedirect("/exception/accessDenied");
 
     }

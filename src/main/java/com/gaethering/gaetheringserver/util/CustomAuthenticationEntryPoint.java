@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response, AuthenticationException authException)
             throws IOException {
 
-        log.error("UnAuthorized!!! " + authException.getMessage());
+        log.info("UnAuthorized!!! " + authException.getMessage());
         response.sendRedirect("/exception/authenticationFailed");
 
     }
