@@ -1,13 +1,16 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.service.PetService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +39,14 @@ public class PetController {
     @GetMapping("/pets/{petId}/profile")
     public ResponseEntity<PetProfileResponse> getPetProfile(@PathVariable("petId") Long id) {
         return ResponseEntity.ok(petService.getPetProfile(id));
+    }
+
+    @PatchMapping("/mypage/pets/{petId}")
+    public ResponseEntity<PetProfileResponse> updatePetProfile(@PathVariable("petId") Long id,
+        @RequestBody @Validated PetProfileUpdateRequest request) {
+
+        return ResponseEntity.ok(petService.updatePetProfile(id, request.getWeight(),
+            request.isNeutered(), request.getDescription()));
     }
 
 }
