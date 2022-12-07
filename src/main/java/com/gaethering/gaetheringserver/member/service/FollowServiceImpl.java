@@ -23,29 +23,33 @@ public class FollowServiceImpl implements FollowService {
     @Override
     @Transactional
     public boolean createFollow(String followerEmail, Long followeeId) {
-        Member follower = memberRepository.findByEmail(followerEmail)
-            .orElseThrow(MemberNotFoundException::new);
-        Member followee = memberRepository.findById(followeeId)
-            .orElseThrow(MemberNotFoundException::new);
+        Member follower = getMemberByEmail(followerEmail);
+        Member followee = getMemberById(followeeId);
         followRepository.save(Follow.builder().follower(follower).followee(followee).build());
         return true;
     }
 
     @Override
     public List<FollowResponse> getFollowers(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
-        List<Follow> follows = followRepository.findByFollowee(member);
+        List<Follow> follows = followRepository.findByFollowee(getMemberById(memberId));
         return follows.stream()
             .map(follow -> FollowResponse.of(follow.getFollower())).collect(Collectors.toList());
     }
 
     @Override
     public List<FollowResponse> getFollowees(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
-        List<Follow> follows = followRepository.findByFollower(member);
+        List<Follow> follows = followRepository.findByFollower(getMemberById(memberId));
         return follows.stream()
             .map(follow -> FollowResponse.of(follow.getFollowee())).collect(Collectors.toList());
+    }
+
+    private Member getMemberByEmail(String followerEmail) {
+        return memberRepository.findByEmail(followerEmail)
+            .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
     }
 }
