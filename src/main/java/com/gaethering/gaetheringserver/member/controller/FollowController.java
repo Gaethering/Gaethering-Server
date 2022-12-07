@@ -1,10 +1,13 @@
 package com.gaethering.gaetheringserver.member.controller;
 
+import com.gaethering.gaetheringserver.member.dto.FollowResponse;
 import com.gaethering.gaetheringserver.member.service.FollowService;
 import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,5 +24,10 @@ public class FollowController {
     public ResponseEntity<Void> createFollow(@PathVariable Long memberId, Principal principal) {
         followService.createFollow(principal.getName(), memberId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/members/{memberId}/follower")
+    public ResponseEntity<List<FollowResponse>> getFollower(@PathVariable Long memberId) {
+        return ResponseEntity.ok(followService.getFollower(memberId));
     }
 }
