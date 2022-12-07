@@ -2,15 +2,19 @@ package com.gaethering.gaetheringserver.member.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
+import com.gaethering.gaetheringserver.member.domain.Follow;
 import com.gaethering.gaetheringserver.member.domain.Member;
+import com.gaethering.gaetheringserver.member.dto.FollowResponse;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,5 +71,58 @@ class FollowServiceTest {
 
         //then
         assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("회원 못 찾았을 때")
+    public void getFollowerMemberNotFoundFailure() {
+        //given
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(MemberNotFoundException.class,
+            () -> followService.getFollower(anyLong()));
+    }
+
+    @Test
+    @DisplayName("팔로워 0명 일떄")
+    public void getFollowerWhenEmpty() {
+        //given
+        Member member = members.get(0);
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(member));
+        given(followRepository.findByFollowee(any()))
+            .willReturn(Collections.emptyList());
+
+        //when
+        List<FollowResponse> follower = followService.getFollower(member.getId());
+
+        //then
+        assertThat(follower.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void getFollowerSuccess() {
+        //given
+        Member followee = members.get(0);
+        Member follower = members.get(1);
+        Follow follow = Follow.builder()
+            .followee(followee)
+            .follower(follower).build();
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(followee));
+        given(followRepository.findByFollowee(followee))
+            .willReturn(List.of(follow));
+
+        //when
+        List<FollowResponse> followResponse = followService.getFollower(followee.getId());
+
+        //then
+        assertThat(followResponse.size()).isEqualTo(1);
+        assertThat(followResponse.get(0).getId()).isEqualTo(follower.getId());
+        assertThat(followResponse.get(0).getName()).isEqualTo(follower.getName());
+        assertThat(followResponse.get(0).getNickname()).isEqualTo(follower.getNickname());
     }
 }
