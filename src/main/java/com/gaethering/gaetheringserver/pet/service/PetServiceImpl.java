@@ -10,60 +10,50 @@ import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
 
-    private final ImageUploader imageUploader;
-    private final PetRepository petRepository;
-    private final MemberRepository memberRepository;
-    private final String defaultImageUrl;
+	private final ImageUploader imageUploader;
+	private final PetRepository petRepository;
+	private final MemberRepository memberRepository;
 
-    public PetServiceImpl(ImageUploader imageUploader,
-        PetRepository petRepository, MemberRepository memberRepository,
-        @Value("${default.image-url}") String defaultImageUrl) {
-        this.imageUploader = imageUploader;
-        this.petRepository = petRepository;
-        this.memberRepository = memberRepository;
-        this.defaultImageUrl = defaultImageUrl;
-    }
+	@Override
+	public String updatePetImage(Long id, MultipartFile multipartFile) {
+		if (multipartFile.isEmpty()) {
+			throw new ImageNotFoundException();
+		}
+		Pet pet = petRepository.findById(id).orElseThrow(PetNotFoundException::new);
 
-    @Override
-    public String updatePetImage(Long id, MultipartFile multipartFile) {
-        if (multipartFile.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
-        Pet pet = petRepository.findById(id).orElseThrow(PetNotFoundException::new);
-        if (!defaultImageUrl.equals(pet.getImageUrl())) {
-            imageUploader.removeImage(pet.getImageUrl());
-        }
-        String newImageUrl = imageUploader.uploadImage(multipartFile);
-        pet.updateImage(newImageUrl);
-        return newImageUrl;
-    }
+		String newImageUrl = imageUploader.uploadImage(multipartFile);
+		pet.updateImage(newImageUrl);
 
-    @Override
-    @Transactional(readOnly = true)
-    public PetProfileResponse getPetProfile(Long id) {
-        Pet pet = petRepository.findById(id)
-            .orElseThrow(PetNotFoundException::new);
+		return newImageUrl;
+	}
 
-        return PetProfileResponse.fromEntity(pet);
-    }
+	@Override
+	@Transactional(readOnly = true)
+	public PetProfileResponse getPetProfile(Long id) {
+		Pet pet = petRepository.findById(id)
+			.orElseThrow(PetNotFoundException::new);
 
-    @Override
-    public boolean setRepresentativePet(String email, Long petId) {
-        Member member = memberRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
-        List<Pet> pets = member.getPets();
-        pets.forEach(pet -> pet.setRepresentative(false));
-        pets.stream().filter(pet -> pet.getId().equals(petId)).findFirst()
-            .ifPresent(pet -> pet.setRepresentative(true));
-        return true;
-    }
+		return PetProfileResponse.fromEntity(pet);
+	}
+
+	@Override
+	public boolean setRepresentativePet(String email, Long petId) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(MemberNotFoundException::new);
+		List<Pet> pets = member.getPets();
+		pets.forEach(pet -> pet.setRepresentative(false));
+		pets.stream().filter(pet -> pet.getId().equals(petId)).findFirst()
+			.ifPresent(pet -> pet.setRepresentative(true));
+		return true;
+	}
 }
