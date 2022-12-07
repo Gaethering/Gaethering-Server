@@ -68,8 +68,9 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/**/sign-up", "/**/login",
-                        "/**/reissue-token", "/exception/**").permitAll()
+                .antMatchers("/api/members/sign-up", "/api/members/auth/login",
+                        "/api/members/auth/reissue-token", "/exception/accessDenied",
+                    "/exception/authenticationFailed").permitAll()
                 .antMatchers("/**/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated();
 
