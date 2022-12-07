@@ -110,14 +110,14 @@ class SignUpRequestTest {
     }
 
     @Test
-    @DisplayName("회원 가입 시 비밀번호 입력하지 않은 경우")
-    void emptyPassword_ThrownError_PasswordMustNotBlank() {
+    @DisplayName("회원 가입 시 비밀번호 형식이 맞지 않는 경우")
+    void invalidPassword_ThrownError_PasswordMustMatchPattern() {
         //given
         SignUpRequest request = SignUpRequest.builder()
             .email("gaethering@gmail.com")
             .nickname("개더링")
-            .password("")
-            .passwordCheck("")
+            .password("1234qwer")
+            .passwordCheck("1234qwer")
             .name("김진호")
             .phone("010-3230-2498")
             .birth("2017-03-15")
@@ -136,7 +136,7 @@ class SignUpRequestTest {
         String message = validator.validate(request).stream().findFirst().get().getMessage();
 
         //then
-        assertEquals("비밀번호는 필수 입력 사항입니다.", message);
+        assertEquals("비밀번호는 최소 8자, 최대 15자, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자이어야합니다.", message);
     }
 
     @Test

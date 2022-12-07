@@ -29,7 +29,8 @@ public class SignUpRequest {
     @Size(min = 2, max = 10, message = "닉네임은 2글자 이상 10글자 이하입니다.")
     private String nickname;
     @NotBlank(message = "비밀번호는 필수 입력 사항입니다.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$",
+    message = "비밀번호는 최소 8자, 최대 15자, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자이어야합니다.")
     private String password;
     @NotBlank(message = "비밀번호는 필수 입력 사항입니다.")
     private String passwordCheck;
