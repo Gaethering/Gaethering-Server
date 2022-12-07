@@ -43,8 +43,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 @WebMvcTest(controllers = MemberController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
 })
 @ActiveProfiles("test")
 class MemberControllerTest {
