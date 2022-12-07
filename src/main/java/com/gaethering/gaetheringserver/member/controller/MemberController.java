@@ -56,13 +56,11 @@ public class MemberController {
 
     @GetMapping("/members/{memberId}/profile")
     public ResponseEntity<OtherProfileResponse> getOtherProfile(@PathVariable Long memberId) {
-        OtherProfileResponse otherProfile = memberProfileService.getOtherProfile(memberId);
-        return ResponseEntity.ok(otherProfile);
+        return ResponseEntity.ok(memberProfileService.getOtherProfile(memberId));
     }
 
     @GetMapping("/mypage")
     public ResponseEntity<OwnProfileResponse> getOwnProfile(Principal principal) {
-        OwnProfileResponse ownProfile = memberProfileService.getOwnProfile(principal.getName());
-        return ResponseEntity.ok(ownProfile);
+        return ResponseEntity.ok(memberProfileService.getOwnProfile(principal.getName()));
     }
 }
