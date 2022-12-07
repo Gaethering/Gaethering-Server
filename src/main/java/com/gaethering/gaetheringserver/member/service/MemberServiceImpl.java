@@ -2,17 +2,29 @@ package com.gaethering.gaetheringserver.member.service;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
-import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.*;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
+import com.gaethering.gaetheringserver.member.exception.auth.TokenIncorrectException;
+import com.gaethering.gaetheringserver.member.exception.auth.TokenInvalidException;
+import com.gaethering.gaetheringserver.member.exception.auth.TokenNotExistException;
+import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
 import com.gaethering.gaetheringserver.member.type.MemberStatus;
 import com.gaethering.gaetheringserver.util.EmailSender;
+
+import java.util.Objects;
 import java.util.UUID;
+
+import com.gaethering.gaetheringserver.util.JwtProvider;
+import com.gaethering.gaetheringserver.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +38,9 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final EmailSender emailSender;
     private final MemberRepository memberRepository;
+    private final JwtProvider jwtProvider;
+    private final RedisUtil redisUtil;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Override
     @Transactional
@@ -85,4 +100,37 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+
+        Authentication authentication
+                = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        return jwtProvider.createTokensByLogin(authentication);
+    }
+
+    @Override
+    public ReissueTokenResponse reissue(ReissueTokenRequest request) {
+
+        if (!jwtProvider.validateToken(request.getRefreshToken())) {
+            throw new TokenInvalidException(MemberErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        Authentication authentication = jwtProvider.getAuthentication(request.getAccessToken());
+        String email = authentication.getName();
+
+        String refreshToken = redisUtil.getData(email);
+
+        if (Objects.isNull(refreshToken)) {
+            throw new TokenNotExistException(MemberErrorCode.NOT_EXIST_REFRESH_TOKEN);
+        }
+
+        if (!request.getRefreshToken().equals(refreshToken)) {
+            throw new TokenIncorrectException(MemberErrorCode.INCORRECT_REFRESH_TOKEN);
+        }
+        return jwtProvider.reissueAccessToken(email);
+    }
 }
