@@ -4,6 +4,7 @@ import com.gaethering.gaetheringserver.core.domain.BaseTimeEntity;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
 import com.gaethering.gaetheringserver.member.type.MemberStatus;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,10 @@ public class Member extends BaseTimeEntity {
 
     @Column(unique = true)
     private String email;
+
+    private String name;
+
+    private LocalDate birth;
 
     private String nickname;
 

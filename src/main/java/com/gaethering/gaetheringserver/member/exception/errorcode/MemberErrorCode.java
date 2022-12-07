@@ -11,6 +11,7 @@ public enum MemberErrorCode {
     DUPLICATED_EMAIL("E902", "중복된 이메일입니다."),
     FAILED_SEND_EMAIL("E903", "이메일 전송에 실패하였습니다."),
     NOT_MATCH_PASSWORD("E904", "비밀번호가 서로 일치하지 않습니다."),
+    INVALID_ARGUMENT("E905", "유효하지 않은 요청 형식입니다."),
     CANNOT_LOGIN_INACTIVE_USER("E101", "비활성화된 계정입니다."),
     CANNOT_LOGIN_DORMANT_USER("E102", "휴면 계정입니다."),
     INVALID_REFRESH_TOKEN("E103",
