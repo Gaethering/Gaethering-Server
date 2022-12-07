@@ -74,17 +74,17 @@ public class MemberServiceImpl implements MemberService {
         }
 
         Member newMember = Member.builder()
-            .email(signUpRequest.getEmail())
-            .nickname(signUpRequest.getNickname())
-            .password(passwordEncoder.encode(signUpRequest.getPassword()))
-            .role(MemberRole.ROLE_USER)
-            .status(MemberStatus.ACTIVE)
-            .isEmailAuth(signUpRequest.isEmailAuth())
-            .memberProfile(MemberProfile.builder()
-                .phoneNumber(signUpRequest.getPhone())
-                .gender(signUpRequest.getGender())
-                .build())
-            .build();
+                .email(signUpRequest.getEmail())
+                .nickname(signUpRequest.getNickname())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .role(MemberRole.ROLE_USER)
+                .status(MemberStatus.ACTIVE)
+                .isEmailAuth(signUpRequest.isEmailAuth())
+                .memberProfile(MemberProfile.builder()
+                        .phoneNumber(signUpRequest.getPhone())
+                        .gender(signUpRequest.getGender())
+                        .build())
+                .build();
 
         memberRepository.save(newMember);
 
@@ -126,6 +126,7 @@ public class MemberServiceImpl implements MemberService {
         }
         return jwtProvider.reissueAccessToken(email);
     }
+
     @Override
     @Transactional
     public void logout(LogoutRequest request) {
