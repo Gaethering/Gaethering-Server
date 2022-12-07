@@ -12,4 +12,6 @@ public interface PetService {
     boolean setRepresentativePet(String email, Long petId);
 
 	PetProfileResponse updatePetProfile(Long id, float weight, boolean isNeutered, String description);
+
+	boolean deletePetProfile(String email, Long id);
 }

@@ -7,6 +7,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,14 @@ public class PetController {
 
         return ResponseEntity.ok(petService.updatePetProfile(id, request.getWeight(),
             request.isNeutered(), request.getDescription()));
+    }
+
+    @DeleteMapping("/mypage/pets/{petId}")
+    public ResponseEntity<Void> deletePetProfile(@PathVariable("petId") Long id,
+        Principal principal) {
+        petService.deletePetProfile(principal.getName(), id);
+
+        return ResponseEntity.ok().build();
     }
 
 }

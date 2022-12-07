@@ -5,7 +5,8 @@ import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
-import com.gaethering.gaetheringserver.pet.exception.ImageNotFoundException;
+import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
+import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
@@ -26,10 +27,9 @@ public class PetServiceImpl implements PetService {
 
 	@Override
 	public String updatePetImage(Long id, MultipartFile multipartFile) {
-		if (multipartFile.isEmpty()) {
-			throw new ImageNotFoundException();
-		}
 		Pet pet = petRepository.findById(id).orElseThrow(PetNotFoundException::new);
+
+		imageUploader.removeImage(pet.getImageUrl());
 
 		String newImageUrl = imageUploader.uploadImage(multipartFile);
 		pet.updateImage(newImageUrl);
@@ -65,5 +65,28 @@ public class PetServiceImpl implements PetService {
 		pet.updatePetProfile(weight, isNeutered, description);
 
 		return PetProfileResponse.fromEntity(pet);
+	}
+
+	@Override
+	public boolean deletePetProfile(String email, Long id) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(MemberNotFoundException::new);
+
+		if (member.getPets().size() == 1) {
+			throw new FailedDeletePetException();
+		}
+
+		Pet findPet = member.getPets().stream().filter(pet -> pet.getId().equals(id)).findFirst()
+			.get();
+
+		if (findPet.isRepresentative()) {
+			throw new FailedDeleteRepresentativeException();
+		}
+
+		imageUploader.removeImage(findPet.getImageUrl());
+
+		petRepository.delete(findPet);
+
+		return true;
 	}
 }
