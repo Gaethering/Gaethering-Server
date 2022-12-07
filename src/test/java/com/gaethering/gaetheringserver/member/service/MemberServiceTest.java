@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -10,12 +11,13 @@ import static org.mockito.Mockito.verify;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
+import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
-import com.gaethering.gaetheringserver.member.repository.member.MemberProfileRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +32,6 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private MemberProfileRepository memberProfileRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -96,6 +95,41 @@ class MemberServiceTest {
         //then
         assertEquals(MemberErrorCode.NOT_MATCH_PASSWORD.getCode(),
             exception.getErrorCode().getCode());
+    }
+
+    @Test
+    @DisplayName("닉네임 수정 회원 없을 때 실패")
+    public void modifyNicknameFailure() {
+        //given
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
+            () -> memberService.modifyNickname("test@test.com", "modify email"));
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @Test
+    public void modifyNicknameSuccess() {
+        //given
+        Member member = Member.builder()
+            .id(1L)
+            .email("test@test.com")
+            .nickname("past nickname")
+            .build();
+        String modifiedNickname = "modified nickname";
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        //when
+        boolean result = memberService.modifyNickname("test@test.com",
+            modifiedNickname);
+
+        //then
+        assertThat(result).isTrue();
+        assertThat(member.getNickname()).isEqualTo(modifiedNickname);
     }
 
     private static SignUpRequest getSignUpRequest() {

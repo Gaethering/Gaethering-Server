@@ -10,4 +10,5 @@ public interface MemberService {
 
     String signUp(SignUpRequest signUpRequest);
 
+    boolean modifyNickname(String email, String nickname);
 }

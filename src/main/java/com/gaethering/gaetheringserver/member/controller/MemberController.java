@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.member.controller;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
+import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameResponse;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,8 +47,7 @@ public class MemberController {
 
     @PostMapping("/members/email-confirm")
     public ResponseEntity<ConfirmEmailResponse> confirmEmailAuthCode(
-        @RequestBody ConfirmEmailRequest confirmEmailRequest
-    ) {
+        @RequestBody ConfirmEmailRequest confirmEmailRequest) {
         memberService.confirmEmailAuthCode(confirmEmailRequest.getCode());
 
         return ResponseEntity.ok(ConfirmEmailResponse.builder()
@@ -62,5 +63,13 @@ public class MemberController {
     @GetMapping("/mypage")
     public ResponseEntity<OwnProfileResponse> getOwnProfile(Principal principal) {
         return ResponseEntity.ok(memberProfileService.getOwnProfile(principal.getName()));
+    }
+
+    @PatchMapping("/mypage/nickname")
+    public ResponseEntity<ModifyMemberNicknameResponse> modifyMemberNickname(
+        @RequestBody String nickname, Principal principal) {
+        String email = principal.getName();
+        memberService.modifyNickname(email, nickname);
+        return ResponseEntity.ok(new ModifyMemberNicknameResponse(nickname));
     }
 }
