@@ -15,43 +15,43 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class PetServiceImpl implements PetService {
 
-    private final ImageUploader imageUploadService;
-    private final PetRepository petRepository;
+	private final ImageUploader imageUploadService;
+	private final PetRepository petRepository;
 
-    private final String defaultImageUrl;
+	private final String defaultImageUrl;
 
-    public PetServiceImpl(ImageUploader imageUploadService,
-        PetRepository petRepository,
-        @Value("${default.image-url}") String defaultImageUrl) {
-        this.imageUploadService = imageUploadService;
-        this.petRepository = petRepository;
-        this.defaultImageUrl = defaultImageUrl;
-    }
+	public PetServiceImpl(ImageUploader imageUploadService,
+		PetRepository petRepository,
+		@Value("${default.image-url}") String defaultImageUrl) {
+		this.imageUploadService = imageUploadService;
+		this.petRepository = petRepository;
+		this.defaultImageUrl = defaultImageUrl;
+	}
 
-    @Override
-    public String updatePetImage(Long id, MultipartFile multipartFile) {
-        if (multipartFile.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
+	@Override
+	public String updatePetImage(Long id, MultipartFile multipartFile) {
+		if (multipartFile.isEmpty()) {
+			throw new ImageNotFoundException();
+		}
 
-        Pet pet = petRepository.findById(id)
-            .orElseThrow(PetNotFoundException::new);
+		Pet pet = petRepository.findById(id)
+			.orElseThrow(PetNotFoundException::new);
 
-        if (!defaultImageUrl.equals(pet.getImageUrl())) {
-            imageUploadService.removeImage(pet.getImageUrl());
-        }
-        String newImageUrl = imageUploadService.uploadImage(multipartFile);
-        pet.updateImage(newImageUrl);
+		if (!defaultImageUrl.equals(pet.getImageUrl())) {
+			imageUploadService.removeImage(pet.getImageUrl());
+		}
+		String newImageUrl = imageUploadService.uploadImage(multipartFile);
+		pet.updateImage(newImageUrl);
 
-        return newImageUrl;
-    }
+		return newImageUrl;
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public PetProfileResponse getPetProfile(Long id) {
-        Pet pet = petRepository.findById(id)
-            .orElseThrow(PetNotFoundException::new);
+	@Override
+	@Transactional(readOnly = true)
+	public PetProfileResponse getPetProfile(Long id) {
+		Pet pet = petRepository.findById(id)
+			.orElseThrow(PetNotFoundException::new);
 
-        return PetProfileResponse.fromEntity(pet);
-    }
+		return PetProfileResponse.fromEntity(pet);
+	}
 }
