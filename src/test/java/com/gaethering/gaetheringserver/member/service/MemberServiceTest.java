@@ -14,16 +14,12 @@ import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
-import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.type.Gender;
-import java.time.LocalDate;
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,24 +100,6 @@ class MemberServiceTest {
 
         //then
         assertEquals(MemberErrorCode.DUPLICATED_EMAIL.getCode(),
-            exception.getErrorCode().getCode());
-    }
-
-    @Test
-    @DisplayName("회원가입 실패_비밀번호가 일치하지 않는 경우")
-    void signUp_ExceptionThrown_NotMatchPassword() {
-        //given
-        SignUpRequest request = getNotMatchSignUpRequest();
-
-        given(memberRepository.existsByEmail(anyString()))
-            .willReturn(false);
-
-        //when
-        NotMatchPasswordException exception = assertThrows(
-            NotMatchPasswordException.class, () -> memberService.signUp(request));
-
-        //then
-        assertEquals(MemberErrorCode.NOT_MATCH_PASSWORD.getCode(),
             exception.getErrorCode().getCode());
     }
 

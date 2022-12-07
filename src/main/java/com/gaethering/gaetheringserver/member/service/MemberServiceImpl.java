@@ -6,7 +6,6 @@ import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.member.type.MemberRole;

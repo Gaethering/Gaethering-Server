@@ -1,43 +1,41 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import static org.junit.jupiter.api.*;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
-import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.ProfilePetResponse;
-import com.gaethering.gaetheringserver.member.service.MemberService;
+import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
+import com.gaethering.gaetheringserver.member.service.MemberService;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import java.security.Principal;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 @WebMvcTest(MemberController.class)
@@ -46,10 +44,10 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
-    
+
     @MockBean
     private MemberProfileService memberProfileService;
-    
+
     @Autowired
     private MockMvc mockMvc;
 

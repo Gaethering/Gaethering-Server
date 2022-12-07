@@ -5,9 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface PetService {
 
-	PetProfileResponse getPetProfile(Long id);
+    PetProfileResponse getPetProfile(Long id);
 
-	String updatePetImage(Long id, MultipartFile multipartFile);
+    String updatePetImage(Long id, MultipartFile multipartFile);
 
     boolean setRepresentativePet(String email, Long petId);
 }
