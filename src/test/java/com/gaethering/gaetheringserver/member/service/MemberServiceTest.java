@@ -14,7 +14,6 @@ import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
@@ -111,13 +110,13 @@ class MemberServiceTest {
             .name("김진호")
             .phone("010-3230-2498")
             .birth("2017-03-15")
-            .gender(Gender.MALE)
+            .gender("MALE")
             .isEmailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
-            .petGender(Gender.FEMALE)
+            .petGender("FEMALE")
             .description("___")
             .isNeutered(true)
             .build();

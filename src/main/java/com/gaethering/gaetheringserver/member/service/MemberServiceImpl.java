@@ -6,6 +6,7 @@ import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
+import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
 import com.gaethering.gaetheringserver.member.type.MemberStatus;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
@@ -74,7 +75,7 @@ public class MemberServiceImpl implements MemberService {
             .isEmailAuth(signUpRequest.isEmailAuth())
             .memberProfile(MemberProfile.builder()
                 .phoneNumber(signUpRequest.getPhone())
-                .gender(signUpRequest.getGender())
+                .gender(Gender.valueOf(signUpRequest.getGender()))
                 .build())
             .build();
 
@@ -83,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
         Pet newPet = Pet.builder()
             .name(signUpRequest.getPetName())
             .birth(LocalDate.parse(signUpRequest.getPetBirth()))
-            .gender(signUpRequest.getPetGender())
+            .gender(Gender.valueOf(signUpRequest.getGender()))
             .breed(signUpRequest.getBreed())
             .weight(signUpRequest.getWeight())
             .isNeutered(signUpRequest.isNeutered())
