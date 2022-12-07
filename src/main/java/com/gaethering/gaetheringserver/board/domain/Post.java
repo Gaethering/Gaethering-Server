@@ -57,8 +57,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post")
     private List<Heart> hearts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<PostCategory> postCategories = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public void addImage(PostImage image) {
         this.postImages.add(image);
