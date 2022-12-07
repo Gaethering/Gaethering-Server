@@ -126,5 +126,21 @@ public class MemberServiceImpl implements MemberService {
         }
         return jwtProvider.reissueAccessToken(email);
     }
+    @Override
+    @Transactional
+    public void logout(LogoutRequest request) {
+        String accessToken = request.getAccessToken();
 
+        if (!jwtProvider.validateToken(accessToken)) {
+            throw new TokenInvalidException(MemberErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
+        Authentication authentication = jwtProvider.getAuthentication(request.getAccessToken());
+        String email = authentication.getName();
+
+        redisUtil.deleteData(email);
+
+        Long expiration = jwtProvider.getExpiration(accessToken);
+        redisUtil.setBlackList(accessToken, "accessToken", expiration);
+    }
 }

@@ -13,4 +13,6 @@ public interface MemberService {
     LoginResponse login(LoginRequest request);
 
     ReissueTokenResponse reissue(ReissueTokenRequest request);
+
+    void logout(LogoutRequest request);
 }
