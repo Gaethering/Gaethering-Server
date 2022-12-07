@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.member.service;
 
-import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.*;
 
 public interface MemberService {
 
@@ -11,4 +11,10 @@ public interface MemberService {
     String signUp(SignUpRequest signUpRequest);
 
     boolean modifyNickname(String email, String nickname);
+
+    LoginResponse login(LoginRequest request);
+
+    ReissueTokenResponse reissue(ReissueTokenRequest request);
+
+    void logout(LogoutRequest request);
 }
