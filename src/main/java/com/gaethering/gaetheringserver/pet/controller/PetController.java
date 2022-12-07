@@ -47,10 +47,11 @@ public class PetController {
     @PostMapping("/pets/register")
     public ResponseEntity<PetRegisterResponse> registerPet(
         @RequestPart("image") MultipartFile multipartFile,
-        @RequestPart("data") @Valid PetRegisterRequest petRegisterRequest
+        @RequestPart("data") @Valid PetRegisterRequest petRegisterRequest,
+        Principal principal
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(petService.registerPet(multipartFile, petRegisterRequest));
+            .body(petService.registerPet(principal.getName(), multipartFile, petRegisterRequest));
     }
 
 }
