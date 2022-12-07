@@ -209,7 +209,6 @@ class SignUpRequestTest {
             .password("1234qwer!")
             .passwordCheck("1234qwer!")
             .name("asdf")
-            .phone("")
             .birth("2017-03-15")
             .gender("MALE")
             .isEmailAuth(true)
