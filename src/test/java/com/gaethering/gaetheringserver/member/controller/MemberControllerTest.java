@@ -163,14 +163,18 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.phoneNumber").value(ownProfileResponse.getPhoneNumber()))
             .andExpect(jsonPath("$.gender").value(ownProfileResponse.getGender().toString()))
             .andExpect(jsonPath("$.mannerDegree").value(
-                String.valueOf(ownProfileResponse.getMannerDegree()))).andExpect(
+                String.valueOf(ownProfileResponse.getMannerDegree())))
+            .andExpect(
                 jsonPath("$.followerCount").value(
-                    String.valueOf(ownProfileResponse.getFollowerCount()))).andExpect(
+                    String.valueOf(ownProfileResponse.getFollowerCount())))
+            .andExpect(
                 jsonPath("$.followerCount").value(
-                    String.valueOf(ownProfileResponse.getFollowingCount()))).andExpect(
+                    String.valueOf(ownProfileResponse.getFollowingCount())))
+            .andExpect(
                 jsonPath("$.petCount").value(String.valueOf(ownProfileResponse.getPetCount())))
             .andExpect(jsonPath("$.pets[0].id").value(String.valueOf(petResponse.getId())))
-            .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName())).andExpect(
+            .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName()))
+            .andExpect(
                 jsonPath("$.pets[0].representative").value(
                     String.valueOf(petResponse.isRepresentative())));
     }
@@ -193,7 +197,8 @@ class MemberControllerTest {
             .andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value(otherProfile.getEmail()))
             .andExpect(jsonPath("$.nickname").value(otherProfile.getNickname()))
-            .andExpect(jsonPath("$.gender").value(otherProfile.getGender().toString())).andExpect(
+            .andExpect(jsonPath("$.gender").value(otherProfile.getGender().toString()))
+            .andExpect(
                 jsonPath("$.mannerDegree").value(String.valueOf(otherProfile.getMannerDegree())))
             .andExpect(
                 jsonPath("$.followerCount").value(String.valueOf(otherProfile.getFollowerCount())))
@@ -201,7 +206,8 @@ class MemberControllerTest {
                 jsonPath("$.followerCount").value(String.valueOf(otherProfile.getFollowingCount())))
             .andExpect(jsonPath("$.petCount").value(String.valueOf(otherProfile.getPetCount())))
             .andExpect(jsonPath("$.pets[0].id").value(String.valueOf(petResponse.getId())))
-            .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName())).andExpect(
+            .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName()))
+            .andExpect(
                 jsonPath("$.pets[0].representative").value(
                     String.valueOf(petResponse.isRepresentative())));
     }
