@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.member.controller;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
+import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,12 @@ public class MemberController {
         return ResponseEntity.ok(ConfirmEmailResponse.builder()
             .emailAuth(true)
             .build());
+    }
+
+    @GetMapping("/members/{memberId}/profile")
+    public ResponseEntity<OtherProfileResponse> getOtherProfile(@PathVariable Long memberId) {
+        OtherProfileResponse otherProfile = memberProfileService.getOtherProfile(memberId);
+        return ResponseEntity.ok(otherProfile);
     }
 
     @GetMapping("/mypage")
