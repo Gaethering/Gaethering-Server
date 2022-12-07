@@ -30,4 +30,9 @@ public class FollowController {
     public ResponseEntity<List<FollowResponse>> getFollowers(@PathVariable Long memberId) {
         return ResponseEntity.ok(followService.getFollowers(memberId));
     }
+
+    @GetMapping("/members/{memberId}/following")
+    public ResponseEntity<List<FollowResponse>> getFollowings(@PathVariable Long memberId) {
+        return ResponseEntity.ok(followService.getFollowees(memberId));
+    }
 }
