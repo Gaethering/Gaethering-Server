@@ -5,18 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.exception.MemberException;
+import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
+import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -163,14 +169,6 @@ class PetServiceTest {
     @Test
     void updatePetImageSuccess() {
         // given
-        String filename = "test.txt";
-        String contentType = "image/png";
-
-        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
-            "test".getBytes());
-        given(imageUploader.uploadImage(file))
-            .willReturn(file.getName());
-
         Pet pet = Pet.builder()
             .id(1L)
             .name("해")
@@ -179,6 +177,16 @@ class PetServiceTest {
             .build();
         given(petRepository.findById(anyLong()))
             .willReturn(Optional.of(pet));
+
+        willDoNothing().given(imageUploader).removeImage(anyString());
+
+        String filename = "test.txt";
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
+            "test".getBytes());
+        given(imageUploader.uploadImage(file))
+            .willReturn(file.getName());
 
         // when
         String imageUrl = petService.updatePetImage(anyLong(), file);
@@ -212,8 +220,7 @@ class PetServiceTest {
             .isNeutered(false)
             .isRepresentative(true)
             .description("하얗고 귀여움")
-            .imageUrl(
-                "https://gaethering.s3.ap-northeast-2.amazonaws.com/default/%EA%B0%95%EC%95%84%EC%A7%803.jpeg")
+            .imageUrl("test")
             .build();
         given(petRepository.findById(anyLong()))
             .willReturn(Optional.of(pet));
@@ -234,5 +241,136 @@ class PetServiceTest {
         assertThat(response.getImageUrl()).isEqualTo(pet.getImageUrl());
     }
 
+    @Test
+    @DisplayName("반려동물 프로필 삭제 실패_대표 반려동물 설정 회원 못 찾음")
+    void deletePetFailure_MemberNotFound() {
+        // given
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        // when
+        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
+            () -> petService.deletePetProfile("test@test.com", anyLong()));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("반려동물 프로필 삭제 실패_반려동물 1마리일 경우")
+    void deletePetFailure_AtLeastOneMorePet() {
+        // given
+        Pet pet = Pet.builder()
+            .id(1L)
+            .name("해")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(true)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        pets = new ArrayList<>();
+        pets.add(pet);
+
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .pets(pets)
+            .build();
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        // when
+        FailedDeletePetException exception = assertThrows(FailedDeletePetException.class,
+            () -> petService.deletePetProfile("test@test.com", anyLong()));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PetErrorCode.FAILED_DELETE_PET);
+    }
+
+    @Test
+    @DisplayName("반려동물 프로필 삭제 실패_대표 반려동물일 경우")
+    void deletePetFailure_Representative() {
+        // given
+        Pet pet1 = Pet.builder()
+            .id(1L)
+            .name("해")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(true)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        Pet pet2 = Pet.builder()
+            .id(2L)
+            .name("해2")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(false)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        pets = new ArrayList<>();
+        pets.add(pet1);
+        pets.add(pet2);
+
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .pets(pets)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        // when
+        FailedDeleteRepresentativeException exception = assertThrows(FailedDeleteRepresentativeException.class,
+            () -> petService.deletePetProfile("test@test.com", pet1.getId()));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PetErrorCode.FAILED_DELETE_REPRESENTATIVE);
+    }
+
+    @Test
+    void deletePetSuccess() {
+        // given
+        Pet pet1 = Pet.builder()
+            .id(1L)
+            .name("해")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(true)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        Pet pet2 = Pet.builder()
+            .id(2L)
+            .name("해2")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(false)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        pets = new ArrayList<>();
+        pets.add(pet1);
+        pets.add(pet2);
+
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .pets(pets)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        willDoNothing().given(imageUploader).removeImage(anyString());
+
+        // when
+        boolean result = petService.deletePetProfile("test@test.com", 2L);
+
+        // then
+        assertThat(result).isTrue();
+    }
 
 }
