@@ -66,6 +66,10 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Pet> pets = new ArrayList<>();
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public void setPets(List<Pet> pets) {
         this.pets = pets;
     }

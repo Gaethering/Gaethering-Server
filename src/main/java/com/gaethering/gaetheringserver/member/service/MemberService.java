@@ -12,4 +12,5 @@ public interface MemberService {
 
     SignUpResponse signUp(MultipartFile file, SignUpRequest signUpRequest);
 
+    boolean modifyNickname(String email, String nickname);
 }

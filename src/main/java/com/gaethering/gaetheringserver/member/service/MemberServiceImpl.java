@@ -5,6 +5,8 @@ import com.gaethering.gaetheringserver.member.domain.MemberProfile;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
+import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
@@ -101,6 +103,14 @@ public class MemberServiceImpl implements MemberService {
             .petName(newPet.getName())
             .imageUrl(newPet.getImageUrl())
             .build();
+    }
+
+    @Override
+    public boolean modifyNickname(String email, String nickname) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
+        member.setNickname(nickname);
+        return true;
     }
 
 }
