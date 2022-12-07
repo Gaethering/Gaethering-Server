@@ -125,4 +125,57 @@ class FollowServiceTest {
         assertThat(followResponse.get(0).getName()).isEqualTo(follower.getName());
         assertThat(followResponse.get(0).getNickname()).isEqualTo(follower.getNickname());
     }
+
+    @Test
+    @DisplayName("회원 못 찾았을 때")
+    public void getFolloweeMemberNotFoundFailure() {
+        //given
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(MemberNotFoundException.class,
+            () -> followService.getFollowees(anyLong()));
+    }
+
+    @Test
+    @DisplayName("팔로워 0명 일떄")
+    public void getFolloweeWhenEmpty() {
+        //given
+        Member member = members.get(0);
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(member));
+        given(followRepository.findByFollower(any()))
+            .willReturn(Collections.emptyList());
+
+        //when
+        List<FollowResponse> follower = followService.getFollowees(member.getId());
+
+        //then
+        assertThat(follower.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void getFolloweeSuccess() {
+        //given
+        Member follower = members.get(0);
+        Member followee = members.get(1);
+        Follow follow = Follow.builder()
+            .followee(followee)
+            .follower(follower).build();
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(follower));
+        given(followRepository.findByFollower(follower))
+            .willReturn(List.of(follow));
+
+        //when
+        List<FollowResponse> followResponse = followService.getFollowees(follower.getId());
+
+        //then
+        assertThat(followResponse.size()).isEqualTo(1);
+        assertThat(followResponse.get(0).getId()).isEqualTo(followee.getId());
+        assertThat(followResponse.get(0).getName()).isEqualTo(followee.getName());
+        assertThat(followResponse.get(0).getNickname()).isEqualTo(followee.getNickname());
+    }
 }
