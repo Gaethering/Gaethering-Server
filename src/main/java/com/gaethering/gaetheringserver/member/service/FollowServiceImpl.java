@@ -39,4 +39,13 @@ public class FollowServiceImpl implements FollowService {
         return follows.stream()
             .map(follow -> FollowResponse.of(follow.getFollower())).collect(Collectors.toList());
     }
+
+    @Override
+    public List<FollowResponse> getFollowees(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
+        List<Follow> follows = followRepository.findByFollower(member);
+        return follows.stream()
+            .map(follow -> FollowResponse.of(follow.getFollowee())).collect(Collectors.toList());
+    }
 }

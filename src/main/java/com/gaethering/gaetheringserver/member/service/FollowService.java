@@ -8,4 +8,5 @@ public interface FollowService {
     boolean createFollow(String followerEmail, Long followeeId);
 
     List<FollowResponse> getFollowers(Long memberId);
+    List<FollowResponse> getFollowees(Long memberId);
 }
