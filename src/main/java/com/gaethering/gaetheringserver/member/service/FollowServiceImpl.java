@@ -32,7 +32,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public List<FollowResponse> getFollower(Long memberId) {
+    public List<FollowResponse> getFollowers(Long memberId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
         List<Follow> follows = followRepository.findByFollowee(member);

@@ -62,7 +62,7 @@ class FollowControllerTest {
             .nickname("nickname2")
             .build();
         List<FollowResponse> followResponses = List.of(followResponse1, followResponse2);
-        given(followService.getFollower(anyLong()))
+        given(followService.getFollowers(anyLong()))
             .willReturn(followResponses);
 
         //when

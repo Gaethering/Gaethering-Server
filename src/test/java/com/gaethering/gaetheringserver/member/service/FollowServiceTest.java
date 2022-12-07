@@ -83,7 +83,7 @@ class FollowServiceTest {
         //when
         //then
         assertThrows(MemberNotFoundException.class,
-            () -> followService.getFollower(anyLong()));
+            () -> followService.getFollowers(anyLong()));
     }
 
     @Test
@@ -97,7 +97,7 @@ class FollowServiceTest {
             .willReturn(Collections.emptyList());
 
         //when
-        List<FollowResponse> follower = followService.getFollower(member.getId());
+        List<FollowResponse> follower = followService.getFollowers(member.getId());
 
         //then
         assertThat(follower.isEmpty()).isTrue();
@@ -117,7 +117,7 @@ class FollowServiceTest {
             .willReturn(List.of(follow));
 
         //when
-        List<FollowResponse> followResponse = followService.getFollower(followee.getId());
+        List<FollowResponse> followResponse = followService.getFollowers(followee.getId());
 
         //then
         assertThat(followResponse.size()).isEqualTo(1);
