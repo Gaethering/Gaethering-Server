@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("${api-prefix}/members")
+@RequestMapping("${api-prefix}")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/sign-up")
+    @PostMapping("/members/sign-up")
     public ResponseEntity<SignUpResponse> signUp(
         @RequestPart("image") MultipartFile multipartFile,
         @RequestPart("data") @Valid SignUpRequest signUpRequest
