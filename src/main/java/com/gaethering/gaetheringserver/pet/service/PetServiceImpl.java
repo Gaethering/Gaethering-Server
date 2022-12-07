@@ -29,7 +29,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public void updatePetImage(Long id, MultipartFile multipartFile) {
+    public String updatePetImage(Long id, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new ImageNotFoundException();
         }
@@ -40,8 +40,10 @@ public class PetServiceImpl implements PetService {
         if (!defaultImageUrl.equals(pet.getImageUrl())) {
             imageUploadService.removeImage(pet.getImageUrl());
         }
+        String newImageUrl = imageUploadService.uploadImage(multipartFile);
+        pet.updateImage(newImageUrl);
 
-        pet.updateImage(imageUploadService.uploadImage(multipartFile));
+        return newImageUrl;
     }
 
     @Override
