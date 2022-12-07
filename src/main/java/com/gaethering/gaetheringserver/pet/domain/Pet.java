@@ -66,4 +66,10 @@ public class Pet {
     public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void updatePetProfile(float weight, boolean isNeutered, String description) {
+        this.weight = weight;
+        this.isNeutered = isNeutered;
+        this.description = description;
+    }
 }

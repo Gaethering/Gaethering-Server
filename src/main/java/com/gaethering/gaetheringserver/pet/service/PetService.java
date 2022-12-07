@@ -10,4 +10,6 @@ public interface PetService {
 	String updatePetImage(Long id, MultipartFile multipartFile);
 
     boolean setRepresentativePet(String email, Long petId);
+
+	PetProfileResponse updatePetProfile(Long id, float weight, boolean isNeutered, String description);
 }

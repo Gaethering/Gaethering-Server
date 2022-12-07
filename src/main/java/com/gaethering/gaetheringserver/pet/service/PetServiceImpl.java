@@ -56,4 +56,14 @@ public class PetServiceImpl implements PetService {
 			.ifPresent(pet -> pet.setRepresentative(true));
 		return true;
 	}
+
+	@Override
+	public PetProfileResponse updatePetProfile(Long id, float weight, boolean isNeutered, String description) {
+		Pet pet = petRepository.findById(id)
+			.orElseThrow(PetNotFoundException::new);
+
+		pet.updatePetProfile(weight, isNeutered, description);
+
+		return PetProfileResponse.fromEntity(pet);
+	}
 }
