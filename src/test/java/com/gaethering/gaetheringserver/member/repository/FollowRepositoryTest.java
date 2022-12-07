@@ -84,4 +84,18 @@ public class FollowRepositoryTest {
         assertThat(member1FollowingCount).isEqualTo(1);
         assertThat(member2FollowingCount).isEqualTo(1);
     }
+
+    @Test
+    public void findByFollowee() {
+        //given
+        Member followee = members.get(0);
+        Member follower = members.get(1);
+
+        //when
+        List<Follow> result = followRepository.findByFollowee(followee);
+
+        //then
+        assertThat(result.get(0).getFollower().getId()).isEqualTo(follower.getId());
+        assertThat(result.get(0).getFollower().getEmail()).isEqualTo(follower.getEmail());
+    }
 }
