@@ -53,21 +53,33 @@ class FollowControllerTest {
 
     @Test
     @WithMockUser
-    public void getFollower() throws Exception {
+    public void getFollowers() throws Exception {
         //given
-        FollowResponse followResponse1 = FollowResponse.builder().id(1L).name("name1")
-            .nickname("nickname1")
-            .build();
-        FollowResponse followResponse2 = FollowResponse.builder().id(2L).name("name2")
-            .nickname("nickname2")
-            .build();
-        List<FollowResponse> followResponses = List.of(followResponse1, followResponse2);
+        List<FollowResponse> followResponses = createFollowResponses();
         given(followService.getFollowers(anyLong()))
             .willReturn(followResponses);
 
         //when
         //then
-        mockMvc.perform(get("/api/members/1/follower")
+        checkPerform("/api/members/1/follower", followResponses.get(0), followResponses.get(1));
+    }
+
+    @Test
+    @WithMockUser
+    public void getFollowings() throws Exception {
+        //given
+        List<FollowResponse> followResponses = createFollowResponses();
+        given(followService.getFollowees(anyLong()))
+            .willReturn(followResponses);
+
+        //when
+        //then
+        checkPerform("/api/members/1/following", followResponses.get(0), followResponses.get(1));
+    }
+
+    private void checkPerform(String url, FollowResponse followResponse1,
+        FollowResponse followResponse2) throws Exception {
+        mockMvc.perform(get(url)
                 .with(csrf()))
             .andDo(print())
             .andExpect(status().isOk())
@@ -77,5 +89,15 @@ class FollowControllerTest {
             .andExpect(jsonPath("$[1].id").value(followResponse2.getId()))
             .andExpect(jsonPath("$[1].name").value(followResponse2.getName()))
             .andExpect(jsonPath("$[1].nickname").value(followResponse2.getNickname()));
+    }
+
+    private List<FollowResponse> createFollowResponses() {
+        FollowResponse followResponse1 = FollowResponse.builder().id(1L).name("name1")
+            .nickname("nickname1")
+            .build();
+        FollowResponse followResponse2 = FollowResponse.builder().id(2L).name("name2")
+            .nickname("nickname2")
+            .build();
+        return List.of(followResponse1, followResponse2);
     }
 }
