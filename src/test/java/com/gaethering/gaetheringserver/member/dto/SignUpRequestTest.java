@@ -380,7 +380,7 @@ class SignUpRequestTest {
 
     @Test
     @DisplayName("회원 가입 시 성별이 MALE 또는 FEMALE이 아닌 경우")
-    void invalidGender_ThrownError_PetWeightMustBeMaleOrFemale() {
+    void invalidGender_ThrownError_GenderMustBeMaleOrFemale() {
         //given
         SignUpRequest request = SignUpRequest.builder()
             .email("gaethering@gmail.com")
