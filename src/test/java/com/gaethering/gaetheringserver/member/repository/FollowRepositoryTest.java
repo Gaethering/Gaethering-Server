@@ -112,4 +112,19 @@ public class FollowRepositoryTest {
         assertThat(result.get(0).getFollowee().getId()).isEqualTo(followee.getId());
         assertThat(result.get(0).getFollowee().getEmail()).isEqualTo(followee.getEmail());
     }
+
+    @Test
+    public void removeByFollowerAndFollowee() {
+        //given
+        Member follower = members.get(0);
+        Member followee = members.get(1);
+
+        //when
+        Integer result = followRepository.removeByFollowerAndFollowee(follower, followee);
+
+        //then
+        assertThat(result).isEqualTo(1);
+        assertThat(followRepository.findByFollowee(followee)).isEmpty();
+        assertThat(followRepository.findByFollower(follower)).isEmpty();
+    }
 }
