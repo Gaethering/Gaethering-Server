@@ -34,7 +34,8 @@ jacocoTestReport {
                             "**/*Config*",
                             "**/*Input*",
                             "**/*Interceptor*",
-                            "**/*Support*"
+                            "**/*Support*",
+                            "**/*Entity*"
                     ])
                 })
         )
@@ -69,7 +70,8 @@ jacocoTestCoverageVerification {
                     '**.*Config*',
                     '**.*Input*',
                     "**.*Interceptor*",
-                    "**.*Support*"
+                    "**.*Support*",
+                    "**.*Entity*"
             ]
         }
     }
