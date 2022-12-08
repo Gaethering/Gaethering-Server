@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class PetServiceImpl implements PetService {
 
+    private static final int MAX_REGISTRABLE_PET = 3;
+
     private final ImageUploader imageUploader;
     private final PetRepository petRepository;
     private final MemberRepository memberRepository;
@@ -80,7 +82,7 @@ public class PetServiceImpl implements PetService {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(MemberNotFoundException::new);
 
-        if (member.getPets().size() == 3) {
+        if (member.getPets().size() == MAX_REGISTRABLE_PET) {
             throw new ExceedRegistrablePetException();
         }
 
