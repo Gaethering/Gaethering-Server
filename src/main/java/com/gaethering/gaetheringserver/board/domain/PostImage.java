@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PostImage {
 
     @Id
@@ -29,12 +28,14 @@ public class PostImage {
     private String imageUrl;
 
     private boolean isRepresentative;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", updatable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     public void setPost(Post post) {
         this.post = post;
+        if(!post.getPostImages().contains(this)) {
+            post.getPostImages().add(this);
+        }
     }
 }
