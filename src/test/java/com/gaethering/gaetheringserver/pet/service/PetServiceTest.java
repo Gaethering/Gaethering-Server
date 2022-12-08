@@ -14,6 +14,7 @@ import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCod
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
+import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
@@ -189,10 +190,10 @@ class PetServiceTest {
             .willReturn(file.getName());
 
         // when
-        String imageUrl = petService.updatePetImage(anyLong(), file);
+        PetImageUpdateResponse petImageUpdateResponse = petService.updatePetImage(anyLong(), file);
 
         // then
-        assertThat(imageUrl).isEqualTo(file.getName());
+        assertThat(petImageUpdateResponse.getImageUrl()).isEqualTo(file.getName());
     }
 
     @Test
