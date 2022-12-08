@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.member.controller;
 
 import com.gaethering.gaetheringserver.member.dto.FollowResponse;
+import com.gaethering.gaetheringserver.member.exception.FollowNotFoundException;
 import com.gaethering.gaetheringserver.member.service.FollowService;
 import java.security.Principal;
 import java.util.List;
@@ -39,7 +40,10 @@ public class FollowController {
 
     @DeleteMapping("/members/{memberId}/follow")
     public ResponseEntity<Void> removeFollow(@PathVariable Long memberId, Principal principal) {
-        followService.removeFollow(principal.getName(), memberId);
+        boolean result = followService.removeFollow(principal.getName(), memberId);
+        if (!result) {
+            throw new FollowNotFoundException();
+        }
         return ResponseEntity.ok().build();
     }
 }
