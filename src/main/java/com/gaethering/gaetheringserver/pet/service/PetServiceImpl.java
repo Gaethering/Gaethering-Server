@@ -4,6 +4,7 @@ import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
+import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
@@ -28,7 +29,7 @@ public class PetServiceImpl implements PetService {
 	private final MemberRepository memberRepository;
 
 	@Override
-	public String updatePetImage(Long id, MultipartFile multipartFile) {
+	public PetImageUpdateResponse updatePetImage(Long id, MultipartFile multipartFile) {
 		Pet pet = petRepository.findById(id).orElseThrow(PetNotFoundException::new);
 
 		imageUploader.removeImage(pet.getImageUrl());
@@ -36,7 +37,7 @@ public class PetServiceImpl implements PetService {
 		String newImageUrl = imageUploader.uploadImage(multipartFile);
 		pet.updateImage(newImageUrl);
 
-		return newImageUrl;
+		return PetImageUpdateResponse.builder().imageUrl(newImageUrl).build();
 	}
 
 	@Override

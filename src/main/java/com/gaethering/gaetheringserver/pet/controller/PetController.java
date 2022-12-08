@@ -1,12 +1,13 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
+import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.service.PetService;
 import java.security.Principal;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,7 +33,7 @@ public class PetController {
     }
 
     @PatchMapping("/mypage/pets/{petId}/image")
-    public ResponseEntity<String> updatePetImage(@PathVariable("petId") Long id,
+    public ResponseEntity<PetImageUpdateResponse> updatePetImage(@PathVariable("petId") Long id,
         @RequestPart("image") MultipartFile multipartFile) {
         return ResponseEntity.ok(petService.updatePetImage(id, multipartFile));
     }
@@ -44,7 +45,7 @@ public class PetController {
 
     @PatchMapping("/mypage/pets/{petId}")
     public ResponseEntity<PetProfileResponse> updatePetProfile(@PathVariable("petId") Long id,
-        @RequestBody @Validated PetProfileUpdateRequest request) {
+        @RequestBody @Valid PetProfileUpdateRequest request) {
 
         return ResponseEntity.ok(petService.updatePetProfile(id, request.getWeight(),
             request.isNeutered(), request.getDescription()));
