@@ -44,10 +44,26 @@ class FollowServiceTest {
     }
 
     @Test
-    @DisplayName("회원 못 찾았을 때")
-    public void createFollowMemberNotFoundFailure() {
+    @DisplayName("이메일로 회원 못 찾았을 때")
+    public void createFollowMemberNotFoundByEmailFailure() {
         //given
         given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(MemberNotFoundException.class,
+            () -> followService.createFollow("test@test.com", 1L));
+    }
+
+    @Test
+    @DisplayName("아이디로 회원 못 찾았을 때")
+    public void createFollowMemberNotFoundByIdFailure() {
+        //given
+        Member member = members.get(0);
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        given(memberRepository.findById(anyLong()))
             .willReturn(Optional.empty());
 
         //when
