@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
+import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
@@ -17,8 +18,11 @@ import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
+import com.gaethering.gaetheringserver.pet.exception.RepresentativePetNotFoundException;
+import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.ImageUploader;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +51,8 @@ class MemberServiceTest {
 
     @InjectMocks
     private MemberServiceImpl memberService;
+
+    private static List<Pet> pets;
 
     @Test
     @DisplayName("회원 가입 성공")
@@ -136,6 +142,92 @@ class MemberServiceTest {
         //then
         assertThat(result).isTrue();
         assertThat(member.getNickname()).isEqualTo(modifiedNickname);
+    }
+
+    @Test
+    @DisplayName("로그인 정보 제공 성공")
+    void getLoginInfo_Success() {
+        //given
+        Pet pet1 = Pet.builder()
+            .name("하울")
+            .imageUrl("testurl1")
+            .isRepresentative(false)
+            .build();
+        Pet pet2 = Pet.builder()
+            .name("여울")
+            .imageUrl("testurl2")
+            .isRepresentative(true)
+            .build();
+
+        pets = List.of(pet1, pet2);
+
+        Member member = Member.builder()
+            .email("test@test.com")
+            .nickname("내캉")
+            .pets(pets)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        //when
+        LoginInfoResponse response = memberService.getLoginInfo("test@test.com");
+
+        //then
+        assertEquals(pet2.getName(), response.getPetName());
+        assertEquals(pet2.getImageUrl(), response.getImageUrl());
+        assertEquals(member.getNickname(), response.getNickname());
+    }
+
+    @Test
+    @DisplayName("로그인 정보 제공 실패_사용자 못 찾는 경우")
+    void getLoginInfo_ExceptionThrown_MemberNotFound() {
+        //given
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        //when
+        MemberNotFoundException exception = assertThrows(
+            MemberNotFoundException.class,
+            () -> memberService.getLoginInfo("test@test.com"));
+
+        //then
+        assertEquals(MemberErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
+
+    }
+
+    @Test
+    @DisplayName("로그인 정보 제공 실패_대표 반려동물 못 찾는 경우")
+    void getLoginInfo_ExceptionThrown_RepresentativePetNotFound() {
+        //given
+        Pet pet1 = Pet.builder()
+            .name("하울")
+            .imageUrl("testurl")
+            .isRepresentative(false)
+            .build();
+        Pet pet2 = Pet.builder()
+            .name("하울")
+            .imageUrl("testurl")
+            .isRepresentative(false)
+            .build();
+
+        pets = List.of(pet1, pet2);
+
+        Member member = Member.builder()
+            .pets(pets)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        //when
+        RepresentativePetNotFoundException exception = assertThrows(
+            RepresentativePetNotFoundException.class,
+            () -> memberService.getLoginInfo("test@test.com"));
+
+        //then
+        assertEquals(PetErrorCode.REPRESENTATIVE_PET_NOT_FOUND, exception.getErrorCode());
+
     }
 
     private static SignUpRequest getSignUpRequest() {
