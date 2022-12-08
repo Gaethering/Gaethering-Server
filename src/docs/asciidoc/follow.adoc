@@ -1,0 +1,61 @@
+= Spring REST DOCS
+BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Follow Api
+
+
+=== 팔로우 하기
+
+==== HTTP Request
+include::{snippets}/follow/create-follow/http-request.adoc[]
+
+==== Path Parameter
+include::{snippets}/follow/create-follow/path-parameters.adoc[]
+
+==== Request Headers
+include::{snippets}/follow/create-follow/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/follow/create-follow/http-response.adoc[]
+
+
+=== 팔로워 목록
+
+==== HTTP Request
+include::{snippets}/follow/get-followers/http-request.adoc[]
+
+==== Path Parameter
+include::{snippets}/follow/get-followers/path-parameters.adoc[]
+
+==== Request Headers
+include::{snippets}/follow/get-followers/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/follow/get-followers/http-response.adoc[]
+
+==== Response Body
+include::{snippets}/follow/get-followers/response-body.adoc[]
+
+
+=== 팔로잉 목록
+
+==== HTTP Request
+include::{snippets}/follow/get-followings/http-request.adoc[]
+
+==== Path Parameter
+include::{snippets}/follow/get-followings/path-parameters.adoc[]
+
+==== Request Headers
+include::{snippets}/follow/get-followings/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/follow/get-followings/http-response.adoc[]
+
+==== Response Body
+include::{snippets}/follow/get-followings/response-body.adoc[]

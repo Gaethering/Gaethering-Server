@@ -1,0 +1,24 @@
+= Spring REST DOCS
+BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Member Api
+
+
+=== 회원(타인) 프로필 조회
+==== HTTP Request
+include::{snippets}/member/get-profile/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/member/get-profile/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/member/get-profile/http-response.adoc[]
+
+==== Response Body
+include::{snippets}/member/get-profile/response-body.adoc[]

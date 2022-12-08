@@ -1,0 +1,41 @@
+= Spring REST DOCS
+BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== MyPage Api
+
+
+=== 내 프로필 조회
+==== HTTP Request
+include::{snippets}/mypage/get-profile/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/mypage/get-profile/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/mypage/get-profile/http-response.adoc[]
+
+==== Response Body
+include::{snippets}/mypage/get-profile/response-body.adoc[]
+
+
+=== 닉네임 수정
+==== HTTP Request
+include::{snippets}/mypage/modify-nickname/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/mypage/modify-nickname/request-headers.adoc[]
+
+==== Request Body
+include::{snippets}/mypage/modify-nickname/request-body.adoc[]
+
+==== HTTP Response
+include::{snippets}/mypage/modify-nickname/http-response.adoc[]
+
+==== Response Body
+include::{snippets}/mypage/modify-nickname/response-body.adoc[]
