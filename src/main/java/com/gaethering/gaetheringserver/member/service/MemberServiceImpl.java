@@ -2,16 +2,20 @@ package com.gaethering.gaetheringserver.member.service;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
-import com.gaethering.gaetheringserver.member.dto.*;
+import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
+import com.gaethering.gaetheringserver.member.dto.LoginRequest;
+import com.gaethering.gaetheringserver.member.dto.LoginResponse;
+import com.gaethering.gaetheringserver.member.dto.LogoutRequest;
+import com.gaethering.gaetheringserver.member.dto.ReissueTokenRequest;
+import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.exception.NotMatchPasswordException;
 import com.gaethering.gaetheringserver.member.exception.auth.TokenIncorrectException;
 import com.gaethering.gaetheringserver.member.exception.auth.TokenInvalidException;
 import com.gaethering.gaetheringserver.member.exception.auth.TokenNotExistException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
-import com.gaethering.gaetheringserver.member.exception.DuplicatedEmailException;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.member.type.MemberRole;
@@ -20,13 +24,12 @@ import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import com.gaethering.gaetheringserver.util.EmailSender;
 import com.gaethering.gaetheringserver.util.ImageUploader;
+import com.gaethering.gaetheringserver.util.JwtProvider;
+import com.gaethering.gaetheringserver.util.RedisUtil;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
-
-import com.gaethering.gaetheringserver.util.JwtProvider;
-import com.gaethering.gaetheringserver.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -134,10 +137,10 @@ public class MemberServiceImpl implements MemberService {
     public LoginResponse login(LoginRequest request) {
 
         UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+            = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
 
         Authentication authentication
-                = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         return jwtProvider.createTokensByLogin(authentication);
     }
@@ -181,5 +184,13 @@ public class MemberServiceImpl implements MemberService {
 
         Long expiration = jwtProvider.getExpiration(accessToken);
         redisUtil.setBlackList(accessToken, "accessToken", expiration);
+    }
+
+    @Override
+    public LoginInfoResponse getLoginInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
+
+        return LoginInfoResponse.of(member);
     }
 }
