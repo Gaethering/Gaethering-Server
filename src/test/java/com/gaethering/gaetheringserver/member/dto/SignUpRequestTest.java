@@ -375,12 +375,12 @@ class SignUpRequestTest {
         String message = validator.validate(request).stream().findFirst().get().getMessage();
 
         //then
-        assertEquals("반려동물 몸무게는 양수이어야 합니다.", message);
+        assertEquals("반려동물 몸무게는 양수여야 합니다.", message);
     }
 
     @Test
     @DisplayName("회원 가입 시 성별이 MALE 또는 FEMALE이 아닌 경우")
-    void invalidGender_ThrownError_PetWeightMustBeMaleOrFemale() {
+    void invalidGender_ThrownError_GenderMustBeMaleOrFemale() {
         //given
         SignUpRequest request = SignUpRequest.builder()
             .email("gaethering@gmail.com")
