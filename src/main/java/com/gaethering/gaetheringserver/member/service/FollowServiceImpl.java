@@ -43,13 +43,21 @@ public class FollowServiceImpl implements FollowService {
             .map(follow -> FollowResponse.of(follow.getFollowee())).collect(Collectors.toList());
     }
 
-    private Member getMemberByEmail(String followerEmail) {
-        return memberRepository.findByEmail(followerEmail)
+    @Override
+    public boolean removeFollow(String followerEmail, Long followeeId) {
+        Member follower = getMemberByEmail(followerEmail);
+        Member followee = getMemberById(followeeId);
+        Integer count = followRepository.removeByFollowerAndFollowee(follower, followee);
+        return count >= 1;
+    }
+
+    private Member getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
             .orElseThrow(MemberNotFoundException::new);
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMemberById(Long id) {
+        return memberRepository.findById(id)
             .orElseThrow(MemberNotFoundException::new);
     }
 }
