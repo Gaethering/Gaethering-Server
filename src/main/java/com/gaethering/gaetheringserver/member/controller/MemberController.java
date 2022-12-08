@@ -1,6 +1,19 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import com.gaethering.gaetheringserver.member.dto.*;
+import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
+import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
+import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
+import com.gaethering.gaetheringserver.member.dto.LoginRequest;
+import com.gaethering.gaetheringserver.member.dto.LoginResponse;
+import com.gaethering.gaetheringserver.member.dto.LogoutRequest;
+import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameRequest;
+import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameResponse;
+import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
+import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
+import com.gaethering.gaetheringserver.member.dto.ReissueTokenRequest;
+import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
 import com.gaethering.gaetheringserver.member.service.MemberService;
 import java.security.Principal;
@@ -66,27 +79,28 @@ public class MemberController {
 
     @PatchMapping("/mypage/nickname")
     public ResponseEntity<ModifyMemberNicknameResponse> modifyMemberNickname(
-        @RequestBody String nickname, Principal principal) {
+        @RequestBody ModifyMemberNicknameRequest request, Principal principal) {
         String email = principal.getName();
-        memberService.modifyNickname(email, nickname);
-        return ResponseEntity.ok(new ModifyMemberNicknameResponse(nickname));
+        memberService.modifyNickname(email, request.getNickname());
+        return ResponseEntity.ok(new ModifyMemberNicknameResponse(request.getNickname()));
     }
 
     @PostMapping("/members/auth/login")
-    public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse loginResponse = memberService.login(request);
         return ResponseEntity.ok(loginResponse);
     }
+
     @PostMapping("/members/auth/reissue-token")
     public ResponseEntity<ReissueTokenResponse> reissueAccessToken
-    (@RequestBody ReissueTokenRequest request) {
+        (@RequestBody ReissueTokenRequest request) {
         ReissueTokenResponse tokenResponse = memberService.reissue(request);
         return ResponseEntity.ok(tokenResponse);
     }
 
     @PostMapping("/auth/logout")
     public ResponseEntity<Void> reissueAccessToken
-    (@RequestBody LogoutRequest request) {
+        (@RequestBody LogoutRequest request) {
         memberService.logout(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
