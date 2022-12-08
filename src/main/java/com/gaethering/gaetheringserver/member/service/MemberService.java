@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.member.service;
 
 import com.gaethering.gaetheringserver.member.dto.*;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
 
@@ -8,7 +9,7 @@ public interface MemberService {
 
     void confirmEmailAuthCode(String code);
 
-    String signUp(SignUpRequest signUpRequest);
+    SignUpResponse signUp(MultipartFile file, SignUpRequest signUpRequest);
 
     boolean modifyNickname(String email, String nickname);
 
