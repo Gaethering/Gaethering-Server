@@ -375,7 +375,7 @@ class SignUpRequestTest {
         String message = validator.validate(request).stream().findFirst().get().getMessage();
 
         //then
-        assertEquals("반려동물 몸무게는 양수이어야 합니다.", message);
+        assertEquals("반려동물 몸무게는 양수여야 합니다.", message);
     }
 
     @Test
