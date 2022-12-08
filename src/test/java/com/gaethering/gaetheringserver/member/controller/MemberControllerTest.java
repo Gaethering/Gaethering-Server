@@ -1,20 +1,24 @@
 package com.gaethering.gaetheringserver.member.controller;
 
+import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
+import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaethering.gaetheringserver.config.SecurityConfig;
-import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
+import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.ProfilePetResponse;
@@ -29,24 +33,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
-@WebMvcTest(controllers = MemberController.class, excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-        classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
-})
+@SpringBootTest
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
 class MemberControllerTest {
 
     @MockBean
@@ -125,19 +129,26 @@ class MemberControllerTest {
     public void modifyMemberNickname() throws Exception {
         //given
         String email = "test@test.com";
-        String nickname = "modifiedNickname";
+        ModifyMemberNicknameRequest request = new ModifyMemberNicknameRequest(
+            "modifiedNickname");
         Principal principal = Mockito.mock(Principal.class);
         given(principal.getName()).willReturn(email);
 
         //when
         //then
-        mockMvc.perform(patch("/api/mypage/nickname")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/nickname")
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
-                .content(nickname))
-            .andDo(print())
+                .header("Authorization", "accessToken")
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nickname").value(nickname));
+            .andExpect(jsonPath("$.nickname").value(request.getNickname()))
+            .andDo(print())
+            .andDo(document("mypage/modify-nickname",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -156,8 +167,10 @@ class MemberControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/mypage").contentType(MediaType.APPLICATION_JSON).with(csrf()))
-            .andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/mypage")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value(ownProfileResponse.getEmail()))
             .andExpect(jsonPath("$.nickname").value(ownProfileResponse.getNickname()))
             .andExpect(jsonPath("$.phoneNumber").value(ownProfileResponse.getPhoneNumber()))
@@ -176,7 +189,15 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName()))
             .andExpect(
                 jsonPath("$.pets[0].representative").value(
-                    String.valueOf(petResponse.isRepresentative())));
+                    String.valueOf(petResponse.isRepresentative())))
+            .andDo(print())
+            .andDo(document("mypage/get-profile",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+
     }
 
     @Test
@@ -193,8 +214,10 @@ class MemberControllerTest {
         //when
         //then
         mockMvc.perform(
-                get("/api/members/1/profile").contentType(MediaType.APPLICATION_JSON).with(csrf()))
-            .andDo(print()).andExpect(status().isOk())
+                RestDocumentationRequestBuilders.get("/api/members/{memberId}/profile", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value(otherProfile.getEmail()))
             .andExpect(jsonPath("$.nickname").value(otherProfile.getNickname()))
             .andExpect(jsonPath("$.gender").value(otherProfile.getGender().toString()))
@@ -209,7 +232,15 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName()))
             .andExpect(
                 jsonPath("$.pets[0].representative").value(
-                    String.valueOf(petResponse.isRepresentative())));
+                    String.valueOf(petResponse.isRepresentative())))
+            .andDo(print())
+            .andDo(document("member/get-profile",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("memberId").description("조회할 회원 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
 }
