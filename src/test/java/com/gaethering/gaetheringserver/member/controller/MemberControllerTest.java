@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.config.SecurityConfig;
 import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
+import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.ProfilePetResponse;
@@ -43,8 +44,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 @WebMvcTest(controllers = MemberController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
 })
 @ActiveProfiles("test")
 class MemberControllerTest {
@@ -204,6 +205,29 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.pets[0].name").value(petResponse.getName())).andExpect(
                 jsonPath("$.pets[0].representative").value(
                     String.valueOf(petResponse.isRepresentative())));
+    }
+
+    @Test
+    @DisplayName("로그인 시 사용자 정보 제공")
+    @WithMockUser
+    public void getLoginInfo() throws Exception {
+        //given
+        LoginInfoResponse response = LoginInfoResponse.builder()
+            .nickname("내캉")
+            .petName("하울")
+            .imageUrl("http://test.com")
+            .build();
+
+        given(memberService.getLoginInfo(anyString())).willReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/api/members/info").contentType(MediaType.APPLICATION_JSON).with(csrf()))
+            .andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.nickname").value(response.getNickname()))
+            .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
+            .andExpect(jsonPath("$.petName").value(response.getPetName()));
     }
 
 }
