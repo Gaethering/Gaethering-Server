@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
 
+	private static final int MIN_EXIST_PET = 1;
+
 	private final ImageUploader imageUploader;
 	private final PetRepository petRepository;
 	private final MemberRepository memberRepository;
@@ -72,7 +74,7 @@ public class PetServiceImpl implements PetService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(MemberNotFoundException::new);
 
-		if (member.getPets().size() == 1) {
+		if (member.getPets().size() == MIN_EXIST_PET) {
 			throw new FailedDeletePetException();
 		}
 
