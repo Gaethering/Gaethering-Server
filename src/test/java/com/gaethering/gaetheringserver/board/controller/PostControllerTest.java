@@ -87,7 +87,7 @@ class PostControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isCreated()).andReturn();
     }
 
     @Test
@@ -115,6 +115,6 @@ class PostControllerTest {
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isCreated()).andReturn();
     }
 }

@@ -28,6 +28,6 @@ public class PostController {
         String email = principal.getName();
         PostResponse response = postService.writePost(email, files, request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
