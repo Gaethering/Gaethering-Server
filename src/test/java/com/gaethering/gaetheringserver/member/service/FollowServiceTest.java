@@ -178,4 +178,72 @@ class FollowServiceTest {
         assertThat(followResponse.get(0).getName()).isEqualTo(followee.getName());
         assertThat(followResponse.get(0).getNickname()).isEqualTo(followee.getNickname());
     }
+
+    @Test
+    @DisplayName("이메일로 회원 못 찾았을 때")
+    public void removeFollowMemberNotFoundByEmailFailure() {
+        //given
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(MemberNotFoundException.class,
+            () -> followService.removeFollow("test@test.com", 1L));
+    }
+
+    @Test
+    @DisplayName("아이디로 회원 못 찾았을 때")
+    public void removeFollowMemberNotFoundByIdFailure() {
+        //given
+        Member member = members.get(0);
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(MemberNotFoundException.class,
+            () -> followService.removeFollow("test@test.com", 1L));
+    }
+
+    @Test
+    @DisplayName("해당하는 팔로우가 존재하지 않을 때")
+    public void removeFollowFollowNotFoundFailure() {
+        //given
+        Member follower = members.get(0);
+        Member followee = members.get(1);
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(follower));
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(followee));
+        given(followRepository.removeByFollowerAndFollowee(follower, followee))
+            .willReturn(0);
+
+        //when
+        boolean result = followService.removeFollow(follower.getEmail(), followee.getId());
+
+        //then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void removeFollowSuccess() {
+        //given
+        Member follower = members.get(0);
+        Member followee = members.get(1);
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(follower));
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.of(followee));
+        given(followRepository.removeByFollowerAndFollowee(follower, followee))
+            .willReturn(1);
+
+        //when
+        boolean result = followService.removeFollow(follower.getEmail(), followee.getId());
+
+        //then
+        assertThat(result).isTrue();
+    }
 }
