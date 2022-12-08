@@ -2,10 +2,8 @@ package com.gaethering.gaetheringserver.member.controller;
 
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -19,12 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.gaethering.gaetheringserver.member.dto.FollowResponse;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.service.FollowService;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,33 +59,6 @@ class FollowControllerTest {
             .andExpect(status().isCreated())
             .andDo(print())
             .andDo(document("follow/create-follow",
-                getDocumentRequest(),
-                getDocumentResponse(),
-                pathParameters(parameterWithName("memberId").description("팔로우할 회원 id")),
-                requestHeaders(
-                    headerWithName("Authorization").description("Access Token"))
-            ));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("회원 못 찾을 때")
-    public void createFollowMemberNotFoundFailure() throws Exception {
-        //given
-
-        //when
-        when(followService.createFollow("test@test.com", 1L)).thenThrow(
-            new MemberNotFoundException());
-
-        //then
-        mockMvc.perform(post("/api/members/{memberId}/follow", 1)
-                .header("Authorization", "accessToken"))
-            .andExpect(status().is4xxClientError())
-            .andExpect(result ->
-                assertThat(getApiResultExceptionClass(result)).isEqualTo(
-                    MemberNotFoundException.class))
-            .andDo(print())
-            .andDo(document("follow/create-follow-failure",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 pathParameters(parameterWithName("memberId").description("팔로우할 회원 id")),
