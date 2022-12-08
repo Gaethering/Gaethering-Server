@@ -1,10 +1,8 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -15,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
-import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.service.PetService;
 import java.security.Principal;
 import java.time.LocalDate;
@@ -94,5 +91,28 @@ class PetControllerTest {
             ).andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
             .andDo(print())
             .andExpect(status().isOk());
+    }
+    @Test
+    @WithMockUser
+    public void getPetProfile() throws Exception {
+        //given
+        PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
+            .birth(LocalDate.parse("2021-12-01")).gender(
+                Gender.valueOf("FEMALE")).breed("말티즈").weight(3.6f).isNeutered(true)
+            .description("하얘요").imageUrl("https://test").build();
+        given(petService.getPetProfile(anyLong())).willReturn(petProfile);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
+                .with(csrf()))
+            .andExpect(jsonPath("$.name").value(petProfile.getName()))
+            .andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
+            .andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
+            .andExpect(jsonPath("$.breed").value(petProfile.getBreed()))
+            .andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
+            .andExpect(jsonPath("$.description").value(petProfile.getDescription()))
+            .andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
+            .andDo(print()).andExpect(status().isOk());
     }
 }
