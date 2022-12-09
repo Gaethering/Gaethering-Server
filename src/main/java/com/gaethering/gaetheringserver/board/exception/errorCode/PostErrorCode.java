@@ -1,11 +1,12 @@
 package com.gaethering.gaetheringserver.board.exception.errorCode;
 
+import com.gaethering.gaetheringserver.core.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum PostErrorCode {
+public enum PostErrorCode implements ErrorCode {
 
     POST_NOT_EXIST("E801","존재하지 않는 게시물입니다."),
     CATEGORY_NOT_EXIST("E802", "존재하지 않는 카테고리입니다."),
