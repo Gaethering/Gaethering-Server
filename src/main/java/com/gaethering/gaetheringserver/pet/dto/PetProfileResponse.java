@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.pet.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gaethering.gaetheringserver.member.type.Gender;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -13,22 +13,22 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PetProfileResponse {
 
-	private String name;
+    private String name;
 
-	private LocalDate birth;
+    private LocalDate birth;
 
-	private Gender gender;
+    private Gender gender;
 
-	private String breed;
+    private String breed;
 
-	private float weight;
+    private float weight;
 
-	@JsonProperty("isNeutered")
-	private boolean neutered;
+    @JsonProperty("isNeutered")
+    private boolean neutered;
 
-	private String description;
+    private String description;
 
-	private String imageUrl;
+    private String imageUrl;
 
 	public static PetProfileResponse fromEntity(Pet pet) {
 		return PetProfileResponse.builder()

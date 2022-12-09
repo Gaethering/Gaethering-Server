@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.member.domain;
 
-import com.gaethering.gaetheringserver.core.domain.BaseTimeEntity;
+import com.gaethering.gaetheringserver.core.domain.BaseCreatedTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Follow extends BaseTimeEntity {
+public class Follow extends BaseCreatedTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

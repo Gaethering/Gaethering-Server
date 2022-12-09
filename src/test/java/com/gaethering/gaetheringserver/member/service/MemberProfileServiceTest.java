@@ -9,13 +9,14 @@ import static org.mockito.BDDMockito.given;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
-import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
-import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.dto.profile.OtherProfileResponse;
+import com.gaethering.gaetheringserver.member.dto.profile.OwnProfileResponse;
+import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.type.Gender;
+import com.gaethering.gaetheringserver.member.service.member.MemberProfileServiceImpl;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.util.List;
 import java.util.Optional;
