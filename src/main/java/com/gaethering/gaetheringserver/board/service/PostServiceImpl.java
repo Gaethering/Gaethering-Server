@@ -1,9 +1,12 @@
 package com.gaethering.gaetheringserver.board.service;
 
+import com.gaethering.gaetheringserver.board.domain.Category;
 import com.gaethering.gaetheringserver.board.domain.Post;
 import com.gaethering.gaetheringserver.board.domain.PostImage;
 import com.gaethering.gaetheringserver.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.board.exception.CategoryNotFoundException;
+import com.gaethering.gaetheringserver.board.repository.CategoryRepository;
 import com.gaethering.gaetheringserver.board.repository.PostImageRepository;
 import com.gaethering.gaetheringserver.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.member.domain.Member;
@@ -26,6 +29,7 @@ public class PostServiceImpl implements PostService {
     private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
     private final PostImageRepository postImageRepository;
+    private final CategoryRepository categoryRepository;
     private final PostRepository postRepository;
 
     @Override
@@ -36,11 +40,15 @@ public class PostServiceImpl implements PostService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
 
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException());
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .category(request.getCategory())
+                .category(category)
                 .member(member)
+                .postImages(new ArrayList<>())
                 .build();
 
         List<String> imgUrlList = getImageUrlInRequest(files);
@@ -60,7 +68,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         return PostResponse.builder()
-                .category(post.getCategory())
+                .categoryName(post.getCategory().getCategoryName())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrls(imgUrlList)
