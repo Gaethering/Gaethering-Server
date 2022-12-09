@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.pet.service;
 
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface PetService {
@@ -12,7 +13,7 @@ public interface PetService {
 
     boolean setRepresentativePet(String email, Long petId);
 
-	PetProfileResponse updatePetProfile(Long id, float weight, boolean isNeutered, String description);
+	PetProfileResponse updatePetProfile(Long id, PetProfileUpdateRequest request);
 
 	boolean deletePetProfile(String email, Long id);
 }

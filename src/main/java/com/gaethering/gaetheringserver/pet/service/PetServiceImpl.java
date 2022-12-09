@@ -6,6 +6,7 @@ import com.gaethering.gaetheringserver.member.repository.member.MemberRepository
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
@@ -61,11 +62,11 @@ public class PetServiceImpl implements PetService {
 	}
 
 	@Override
-	public PetProfileResponse updatePetProfile(Long id, float weight, boolean isNeutered, String description) {
+	public PetProfileResponse updatePetProfile(Long id, PetProfileUpdateRequest request) {
 		Pet pet = petRepository.findById(id)
 			.orElseThrow(PetNotFoundException::new);
 
-		pet.updatePetProfile(weight, isNeutered, description);
+		pet.updatePetProfile(request.getWeight(), request.isNeutered(), request.getDescription());
 
 		return PetProfileResponse.fromEntity(pet);
 	}

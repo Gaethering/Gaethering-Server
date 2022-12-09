@@ -47,8 +47,7 @@ public class PetController {
     public ResponseEntity<PetProfileResponse> updatePetProfile(@PathVariable("petId") Long id,
         @RequestBody @Valid PetProfileUpdateRequest request) {
 
-        return ResponseEntity.ok(petService.updatePetProfile(id, request.getWeight(),
-            request.isNeutered(), request.getDescription()));
+        return ResponseEntity.ok(petService.updatePetProfile(id, request));
     }
 
     @DeleteMapping("/mypage/pets/{petId}")
