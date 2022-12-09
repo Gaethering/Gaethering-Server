@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.member.controller;
 
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -18,11 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.gaethering.gaetheringserver.member.dto.FollowResponse;
 import com.gaethering.gaetheringserver.member.service.FollowService;
-import java.security.Principal;
 import java.util.List;
-import java.util.Objects;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,12 +45,6 @@ class FollowControllerTest {
     @Test
     @WithMockUser
     public void createFollow() throws Exception {
-        //given
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn("test@test.com");
-
-        //when
-        //then
         mockMvc.perform(post("/api/members/{memberId}/follow", 1)
                 .header("Authorization", "accessToken"))
             .andExpect(status().isCreated())
@@ -101,8 +92,8 @@ class FollowControllerTest {
     @WithMockUser
     public void removeFollow() throws Exception {
         //given
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn("test@test.com");
+        given(followService.removeFollow(any(), anyLong()))
+            .willReturn(true);
 
         //when
         //then
@@ -117,10 +108,6 @@ class FollowControllerTest {
                 requestHeaders(
                     headerWithName("Authorization").description("Access Token"))
             ));
-    }
-
-    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
-        return Objects.requireNonNull(result.getResolvedException()).getClass();
     }
 
     private void checkPerform(String url, String identifier, FollowResponse followResponse1,

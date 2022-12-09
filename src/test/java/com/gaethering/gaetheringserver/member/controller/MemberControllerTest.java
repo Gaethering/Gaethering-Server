@@ -27,11 +27,9 @@ import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
 import com.gaethering.gaetheringserver.member.service.MemberService;
 import com.gaethering.gaetheringserver.member.type.Gender;
-import java.security.Principal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -128,11 +126,8 @@ class MemberControllerTest {
     @WithMockUser
     public void modifyMemberNickname() throws Exception {
         //given
-        String email = "test@test.com";
         ModifyMemberNicknameRequest request = new ModifyMemberNicknameRequest(
             "modifiedNickname");
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
 
         //when
         //then
@@ -161,8 +156,6 @@ class MemberControllerTest {
             .nickname("nickname").phoneNumber("010-0000-0000").gender(Gender.MALE)
             .mannerDegree(36.5f).followerCount(10L).followingCount(10L).petCount(5)
             .pets(List.of(petResponse)).build();
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(ownProfileResponse.getEmail());
         given(memberProfileService.getOwnProfile(anyString())).willReturn(ownProfileResponse);
 
         //when
