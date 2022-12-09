@@ -290,6 +290,48 @@ class PetServiceTest {
     }
 
     @Test
+    @DisplayName("반려동물 프로필 삭제 실패_해당 반려동물 존재하지 않을 경우")
+    void deletePetFailure_PetNotFound() {
+        // given
+        Pet pet1 = Pet.builder()
+            .id(1L)
+            .name("해")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(true)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        Pet pet2 = Pet.builder()
+            .id(2L)
+            .name("해2")
+            .weight(3.6f)
+            .isNeutered(false)
+            .isRepresentative(false)
+            .description("하얗고 귀여움")
+            .imageUrl("test")
+            .build();
+        pets = new ArrayList<>();
+        pets.add(pet1);
+        pets.add(pet2);
+
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .pets(pets)
+            .build();
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+
+        // when
+        PetNotFoundException exception = assertThrows(PetNotFoundException.class,
+            () -> petService.deletePetProfile("test@test.com", 3L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PetErrorCode.PET_NOT_FOUND);
+    }
+
+    @Test
     @DisplayName("반려동물 프로필 삭제 실패_대표 반려동물일 경우")
     void deletePetFailure_Representative() {
         // given
