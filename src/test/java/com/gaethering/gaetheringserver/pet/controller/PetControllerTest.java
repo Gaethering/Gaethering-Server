@@ -46,293 +46,293 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @ActiveProfiles("test")
 class PetControllerTest {
 
-    @MockBean
-    private PetService petService;
+	@MockBean
+	private PetService petService;
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @Test
-    @WithMockUser
-    public void setRepresentativePet() throws Exception {
-        //given
-        String email = "test@test.com";
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
+	@Test
+	@WithMockUser
+	public void setRepresentativePet() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
 
-        //when
-        //then
-        mockMvc.perform(patch("/api/mypage/pets/1/representative")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isOk());
-    }
+		//when
+		//then
+		mockMvc.perform(patch("/api/mypage/pets/1/representative")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser
-    void updatePetImage() throws Exception {
-        // given
-        String filename = "test.png";
-        String contentType = "image/png";
+	@Test
+	@WithMockUser
+	void updatePetImage() throws Exception {
+		// given
+		String filename = "test.png";
+		String contentType = "image/png";
 
-        MockMultipartFile image = new MockMultipartFile("image", filename, contentType,
-            "test".getBytes());
-        PetImageUpdateResponse response = PetImageUpdateResponse.builder()
-            .imageUrl("https://test").build();
+		MockMultipartFile image = new MockMultipartFile("image", filename, contentType,
+			"test".getBytes());
+		PetImageUpdateResponse response = PetImageUpdateResponse.builder()
+			.imageUrl("https://test").build();
 
-        given(petService.updatePetImage(1L, image))
-            .willReturn(PetImageUpdateResponse.builder().imageUrl(response.getImageUrl()).build());
+		given(petService.updatePetImage(1L, image))
+			.willReturn(PetImageUpdateResponse.builder().imageUrl(response.getImageUrl()).build());
 
-        // when
-        // then
-        MockMultipartHttpServletRequestBuilder builder =
-            MockMvcRequestBuilders.multipart("/api/mypage/pets/1/image");
+		// when
+		// then
+		MockMultipartHttpServletRequestBuilder builder =
+			MockMvcRequestBuilders.multipart("/api/mypage/pets/1/image");
 
-        builder.with(request -> {
-            request.setMethod("PATCH");
-            return request;
-        });
+		builder.with(request -> {
+			request.setMethod("PATCH");
+			return request;
+		});
 
-        mockMvc.perform(
-                builder
-                    .file(image)
-                    .with(csrf())
-            ).andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
-            .andDo(print())
-            .andExpect(status().isOk());
-    }
+		mockMvc.perform(
+				builder
+					.file(image)
+					.with(csrf())
+			).andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 이미지 수정 실패-반려동물 없을때")
-    void updatePetImageFailure_PetNotFound() throws Exception {
-        // given
-        String filename = "test.png";
-        String contentType = "image/png";
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 이미지 수정 실패-반려동물 없을때")
+	void updatePetImageFailure_PetNotFound() throws Exception {
+		// given
+		String filename = "test.png";
+		String contentType = "image/png";
 
-        MockMultipartFile image = new MockMultipartFile("image", filename, contentType,
-            "test".getBytes());
+		MockMultipartFile image = new MockMultipartFile("image", filename, contentType,
+			"test".getBytes());
 
-        given(petService.updatePetImage(1L, image))
-            .willThrow(new PetNotFoundException());
+		given(petService.updatePetImage(1L, image))
+			.willThrow(new PetNotFoundException());
 
-        // when
-        // then
-        MockMultipartHttpServletRequestBuilder builder =
-            MockMvcRequestBuilders.multipart("/api/mypage/pets/1/image");
+		// when
+		// then
+		MockMultipartHttpServletRequestBuilder builder =
+			MockMvcRequestBuilders.multipart("/api/mypage/pets/1/image");
 
-        builder.with(request -> {
-            request.setMethod("PATCH");
-            return request;
-        });
+		builder.with(request -> {
+			request.setMethod("PATCH");
+			return request;
+		});
 
-        mockMvc.perform(
-                builder
-                    .file(image)
-                    .with(csrf())
-            ).andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
-            .andDo(print());
-    }
+		mockMvc.perform(
+				builder
+					.file(image)
+					.with(csrf())
+			).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
+			.andDo(print());
+	}
 
-    @Test
-    @WithMockUser
-    public void getPetProfile() throws Exception {
-        //given
-        PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
-            .birth(LocalDate.parse("2021-12-01"))
-            .gender(Gender.valueOf("FEMALE"))
-            .breed("말티즈")
-            .weight(3.6f)
-            .neutered(true)
-            .description("하얘요")
-            .imageUrl("https://test").build();
-        given(petService.getPetProfile(anyLong())).willReturn(petProfile);
+	@Test
+	@WithMockUser
+	public void getPetProfile() throws Exception {
+		//given
+		PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
+			.birth(LocalDate.parse("2021-12-01"))
+			.gender(Gender.valueOf("FEMALE"))
+			.breed("말티즈")
+			.weight(3.6f)
+			.neutered(true)
+			.description("하얘요")
+			.imageUrl("https://test").build();
+		given(petService.getPetProfile(anyLong())).willReturn(petProfile);
 
-        //when
-        //then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andExpect(jsonPath("$.name").value(petProfile.getName()))
-            .andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
-            .andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
-            .andExpect(jsonPath("$.breed").value(petProfile.getBreed()))
-            .andExpect(jsonPath("$.isNeutered").value(petProfile.isNeutered()))
-            .andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
-            .andExpect(jsonPath("$.description").value(petProfile.getDescription()))
-            .andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
-            .andDo(print()).andExpect(status().isOk());
-    }
+		//when
+		//then
+		mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andExpect(jsonPath("$.name").value(petProfile.getName()))
+			.andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
+			.andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
+			.andExpect(jsonPath("$.breed").value(petProfile.getBreed()))
+			.andExpect(jsonPath("$.isNeutered").value(petProfile.isNeutered()))
+			.andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
+			.andExpect(jsonPath("$.description").value(petProfile.getDescription()))
+			.andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
+			.andDo(print()).andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 조회 실패-반려동물 없을때")
-    void getPetProfileFailure_PetNotFound() throws Exception {
-        // given
-        given(petService.getPetProfile(anyLong())).willThrow(new PetNotFoundException());
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 조회 실패-반려동물 없을때")
+	void getPetProfileFailure_PetNotFound() throws Exception {
+		// given
+		given(petService.getPetProfile(anyLong())).willThrow(new PetNotFoundException());
 
-        // when
-        // then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
-    }
+		// when
+		// then
+		mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+	}
 
-    @Test
-    @WithMockUser
-    public void updatePetProfile() throws Exception {
-        //given
-        PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
-            .weight(3.5f)
-            .neutered(true)
-            .description("귀여워요")
-            .build();
-        PetProfileResponse response = PetProfileResponse.builder()
-            .name("해")
-            .birth(LocalDate.parse("2021-12-01"))
-            .gender(Gender.valueOf("FEMALE"))
-            .breed("말티즈")
-            .weight(3.5f)
-            .neutered(true)
-            .description("귀여워요")
-            .imageUrl("https://test")
-            .build();
-        given(petService.updatePetProfile(1L, request))
-            .willReturn(response);
+	@Test
+	@WithMockUser
+	public void updatePetProfile() throws Exception {
+		//given
+		PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
+			.weight(3.5f)
+			.neutered(true)
+			.description("귀여워요")
+			.build();
+		PetProfileResponse response = PetProfileResponse.builder()
+			.name("해")
+			.birth(LocalDate.parse("2021-12-01"))
+			.gender(Gender.valueOf("FEMALE"))
+			.breed("말티즈")
+			.weight(3.5f)
+			.neutered(true)
+			.description("귀여워요")
+			.imageUrl("https://test")
+			.build();
+		given(petService.updatePetProfile(1L, request))
+			.willReturn(response);
 
-        String requestString = objectMapper.writeValueAsString(request);
+		String requestString = objectMapper.writeValueAsString(request);
 
-        //when
-        //then
-        mockMvc.perform(patch("/api/mypage/pets/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
-                .content(requestString))
-            .andDo(print())
-            .andExpect(status().isOk());
-    }
+		//when
+		//then
+		mockMvc.perform(patch("/api/mypage/pets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf())
+				.content(requestString))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 수정 실패-반려동물 없을때")
-    public void updatePetProfileFailure_PetNotFound() throws Exception {
-        //given
-        PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
-            .weight(3.5f)
-            .neutered(true)
-            .description("귀여워요")
-            .build();
-        given(petService.updatePetProfile(anyLong(), any()))
-            .willThrow(new PetNotFoundException());
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 수정 실패-반려동물 없을때")
+	public void updatePetProfileFailure_PetNotFound() throws Exception {
+		//given
+		PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
+			.weight(3.5f)
+			.neutered(true)
+			.description("귀여워요")
+			.build();
+		given(petService.updatePetProfile(anyLong(), any()))
+			.willThrow(new PetNotFoundException());
 
-        String requestString = objectMapper.writeValueAsString(request);
+		String requestString = objectMapper.writeValueAsString(request);
 
-        //when
-        //then
-        mockMvc.perform(patch("/api/mypage/pets/100")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
-                .content(requestString))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
-    }
+		//when
+		//then
+		mockMvc.perform(patch("/api/mypage/pets/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf())
+				.content(requestString))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+	}
 
-    @Test
-    @WithMockUser
-    public void deletePetProfile() throws Exception {
-        //given
-        String email = "test@test.com";
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
+	@Test
+	@WithMockUser
+	public void deletePetProfile() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
 
-        given(petService.deletePetProfile(anyString(), anyLong()))
-            .willReturn(true);
+		given(petService.deletePetProfile(anyString(), anyLong()))
+			.willReturn(true);
 
-        //when
-        //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isOk());
-    }
+		//when
+		//then
+		mockMvc.perform(delete("/api/mypage/pets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 삭제 실패 - 회원 못 찾았을 때")
-    public void deletePetProfileFailure_MemberNotFound() throws Exception {
-        //given
-        String email = "test@test.com";
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 삭제 실패 - 회원 못 찾았을 때")
+	public void deletePetProfileFailure_MemberNotFound() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
 
-        given(petService.deletePetProfile(anyString(), anyLong()))
-            .willThrow(new MemberNotFoundException());
+		given(petService.deletePetProfile(anyString(), anyLong()))
+			.willThrow(new MemberNotFoundException());
 
-        //when
-        //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()));
-    }
+		//when
+		//then
+		mockMvc.perform(delete("/api/mypage/pets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()));
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 삭제 실패 - 반려동물이 1마리 일때")
-    public void deletePetProfileFailure_MinExistPet() throws Exception {
-        //given
-        String email = "test@test.com";
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 삭제 실패 - 반려동물이 1마리 일때")
+	public void deletePetProfileFailure_MinExistPet() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
 
-        given(petService.deletePetProfile(anyString(), anyLong()))
-            .willThrow(new FailedDeletePetException());
+		given(petService.deletePetProfile(anyString(), anyLong()))
+			.willThrow(new FailedDeletePetException());
 
-        //when
-        //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(FAILED_DELETE_PET.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()));
-    }
+		//when
+		//then
+		mockMvc.perform(delete("/api/mypage/pets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(FAILED_DELETE_PET.getCode()))
+			.andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()));
+	}
 
-    @Test
-    @WithMockUser
-    @DisplayName("반려동물 프로필 삭제 실패 - 대표 반려동물일때")
-    public void deletePetProfileFailure_RepresentativePet() throws Exception {
-        //given
-        String email = "test@test.com";
-        Principal principal = Mockito.mock(Principal.class);
-        given(principal.getName()).willReturn(email);
+	@Test
+	@WithMockUser
+	@DisplayName("반려동물 프로필 삭제 실패 - 대표 반려동물일때")
+	public void deletePetProfileFailure_RepresentativePet() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
 
-        given(petService.deletePetProfile(anyString(), anyLong()))
-            .willThrow(new FailedDeleteRepresentativeException());
+		given(petService.deletePetProfile(anyString(), anyLong()))
+			.willThrow(new FailedDeleteRepresentativeException());
 
-        //when
-        //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value(FAILED_DELETE_REPRESENTATIVE.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()));
-    }
+		//when
+		//then
+		mockMvc.perform(delete("/api/mypage/pets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.with(csrf()))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value(FAILED_DELETE_REPRESENTATIVE.getCode()))
+			.andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()));
+	}
 }
