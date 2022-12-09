@@ -16,9 +16,12 @@ import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
+import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
+import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
 import com.gaethering.gaetheringserver.pet.service.PetService;
 import java.security.Principal;
 import java.time.LocalDate;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +98,43 @@ class PetControllerTest {
             .andDo(print())
             .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser
+    @DisplayName("반려동물 프로필 이미지 수정 실패-반려동물 없을때")
+    void updatePetImageFailure_PetNotFound() throws Exception {
+        // given
+        String filename = "test.png";
+        String contentType = "image/png";
+
+        MockMultipartFile image = new MockMultipartFile("image", filename, contentType,
+            "test".getBytes());
+        PetImageUpdateResponse response = PetImageUpdateResponse.builder()
+            .imageUrl("https://test").build();
+
+        given(petService.updatePetImage(1L, image))
+            .willThrow(new PetNotFoundException());
+
+        // when
+        // then
+        MockMultipartHttpServletRequestBuilder builder =
+            MockMvcRequestBuilders.multipart("/api/mypage/pets/1/image");
+
+        builder.with(request -> {
+            request.setMethod("PATCH");
+            return request;
+        });
+
+        mockMvc.perform(
+                builder
+                    .file(image)
+                    .with(csrf())
+            ).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value(PetErrorCode.PET_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(PetErrorCode.PET_NOT_FOUND.getMessage()))
+            .andDo(print());
+    }
+
     @Test
     @WithMockUser
     public void getPetProfile() throws Exception {
