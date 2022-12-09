@@ -80,8 +80,7 @@ public class MemberController {
     @PatchMapping("/mypage/nickname")
     public ResponseEntity<ModifyMemberNicknameResponse> modifyMemberNickname(
         @RequestBody ModifyMemberNicknameRequest request, Principal principal) {
-        String email = principal.getName();
-        memberService.modifyNickname(email, request.getNickname());
+        memberService.modifyNickname(principal.getName(), request.getNickname());
         return ResponseEntity.ok(new ModifyMemberNicknameResponse(request.getNickname()));
     }
 
