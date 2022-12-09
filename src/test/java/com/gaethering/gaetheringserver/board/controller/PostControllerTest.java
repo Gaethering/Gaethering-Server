@@ -76,7 +76,7 @@ class PostControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        MockMultipartFile post = new MockMultipartFile("request", "request",
+        MockMultipartFile post = new MockMultipartFile("data", "data",
                 "application/json", requestJson.getBytes(StandardCharsets.UTF_8));
 
 
@@ -107,7 +107,7 @@ class PostControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        MockMultipartFile post = new MockMultipartFile("request", "request",
+        MockMultipartFile post = new MockMultipartFile("data", "data",
                 "application/json", requestJson.getBytes(StandardCharsets.UTF_8));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")

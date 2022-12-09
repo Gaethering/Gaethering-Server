@@ -20,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/boards")
-    public ResponseEntity<PostResponse> writePost(@RequestPart PostRequest request,
+    public ResponseEntity<PostResponse> writePost(@RequestPart(value = "data") PostRequest request,
                                                   @RequestPart(value = "images", required = false) List<MultipartFile> files, Principal principal) {
 
         String email = principal.getName();
