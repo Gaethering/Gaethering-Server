@@ -19,8 +19,10 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/boards")
-    public ResponseEntity<PostResponse> writePost(@RequestPart(value = "data") PostRequest request,
-                                                  @RequestPart(value = "images", required = false) List<MultipartFile> files, Principal principal) {
+    public ResponseEntity<PostResponse> writePost
+            (@RequestPart(value = "data") PostRequest request,
+             @RequestPart(value = "images", required = false) List<MultipartFile> files,
+             Principal principal) {
 
         String email = principal.getName();
         PostResponse response = postService.writePost(email, files, request);
