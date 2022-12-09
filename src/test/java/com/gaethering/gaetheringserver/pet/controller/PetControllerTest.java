@@ -145,9 +145,13 @@ class PetControllerTest {
     public void getPetProfile() throws Exception {
         //given
         PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
-            .birth(LocalDate.parse("2021-12-01")).gender(
-                Gender.valueOf("FEMALE")).breed("말티즈").weight(3.6f).isNeutered(true)
-            .description("하얘요").imageUrl("https://test").build();
+            .birth(LocalDate.parse("2021-12-01"))
+            .gender(Gender.valueOf("FEMALE"))
+            .breed("말티즈")
+            .weight(3.6f)
+            .neutered(true)
+            .description("하얘요")
+            .imageUrl("https://test").build();
         given(petService.getPetProfile(anyLong())).willReturn(petProfile);
 
         //when
@@ -158,6 +162,7 @@ class PetControllerTest {
             .andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
             .andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
             .andExpect(jsonPath("$.breed").value(petProfile.getBreed()))
+            .andExpect(jsonPath("$.isNeutered").value(petProfile.isNeutered()))
             .andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
             .andExpect(jsonPath("$.description").value(petProfile.getDescription()))
             .andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
@@ -187,7 +192,7 @@ class PetControllerTest {
         //given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.5f)
-            .isNeutered(true)
+            .neutered(true)
             .description("귀여워요")
             .build();
         PetProfileResponse response = PetProfileResponse.builder()
@@ -196,7 +201,7 @@ class PetControllerTest {
             .gender(Gender.valueOf("FEMALE"))
             .breed("말티즈")
             .weight(3.5f)
-            .isNeutered(true)
+            .neutered(true)
             .description("귀여워요")
             .imageUrl("https://test")
             .build();
@@ -222,7 +227,7 @@ class PetControllerTest {
         //given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.5f)
-            .isNeutered(true)
+            .neutered(true)
             .description("귀여워요")
             .build();
         given(petService.updatePetProfile(anyLong(), any()))

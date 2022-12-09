@@ -217,7 +217,7 @@ class PetServiceTest {
         // given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.7f)
-            .isNeutered(true)
+            .neutered(true )
             .description("깨발랄함")
             .build();
         Pet pet = Pet.builder()

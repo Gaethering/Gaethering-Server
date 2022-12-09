@@ -25,7 +25,7 @@ class PetProfileUpdateRequestTest {
 		// given
 		PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
 			.weight(-1.1f)
-			.isNeutered(true)
+			.neutered(true)
 			.description("test")
 			.build();
 
@@ -42,7 +42,7 @@ class PetProfileUpdateRequestTest {
 		// given
 		PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
 			.weight(3.5f)
-			.isNeutered(true)
+			.neutered(true)
 			.build();
 
 		// when
