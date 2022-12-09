@@ -19,7 +19,7 @@ public class PostResponse {
 
     private String content;
 
-    private List<String> imgUrlList;
+    private List<String> imageUrls;
 
     private Category category;
 
