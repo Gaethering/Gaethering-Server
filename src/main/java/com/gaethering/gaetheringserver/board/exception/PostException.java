@@ -9,7 +9,7 @@ public class PostException extends BusinessException {
 
     private final PostErrorCode postErrorCode;
 
-    protected PostException (PostErrorCode postErrorCode) {
+    protected PostException(PostErrorCode postErrorCode) {
         super(postErrorCode);
         this.postErrorCode = postErrorCode;
     }
