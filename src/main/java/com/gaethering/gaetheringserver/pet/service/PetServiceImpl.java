@@ -80,7 +80,7 @@ public class PetServiceImpl implements PetService {
 		}
 
 		Pet findPet = member.getPets().stream().filter(pet -> pet.getId().equals(id)).findFirst()
-			.get();
+			.orElseThrow(PetNotFoundException::new);
 
 		if (findPet.isRepresentative()) {
 			throw new FailedDeleteRepresentativeException();
