@@ -2,9 +2,19 @@ package com.gaethering.gaetheringserver.board.domain;
 
 import com.gaethering.gaetheringserver.core.domain.BaseTimeEntity;
 import com.gaethering.gaetheringserver.member.domain.Member;
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter

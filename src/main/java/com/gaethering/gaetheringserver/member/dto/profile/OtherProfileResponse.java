@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.member.dto.profile;
 
-import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.core.type.Gender;
+import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.util.List;
 import java.util.stream.Collectors;

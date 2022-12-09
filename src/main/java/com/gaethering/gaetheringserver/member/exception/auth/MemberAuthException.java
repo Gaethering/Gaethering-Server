@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class MemberAuthException extends BusinessException {
+
     private final MemberErrorCode errorCode;
 
     public MemberAuthException(MemberErrorCode memberErrorCode) {

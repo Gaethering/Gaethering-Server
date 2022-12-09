@@ -4,9 +4,9 @@ import static com.gaethering.gaetheringserver.member.domain.QMember.member;
 import static com.gaethering.gaetheringserver.member.domain.QMemberProfile.memberProfile;
 import static com.gaethering.gaetheringserver.pet.domain.QPet.pet;
 
+import com.gaethering.gaetheringserver.core.repository.support.Querydsl4RepositorySupport;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.repository.member.CustomMemberRepository;
-import com.gaethering.gaetheringserver.core.repository.support.Querydsl4RepositorySupport;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.Optional;
 

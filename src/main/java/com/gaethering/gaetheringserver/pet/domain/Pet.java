@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.pet.domain;
 
-import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.core.type.Gender;
+import com.gaethering.gaetheringserver.member.domain.Member;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,5 +65,11 @@ public class Pet {
 
     public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void updatePetProfile(float weight, boolean isNeutered, String description) {
+        this.weight = weight;
+        this.isNeutered = isNeutered;
+        this.description = description;
     }
 }

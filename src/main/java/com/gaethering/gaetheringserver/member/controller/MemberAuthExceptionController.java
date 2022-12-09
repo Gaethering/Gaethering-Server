@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberAuthExceptionController {
 
     @GetMapping("/accessDenied")
-    public String accessDenied () {
+    public String accessDenied() {
         throw new AuthorizationFailException(MemberErrorCode.FAIL_TO_AUTHORIZATION);
     }
 
     @GetMapping("/authenticationFailed")
-    public String authenticationFailed () {
+    public String authenticationFailed() {
         throw new AuthenticationFailException(MemberErrorCode.FAIL_TO_AUTHENTICATION);
     }
 }

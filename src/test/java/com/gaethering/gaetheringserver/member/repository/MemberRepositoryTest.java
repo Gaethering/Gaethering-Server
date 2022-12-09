@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.gaethering.gaetheringserver.config.JpaConfig;
 import com.gaethering.gaetheringserver.config.QuerydslConfig;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
 import com.gaethering.gaetheringserver.member.repository.member.MemberProfileRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import java.util.ArrayList;
@@ -18,11 +18,13 @@ import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({JpaConfig.class, QuerydslConfig.class})
 @Transactional
 public class MemberRepositoryTest {
