@@ -7,6 +7,7 @@ import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.LoginRequest;
 import com.gaethering.gaetheringserver.member.dto.LoginResponse;
 import com.gaethering.gaetheringserver.member.dto.LogoutRequest;
+import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameResponse;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
@@ -79,10 +80,9 @@ public class MemberController {
 
     @PatchMapping("/mypage/nickname")
     public ResponseEntity<ModifyMemberNicknameResponse> modifyMemberNickname(
-        @RequestBody String nickname, Principal principal) {
-        String email = principal.getName();
-        memberService.modifyNickname(email, nickname);
-        return ResponseEntity.ok(new ModifyMemberNicknameResponse(nickname));
+        @RequestBody ModifyMemberNicknameRequest request, Principal principal) {
+        memberService.modifyNickname(principal.getName(), request.getNickname());
+        return ResponseEntity.ok(new ModifyMemberNicknameResponse(request.getNickname()));
     }
 
     @PostMapping("/members/auth/login")
