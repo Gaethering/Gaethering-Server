@@ -103,7 +103,7 @@ public class MemberController {
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/members/auth/logout")
     public ResponseEntity<Void> reissueAccessToken
         (@RequestBody LogoutRequest request) {
         memberService.logout(request);
