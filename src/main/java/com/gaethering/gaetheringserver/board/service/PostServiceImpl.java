@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .imgUrlList(imgUrlList)
+                .imageUrls(imgUrlList)
                 .viewCnt(0)
                 .heartCnt(0)
                 .createAt(post.getCreatedAt())
