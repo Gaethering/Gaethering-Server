@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModifyMemberNicknameRequest {
+
     private String nickname;
 }

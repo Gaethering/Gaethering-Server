@@ -1,9 +1,9 @@
 package com.gaethering.gaetheringserver.member.service.member;
 
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
 import com.gaethering.gaetheringserver.member.dto.auth.LoginInfoResponse;
-import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.member.DuplicatedEmailException;

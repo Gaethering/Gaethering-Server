@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PetProfileUpdateRequest {
 
-	@Positive(message = "반려동물 몸무게는 양수여야 합니다.")
-	private float weight;
+    @Positive(message = "반려동물 몸무게는 양수여야 합니다.")
+    private float weight;
 
-	@JsonProperty("isNeutered")
-	private boolean neutered;
+    @JsonProperty("isNeutered")
+    private boolean neutered;
 
-	@NotBlank(message = "반려동물 상세설명은 필수 입력 사항입니다.")
-	private String description;
+    @NotBlank(message = "반려동물 상세설명은 필수 입력 사항입니다.")
+    private String description;
 
 }

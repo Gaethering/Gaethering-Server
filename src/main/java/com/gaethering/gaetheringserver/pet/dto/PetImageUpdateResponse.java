@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PetImageUpdateResponse {
 
-	private String imageUrl;
+    private String imageUrl;
 }

@@ -10,25 +10,26 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.exception.MemberException;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.member.exception.member.MemberException;
+import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.dto.PetRegisterRequest;
 import com.gaethering.gaetheringserver.pet.dto.PetRegisterResponse;
+import com.gaethering.gaetheringserver.pet.exception.ExceedRegistrablePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
-import com.gaethering.gaetheringserver.pet.exception.ExceedRegistrablePetException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
-import com.gaethering.gaetheringserver.util.ImageUploader;
+import com.gaethering.gaetheringserver.util.upload.ImageUploader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -223,7 +224,7 @@ class PetServiceTest {
         // given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.7f)
-            .neutered(true )
+            .neutered(true)
             .description("깨발랄함")
             .build();
         Pet pet = Pet.builder()
@@ -240,7 +241,7 @@ class PetServiceTest {
             .willReturn(Optional.of(pet));
 
         // when
-        PetProfileResponse response = petService.updatePetProfile(1L,request);
+        PetProfileResponse response = petService.updatePetProfile(1L, request);
 
         // then
         assertThat(response.getWeight()).isEqualTo(pet.getWeight());
@@ -376,7 +377,8 @@ class PetServiceTest {
             .willReturn(Optional.of(member));
 
         // when
-        FailedDeleteRepresentativeException exception = assertThrows(FailedDeleteRepresentativeException.class,
+        FailedDeleteRepresentativeException exception = assertThrows(
+            FailedDeleteRepresentativeException.class,
             () -> petService.deletePetProfile("test@test.com", pet1.getId()));
 
         // then

@@ -9,7 +9,6 @@ import com.gaethering.gaetheringserver.member.exception.auth.TokenIncorrectExcep
 import com.gaethering.gaetheringserver.member.exception.auth.TokenInvalidException;
 import com.gaethering.gaetheringserver.member.exception.auth.TokenNotExistException;
 import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
-import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
 import com.gaethering.gaetheringserver.util.jwt.JwtProvider;
 import com.gaethering.gaetheringserver.util.redis.RedisUtil;
 import java.util.Objects;

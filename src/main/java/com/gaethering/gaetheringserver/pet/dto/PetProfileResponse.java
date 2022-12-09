@@ -30,16 +30,16 @@ public class PetProfileResponse {
 
     private String imageUrl;
 
-	public static PetProfileResponse fromEntity(Pet pet) {
-		return PetProfileResponse.builder()
-			.name(pet.getName())
-			.birth(pet.getBirth())
-			.gender(pet.getGender())
-			.breed(pet.getBreed())
-			.weight(pet.getWeight())
-			.neutered(pet.isNeutered())
-			.description(pet.getDescription())
-			.imageUrl(pet.getImageUrl())
-			.build();
-	}
+    public static PetProfileResponse fromEntity(Pet pet) {
+        return PetProfileResponse.builder()
+            .name(pet.getName())
+            .birth(pet.getBirth())
+            .gender(pet.getGender())
+            .breed(pet.getBreed())
+            .weight(pet.getWeight())
+            .neutered(pet.isNeutered())
+            .description(pet.getDescription())
+            .imageUrl(pet.getImageUrl())
+            .build();
+    }
 }

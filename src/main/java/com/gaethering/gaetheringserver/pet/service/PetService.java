@@ -11,14 +11,14 @@ public interface PetService {
 
     PetProfileResponse getPetProfile(Long id);
 
-	  PetImageUpdateResponse updatePetImage(Long id, MultipartFile multipartFile);
+    PetImageUpdateResponse updatePetImage(Long id, MultipartFile multipartFile);
 
     boolean setRepresentativePet(String email, Long petId);
 
-	  PetProfileResponse updatePetProfile(Long id, PetProfileUpdateRequest request);
+    PetProfileResponse updatePetProfile(Long id, PetProfileUpdateRequest request);
 
-	  boolean deletePetProfile(String email, Long id);
-  
+    boolean deletePetProfile(String email, Long id);
+
     PetRegisterResponse registerPet(String email, MultipartFile file,
         PetRegisterRequest petRegisterRequest);
 }

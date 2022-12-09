@@ -1,18 +1,18 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailRequest;
-import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.auth.EmailAuthRequest;
 import com.gaethering.gaetheringserver.member.dto.auth.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.auth.LoginRequest;
 import com.gaethering.gaetheringserver.member.dto.auth.LoginResponse;
 import com.gaethering.gaetheringserver.member.dto.auth.LogoutRequest;
+import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenRequest;
+import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenResponse;
 import com.gaethering.gaetheringserver.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.member.dto.profile.ModifyMemberNicknameResponse;
 import com.gaethering.gaetheringserver.member.dto.profile.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.profile.OwnProfileResponse;
-import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenRequest;
-import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailRequest;
+import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpResponse;
 import com.gaethering.gaetheringserver.member.service.auth.AuthService;

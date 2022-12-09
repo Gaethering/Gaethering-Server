@@ -2,7 +2,6 @@ package com.gaethering.gaetheringserver.util.redis;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;

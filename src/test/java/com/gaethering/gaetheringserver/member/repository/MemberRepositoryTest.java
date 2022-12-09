@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.gaethering.gaetheringserver.config.JpaConfig;
 import com.gaethering.gaetheringserver.config.QuerydslConfig;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.domain.Member;
 import com.gaethering.gaetheringserver.member.domain.MemberProfile;
 import com.gaethering.gaetheringserver.member.repository.member.MemberProfileRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
 import java.util.ArrayList;

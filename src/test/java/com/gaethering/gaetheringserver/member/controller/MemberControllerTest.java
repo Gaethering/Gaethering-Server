@@ -21,17 +21,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.member.dto.auth.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.member.dto.profile.OtherProfileResponse;
-import com.gaethering.gaetheringserver.member.dto.profile.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.profile.OtherProfileResponse.ProfilePetResponse;
+import com.gaethering.gaetheringserver.member.dto.profile.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.signup.SignUpResponse;
 import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.service.member.MemberProfileService;
 import com.gaethering.gaetheringserver.member.service.member.MemberService;
-import com.gaethering.gaetheringserver.core.type.Gender;
 import java.security.Principal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
