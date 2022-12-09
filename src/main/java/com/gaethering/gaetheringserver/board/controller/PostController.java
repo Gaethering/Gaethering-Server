@@ -5,10 +5,12 @@ import com.gaethering.gaetheringserver.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.board.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -20,13 +22,14 @@ public class PostController {
 
     @PostMapping(value = "/boards")
     public ResponseEntity<PostResponse> writePost
-            (@RequestPart(value = "data") PostRequest request,
+            (@RequestPart(value = "data") @Valid PostRequest request,
              @RequestPart(value = "images", required = false) List<MultipartFile> files,
              Principal principal) {
 
         String email = principal.getName();
         PostResponse response = postService.writePost(email, files, request);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON).body(response);
     }
 }
