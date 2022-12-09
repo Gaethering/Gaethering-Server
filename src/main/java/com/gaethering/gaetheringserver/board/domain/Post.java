@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.board.domain;
 
 import com.gaethering.gaetheringserver.core.domain.BaseTimeEntity;
 import com.gaethering.gaetheringserver.member.domain.Member;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,8 +51,8 @@ public class Post extends BaseTimeEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post",
-        cascade = CascadeType.REMOVE,
-        orphanRemoval = true)
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
@@ -61,7 +63,7 @@ public class Post extends BaseTimeEntity {
     private Category category;
 
     public void addImage(PostImage image) {
-        if(image.getPost() != this) {
+        if (image.getPost() != this) {
             image.setPost(this);
         }
         this.postImages.add(image);

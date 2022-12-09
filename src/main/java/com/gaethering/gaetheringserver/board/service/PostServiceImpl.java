@@ -45,8 +45,8 @@ public class PostServiceImpl implements PostService {
 
         List<String> imgUrlList = getImageUrlInRequest(files);
 
-        if(!imgUrlList.isEmpty()) {
-            for(String imgUrl : imgUrlList) {
+        if (!imgUrlList.isEmpty()) {
+            for (String imgUrl : imgUrlList) {
                 PostImage image = PostImage.builder()
                         .imageUrl(imgUrl)
                         .isRepresentative(false)
@@ -72,11 +72,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<String> getImageUrlInRequest (List<MultipartFile> files) {
+    public List<String> getImageUrlInRequest(List<MultipartFile> files) {
         List<String> imgUrlList = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(files)) {
-            for(MultipartFile file : files) {
+            for (MultipartFile file : files) {
                 String imgUrl = imageUploader.uploadImage(file);
                 imgUrlList.add(imgUrl);
             }

@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class PostImage {
 
     public void setPost(Post post) {
         this.post = post;
-        if(!post.getPostImages().contains(this)) {
+        if (!post.getPostImages().contains(this)) {
             post.getPostImages().add(this);
         }
     }

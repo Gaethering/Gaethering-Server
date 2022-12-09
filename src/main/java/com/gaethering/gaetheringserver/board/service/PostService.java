@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PostService {
 
-    PostResponse writePost (String email, List<MultipartFile> files, PostRequest request);
+    PostResponse writePost(String email, List<MultipartFile> files, PostRequest request);
 
-    List<String> getImageUrlInRequest (List<MultipartFile> files);
+    List<String> getImageUrlInRequest(List<MultipartFile> files);
 }
