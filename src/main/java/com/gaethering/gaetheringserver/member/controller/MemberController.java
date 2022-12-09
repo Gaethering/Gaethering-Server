@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.member.controller;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
 import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
 import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
+import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.LoginRequest;
 import com.gaethering.gaetheringserver.member.dto.LoginResponse;
 import com.gaethering.gaetheringserver.member.dto.LogoutRequest;
@@ -88,6 +89,11 @@ public class MemberController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse loginResponse = memberService.login(request);
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/members/info")
+    public ResponseEntity<LoginInfoResponse> getLoginInfo(Principal principal) {
+        return ResponseEntity.ok(memberService.getLoginInfo(principal.getName()));
     }
 
     @PostMapping("/members/auth/reissue-token")

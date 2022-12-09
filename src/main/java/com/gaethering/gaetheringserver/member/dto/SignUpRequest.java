@@ -49,7 +49,7 @@ public class SignUpRequest {
     private String petName;
     @LocalDateValid(message = "8자리의 yyyy-MM-dd 형식이어야 합니다.", pattern = "yyyy-MM-dd")
     private String petBirth;
-    @Positive(message = "반려동물 몸무게는 양수이어야 합니다.")
+    @Positive(message = "반려동물 몸무게는 양수여야 합니다.")
     private float weight;
     private String breed;
     @EnumValid(enumClass = Gender.class, message = "성별은 MALE, FEMALE 둘 중 하나여야 합니다.")

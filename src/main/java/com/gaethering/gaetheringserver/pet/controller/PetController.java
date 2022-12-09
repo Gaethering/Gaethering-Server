@@ -1,13 +1,18 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.dto.PetRegisterRequest;
+import com.gaethering.gaetheringserver.pet.dto.PetRegisterResponse;
 import com.gaethering.gaetheringserver.pet.service.PetService;
 import java.security.Principal;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +41,16 @@ public class PetController {
     @GetMapping("/pets/{petId}/profile")
     public ResponseEntity<PetProfileResponse> getPetProfile(@PathVariable("petId") Long id) {
         return ResponseEntity.ok(petService.getPetProfile(id));
+    }
+
+    @PostMapping("/pets/register")
+    public ResponseEntity<PetRegisterResponse> registerPet(
+        @RequestPart("image") MultipartFile multipartFile,
+        @RequestPart("data") @Valid PetRegisterRequest petRegisterRequest,
+        Principal principal
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(petService.registerPet(principal.getName(), multipartFile, petRegisterRequest));
     }
 
 }

@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
 import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
@@ -31,9 +32,11 @@ import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
 import com.gaethering.gaetheringserver.member.service.MemberService;
 import com.gaethering.gaetheringserver.member.type.Gender;
+import java.security.Principal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -215,6 +218,8 @@ class MemberControllerTest {
             .nickname("nickname").phoneNumber("010-0000-0000").gender(Gender.MALE)
             .mannerDegree(36.5f).followerCount(10L).followingCount(10L).petCount(5)
             .pets(List.of(petResponse)).build();
+        Principal principal = Mockito.mock(Principal.class);
+        given(principal.getName()).willReturn(ownProfileResponse.getEmail());
         given(memberProfileService.getOwnProfile(anyString())).willReturn(ownProfileResponse);
 
         //when
@@ -321,6 +326,29 @@ class MemberControllerTest {
                 requestHeaders(
                     headerWithName("Authorization").description("Access Token"))
             ));
+    }
+
+    @Test
+    @DisplayName("로그인 시 사용자 정보 제공")
+    @WithMockUser
+    public void getLoginInfo() throws Exception {
+        //given
+        LoginInfoResponse response = LoginInfoResponse.builder()
+            .nickname("내캉")
+            .petName("하울")
+            .imageUrl("http://test.com")
+            .build();
+
+        given(memberService.getLoginInfo(anyString())).willReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/api/members/info").contentType(MediaType.APPLICATION_JSON).with(csrf()))
+            .andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.nickname").value(response.getNickname()))
+            .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
+            .andExpect(jsonPath("$.petName").value(response.getPetName()));
     }
 
 }

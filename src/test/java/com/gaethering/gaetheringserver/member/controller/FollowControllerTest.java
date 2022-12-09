@@ -145,8 +145,7 @@ class FollowControllerTest {
         //when
         //then
         checkPerform("/api/members/{memberId}/following", "follow/get-followings/success",
-            followResponses.get(0),
-            followResponses.get(1));
+            followResponses.get(0), followResponses.get(1));
     }
 
     @Test
