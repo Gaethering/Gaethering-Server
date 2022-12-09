@@ -1,9 +1,9 @@
 package com.gaethering.gaetheringserver.pet.service;
 
 import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.type.Gender;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetRegisterRequest;
@@ -12,7 +12,7 @@ import com.gaethering.gaetheringserver.pet.exception.ExceedRegistrablePetExcepti
 import com.gaethering.gaetheringserver.pet.exception.ImageNotFoundException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.pet.repository.PetRepository;
-import com.gaethering.gaetheringserver.util.ImageUploader;
+import com.gaethering.gaetheringserver.util.upload.ImageUploader;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,11 +1,12 @@
 package com.gaethering.gaetheringserver.pet.exception.errorcode;
 
+import com.gaethering.gaetheringserver.core.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum PetErrorCode {
+public enum PetErrorCode implements ErrorCode {
 
     IMAGE_NOT_FOUND("E1001", "사진이 존재하지 않습니다."),
     INVALID_IMAGE_TYPE("E1002", "사진 형식이 잘못되었습니다."),

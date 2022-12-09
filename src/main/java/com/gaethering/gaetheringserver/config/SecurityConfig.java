@@ -1,8 +1,8 @@
 package com.gaethering.gaetheringserver.config;
 
 import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
-import com.gaethering.gaetheringserver.util.CustomAccessDeniedHandler;
-import com.gaethering.gaetheringserver.util.CustomAuthenticationEntryPoint;
+import com.gaethering.gaetheringserver.util.auth.CustomAccessDeniedHandler;
+import com.gaethering.gaetheringserver.util.auth.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,41 +43,42 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
+        AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers( "/h2-console/**");
+        return (web) -> web.ignoring().antMatchers("/h2-console/**");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.httpBasic().disable()
-                .csrf().disable();
+            .csrf().disable();
 
         http.headers().frameOptions().sameOrigin();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/api/members/sign-up", "/api/members/auth/login",
-                        "/api/members/auth/reissue-token", "/exception/accessDenied",
-                        "/exception/authenticationFailed").permitAll()
+            .antMatchers("/api/members/sign-up", "/api/members/auth/login",
+                "/api/members/auth/reissue-token", "/exception/accessDenied",
+                "/exception/authenticationFailed", "/docs/**").permitAll()
 
-                .antMatchers("/**/admin/**").hasAuthority("ROLE_ADMIN")
-                .anyRequest().authenticated();
+            .antMatchers("/**/admin/**").hasAuthority("ROLE_ADMIN")
+            .anyRequest().authenticated();
 
         http.formLogin().disable();
         http.logout().disable();
 
         http.exceptionHandling()
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
-                .accessDeniedHandler(customAccessDeniedHandler);
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDeniedHandler);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -1,11 +1,12 @@
 package com.gaethering.gaetheringserver.member.exception.errorcode;
 
+import com.gaethering.gaetheringserver.core.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MemberErrorCode {
+public enum MemberErrorCode implements ErrorCode {
     MEMBER_NOT_FOUND("E001", "존재하지 않는 회원입니다."),
     INVALID_EMAIL_AUTH_CODE("E901", "이메일 인증 코드가 유효하지 않습니다."),
     DUPLICATED_EMAIL("E902", "중복된 이메일입니다."),

@@ -1,21 +1,23 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import com.gaethering.gaetheringserver.member.dto.ConfirmEmailRequest;
-import com.gaethering.gaetheringserver.member.dto.ConfirmEmailResponse;
-import com.gaethering.gaetheringserver.member.dto.EmailAuthRequest;
-import com.gaethering.gaetheringserver.member.dto.LoginInfoResponse;
-import com.gaethering.gaetheringserver.member.dto.LoginRequest;
-import com.gaethering.gaetheringserver.member.dto.LoginResponse;
-import com.gaethering.gaetheringserver.member.dto.LogoutRequest;
-import com.gaethering.gaetheringserver.member.dto.ModifyMemberNicknameResponse;
-import com.gaethering.gaetheringserver.member.dto.OtherProfileResponse;
-import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
-import com.gaethering.gaetheringserver.member.dto.ReissueTokenRequest;
-import com.gaethering.gaetheringserver.member.dto.ReissueTokenResponse;
-import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
-import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
-import com.gaethering.gaetheringserver.member.service.MemberProfileService;
-import com.gaethering.gaetheringserver.member.service.MemberService;
+import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailRequest;
+import com.gaethering.gaetheringserver.member.dto.signup.ConfirmEmailResponse;
+import com.gaethering.gaetheringserver.member.dto.auth.EmailAuthRequest;
+import com.gaethering.gaetheringserver.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.member.dto.auth.LoginRequest;
+import com.gaethering.gaetheringserver.member.dto.auth.LoginResponse;
+import com.gaethering.gaetheringserver.member.dto.auth.LogoutRequest;
+import com.gaethering.gaetheringserver.member.dto.profile.ModifyMemberNicknameRequest;
+import com.gaethering.gaetheringserver.member.dto.profile.ModifyMemberNicknameResponse;
+import com.gaethering.gaetheringserver.member.dto.profile.OtherProfileResponse;
+import com.gaethering.gaetheringserver.member.dto.profile.OwnProfileResponse;
+import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenRequest;
+import com.gaethering.gaetheringserver.member.dto.auth.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
+import com.gaethering.gaetheringserver.member.dto.signup.SignUpResponse;
+import com.gaethering.gaetheringserver.member.service.auth.AuthService;
+import com.gaethering.gaetheringserver.member.service.member.MemberProfileService;
+import com.gaethering.gaetheringserver.member.service.member.MemberService;
 import java.security.Principal;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberProfileService memberProfileService;
+    private final AuthService authService;
 
     @PostMapping("/members/sign-up")
     public ResponseEntity<SignUpResponse> signUp(
@@ -79,15 +82,14 @@ public class MemberController {
 
     @PatchMapping("/mypage/nickname")
     public ResponseEntity<ModifyMemberNicknameResponse> modifyMemberNickname(
-        @RequestBody String nickname, Principal principal) {
-        String email = principal.getName();
-        memberService.modifyNickname(email, nickname);
-        return ResponseEntity.ok(new ModifyMemberNicknameResponse(nickname));
+        @RequestBody ModifyMemberNicknameRequest request, Principal principal) {
+        memberService.modifyNickname(principal.getName(), request.getNickname());
+        return ResponseEntity.ok(new ModifyMemberNicknameResponse(request.getNickname()));
     }
 
     @PostMapping("/members/auth/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        LoginResponse loginResponse = memberService.login(request);
+        LoginResponse loginResponse = authService.login(request);
         return ResponseEntity.ok(loginResponse);
     }
 
@@ -99,14 +101,14 @@ public class MemberController {
     @PostMapping("/members/auth/reissue-token")
     public ResponseEntity<ReissueTokenResponse> reissueAccessToken
         (@RequestBody ReissueTokenRequest request) {
-        ReissueTokenResponse tokenResponse = memberService.reissue(request);
+        ReissueTokenResponse tokenResponse = authService.reissue(request);
         return ResponseEntity.ok(tokenResponse);
     }
 
     @PostMapping("/members/auth/logout")
     public ResponseEntity<Void> reissueAccessToken
         (@RequestBody LogoutRequest request) {
-        memberService.logout(request);
+        authService.logout(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

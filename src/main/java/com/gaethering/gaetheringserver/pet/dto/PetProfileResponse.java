@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.pet.dto;
 
-import com.gaethering.gaetheringserver.member.type.Gender;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;

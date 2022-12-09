@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.filter;
 
-import com.gaethering.gaetheringserver.util.JwtProvider;
+import com.gaethering.gaetheringserver.util.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
