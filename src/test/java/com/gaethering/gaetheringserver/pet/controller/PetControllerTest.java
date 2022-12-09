@@ -161,6 +161,27 @@ class PetControllerTest {
 
     @Test
     @WithMockUser
+    @DisplayName("반려동물 프로필 조회 실패-반려동물 없을때")
+    void getPetProfileFailure_PetNotFound() throws Exception {
+        // given
+        PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
+            .birth(LocalDate.parse("2021-12-01")).gender(
+                Gender.valueOf("FEMALE")).breed("말티즈").weight(3.6f).isNeutered(true)
+            .description("하얘요").imageUrl("https://test").build();
+        given(petService.getPetProfile(anyLong())).willThrow(new PetNotFoundException());
+
+        // when
+        // then
+        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
+                .with(csrf()))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value(PetErrorCode.PET_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(PetErrorCode.PET_NOT_FOUND.getMessage()));
+    }
+
+    @Test
+    @WithMockUser
     public void updatePetProfile() throws Exception {
         //given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
