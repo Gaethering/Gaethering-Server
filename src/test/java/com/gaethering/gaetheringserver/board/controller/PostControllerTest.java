@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.board.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.board.service.PostService;
 import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.gaethering.gaetheringserver.board.exception.errorCode.PostErrorCode.CATEGORY_NOT_EXIST;
 import static com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
@@ -120,7 +122,7 @@ class PostControllerTest {
     @Test
     @DisplayName("게시물 작성 실패 - 회원 없음")
     @WithMockUser
-    void writePost_fail() throws Exception {
+    void writePost_fail_NoUser() throws Exception {
 
         MockMultipartFile file1 = new MockMultipartFile("test1", "test1.PNG",
                 MediaType.IMAGE_PNG_VALUE, "test1".getBytes(StandardCharsets.UTF_8));
@@ -161,4 +163,48 @@ class PostControllerTest {
                                 headerWithName("Authorization").description("Access Token"))
                 ));
     }
+    @Test
+    @DisplayName("게시물 작성 실패 - 카테고리 없음")
+    @WithMockUser
+    void writePost_fail_NoCategory () throws Exception {
+        MockMultipartFile file1 = new MockMultipartFile("test1", "test1.PNG",
+                MediaType.IMAGE_PNG_VALUE, "test1".getBytes(StandardCharsets.UTF_8));
+
+        MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
+                MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
+
+        PostRequest request = PostRequest.builder()
+                .title("제목입니다")
+                .content("내용입니다")
+                .categoryId(1L)
+                .build();
+
+        given(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+                .willThrow(new CategoryNotFoundException());
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        MockPart data = new MockPart("data", requestJson.getBytes());
+        data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+                        .file("images", file1.getBytes())
+                        .file("images", file2.getBytes())
+                        .part(data)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .header("Authorization", "accessToken"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(CATEGORY_NOT_EXIST.getCode()))
+                .andExpect(jsonPath("$.message").value(CATEGORY_NOT_EXIST.getMessage()))
+
+                .andDo(print())
+                .andDo(document("boards/write-post/failure/category-not-found",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
+
 }
