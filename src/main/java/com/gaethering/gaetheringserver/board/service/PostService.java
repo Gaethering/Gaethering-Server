@@ -10,5 +10,5 @@ public interface PostService {
 
     PostResponse writePost(String email, List<MultipartFile> files, PostRequest request);
 
-    List<String> getImageUrlInRequest(List<MultipartFile> files);
+    List<String> getImageUrlsInRequest(List<MultipartFile> files);
 }

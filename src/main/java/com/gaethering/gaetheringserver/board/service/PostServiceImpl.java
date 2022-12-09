@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
                 .member(member)
                 .build();
 
-        List<String> imgUrlList = getImageUrlInRequest(files);
+        List<String> imgUrlList = getImageUrlsInRequest(files);
 
         if (!imgUrlList.isEmpty()) {
             for (String imgUrl : imgUrlList) {
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<String> getImageUrlInRequest(List<MultipartFile> files) {
+    public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
         List<String> imgUrlList = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(files)) {

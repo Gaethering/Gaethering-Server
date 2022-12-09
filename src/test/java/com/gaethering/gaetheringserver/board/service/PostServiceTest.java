@@ -113,7 +113,7 @@ class PostServiceTest {
         given(imageUploader.uploadImage(any()))
                 .willReturn(imageFiles.get(0).getName());
 
-        List<String> imgUrlList = postService.getImageUrlInRequest(imageFiles);
+        List<String> imgUrlList = postService.getImageUrlsInRequest(imageFiles);
         assertEquals(1, imgUrlList.size());
         assertEquals("test1", imgUrlList.get(0));
     }
