@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.pet.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import java.time.LocalDate;
@@ -22,22 +23,23 @@ public class PetProfileResponse {
 
     private float weight;
 
-    private boolean isNeutered;
+    @JsonProperty("isNeutered")
+    private boolean neutered;
 
     private String description;
 
     private String imageUrl;
 
-    public static PetProfileResponse fromEntity(Pet pet) {
-        return PetProfileResponse.builder()
-            .name(pet.getName())
-            .birth(pet.getBirth())
-            .gender(pet.getGender())
-            .breed(pet.getBreed())
-            .weight(pet.getWeight())
-            .isNeutered(pet.isNeutered())
-            .description(pet.getDescription())
-            .imageUrl(pet.getImageUrl())
-            .build();
-    }
+	public static PetProfileResponse fromEntity(Pet pet) {
+		return PetProfileResponse.builder()
+			.name(pet.getName())
+			.birth(pet.getBirth())
+			.gender(pet.getGender())
+			.breed(pet.getBreed())
+			.weight(pet.getWeight())
+			.neutered(pet.isNeutered())
+			.description(pet.getDescription())
+			.imageUrl(pet.getImageUrl())
+			.build();
+	}
 }
