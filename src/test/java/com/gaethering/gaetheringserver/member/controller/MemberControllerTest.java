@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.member.controller;
 
+import static com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +10,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -24,6 +27,7 @@ import com.gaethering.gaetheringserver.member.dto.OwnProfileResponse;
 import com.gaethering.gaetheringserver.member.dto.ProfilePetResponse;
 import com.gaethering.gaetheringserver.member.dto.SignUpRequest;
 import com.gaethering.gaetheringserver.member.dto.SignUpResponse;
+import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.service.MemberProfileService;
 import com.gaethering.gaetheringserver.member.service.MemberService;
 import com.gaethering.gaetheringserver.member.type.Gender;
@@ -38,7 +42,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -124,21 +127,77 @@ class MemberControllerTest {
 
     @Test
     @WithMockUser
-    public void modifyMemberNickname() throws Exception {
+    @DisplayName("닉네임 수정 - 회원 못 찾았을 때")
+    public void modifyMemberNicknameMemberNotFoundFailure() throws Exception {
+        //given
+        ModifyMemberNicknameRequest request = new ModifyMemberNicknameRequest(
+            "modifiedNickname");
+        given(memberService.modifyNickname(anyString(), anyString()))
+            .willThrow(new MemberNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(patch("/api/mypage/nickname")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken")
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+
+            .andDo(print())
+            .andDo(document("mypage/modify-nickname/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @WithMockUser
+    public void modifyMemberNicknameSuccess() throws Exception {
         //given
         ModifyMemberNicknameRequest request = new ModifyMemberNicknameRequest(
             "modifiedNickname");
 
         //when
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/nickname")
+        mockMvc.perform(patch("/api/mypage/nickname")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "accessToken")
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.nickname").value(request.getNickname()))
+
             .andDo(print())
-            .andDo(document("mypage/modify-nickname",
+            .andDo(document("mypage/modify-nickname/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("회원(본인) 프로필 조회 - 회원 못 찾았을 때")
+    public void getOwnProfileMemberNotFoundFailure() throws Exception {
+        //given
+        given(memberProfileService.getOwnProfile(anyString()))
+            .willThrow(new MemberNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(get("/api/mypage")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+
+            .andDo(print())
+            .andDo(document("mypage/get-profile/failure/member-not-found",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestHeaders(
@@ -160,7 +219,7 @@ class MemberControllerTest {
 
         //when
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/mypage")
+        mockMvc.perform(get("/api/mypage")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "accessToken"))
             .andExpect(status().isOk())
@@ -183,14 +242,42 @@ class MemberControllerTest {
             .andExpect(
                 jsonPath("$.pets[0].representative").value(
                     String.valueOf(petResponse.isRepresentative())))
+
             .andDo(print())
-            .andDo(document("mypage/get-profile",
+            .andDo(document("mypage/get-profile/success",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestHeaders(
                     headerWithName("Authorization").description("Access Token"))
             ));
 
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("회원(타인) 프로필 조회 - 회원 못 찾았을 때")
+    public void getOtherProfileMemberNotFoundFailure() throws Exception {
+        //given
+        given(memberProfileService.getOtherProfile(anyLong()))
+            .willThrow(new MemberNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(get("/api/members/{memberId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+
+            .andDo(print())
+            .andDo(document("member/get-profile/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("memberId").description("조회할 회원 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -206,10 +293,9 @@ class MemberControllerTest {
 
         //when
         //then
-        mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/members/{memberId}/profile", 1)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "accessToken"))
+        mockMvc.perform(get("/api/members/{memberId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value(otherProfile.getEmail()))
             .andExpect(jsonPath("$.nickname").value(otherProfile.getNickname()))
@@ -226,8 +312,9 @@ class MemberControllerTest {
             .andExpect(
                 jsonPath("$.pets[0].representative").value(
                     String.valueOf(petResponse.isRepresentative())))
+
             .andDo(print())
-            .andDo(document("member/get-profile",
+            .andDo(document("member/get-profile/success",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 pathParameters(parameterWithName("memberId").description("조회할 회원 Id")),
