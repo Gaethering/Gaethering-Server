@@ -12,50 +12,162 @@ BE 최영훈
 
 === 팔로우 하기
 
-==== HTTP Request
-include::{snippets}/follow/create-follow/http-request.adoc[]
+==== 성공
 
-==== Path Parameter
-include::{snippets}/follow/create-follow/path-parameters.adoc[]
+* HTTP Request
+include::{snippets}/follow/create-follow/success/http-request.adoc[]
 
-==== Request Headers
-include::{snippets}/follow/create-follow/request-headers.adoc[]
+* Path Parameter
+include::{snippets}/follow/create-follow/success/path-parameters.adoc[]
 
-==== HTTP Response
-include::{snippets}/follow/create-follow/http-response.adoc[]
+* Request Headers
+include::{snippets}/follow/create-follow/success/request-headers.adoc[]
 
+* HTTP Response
+include::{snippets}/follow/create-follow/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/create-follow/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/follow/create-follow/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/create-follow/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/create-follow/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/create-follow/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/create-follow/failure/member-not-found/response-body.adoc[]
 
 === 팔로워 목록
 
-==== HTTP Request
-include::{snippets}/follow/get-followers/http-request.adoc[]
+==== 성공
 
-==== Path Parameter
-include::{snippets}/follow/get-followers/path-parameters.adoc[]
+* HTTP Request
+include::{snippets}/follow/get-followers/success/http-request.adoc[]
 
-==== Request Headers
-include::{snippets}/follow/get-followers/request-headers.adoc[]
+* Path Parameter
+include::{snippets}/follow/get-followers/success/path-parameters.adoc[]
 
-==== HTTP Response
-include::{snippets}/follow/get-followers/http-response.adoc[]
+* Request Headers
+include::{snippets}/follow/get-followers/success/request-headers.adoc[]
 
-==== Response Body
-include::{snippets}/follow/get-followers/response-body.adoc[]
+* HTTP Response
+include::{snippets}/follow/get-followers/success/http-response.adoc[]
 
+* Response Body
+include::{snippets}/follow/get-followers/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/follow/get-followers/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/get-followers/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/get-followers/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/get-followers/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/get-followers/failure/member-not-found/response-body.adoc[]
 
 === 팔로잉 목록
 
-==== HTTP Request
-include::{snippets}/follow/get-followings/http-request.adoc[]
+==== 성공
 
-==== Path Parameter
-include::{snippets}/follow/get-followings/path-parameters.adoc[]
+* HTTP Request
+include::{snippets}/follow/get-followings/success/http-request.adoc[]
 
-==== Request Headers
-include::{snippets}/follow/get-followings/request-headers.adoc[]
+* Path Parameter
+include::{snippets}/follow/get-followings/success/path-parameters.adoc[]
 
-==== HTTP Response
-include::{snippets}/follow/get-followings/http-response.adoc[]
+* Request Headers
+include::{snippets}/follow/get-followings/success/request-headers.adoc[]
 
-==== Response Body
-include::{snippets}/follow/get-followings/response-body.adoc[]
+* HTTP Response
+include::{snippets}/follow/get-followings/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/get-followings/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/follow/get-followings/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/get-followings/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/get-followings/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/get-followings/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/get-followings/failure/member-not-found/response-body.adoc[]
+
+
+=== 팔로잉 취소
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/follow/delete-follow/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/delete-follow/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/delete-follow/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/delete-follow/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/delete-follow/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/follow/delete-follow/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/delete-follow/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/delete-follow/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/delete-follow/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/delete-follow/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 팔로우 관계가 존재하지 않을 때
+
+* HTTP Request
+include::{snippets}/follow/delete-follow/failure/follow-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/follow/delete-follow/failure/follow-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/follow/delete-follow/failure/follow-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/follow/delete-follow/failure/follow-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/follow/delete-follow/failure/follow-not-found/response-body.adoc[]

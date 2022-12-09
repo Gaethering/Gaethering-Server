@@ -445,19 +445,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_내_프로필_조회">내 프로필 조회</a>
 <ul class="sectlevel3">
-<li><a href="#_http_request">HTTP Request</a></li>
-<li><a href="#_request_headers">Request Headers</a></li>
-<li><a href="#_http_response">HTTP Response</a></li>
-<li><a href="#_response_body">Response Body</a></li>
+<li><a href="#_성공">성공</a></li>
+<li><a href="#_실패_회원_못_찾았을_때">실패 - 회원 못 찾았을 때</a></li>
 </ul>
 </li>
 <li><a href="#_닉네임_수정">닉네임 수정</a>
 <ul class="sectlevel3">
-<li><a href="#_http_request_2">HTTP Request</a></li>
-<li><a href="#_request_headers_2">Request Headers</a></li>
-<li><a href="#_request_body">Request Body</a></li>
-<li><a href="#_http_response_2">HTTP Response</a></li>
-<li><a href="#_response_body_2">Response Body</a></li>
+<li><a href="#_성공_2">성공</a></li>
+<li><a href="#_실패_회원_못_찾았을_때_2">실패 - 회원 못 찾았을 때</a></li>
 </ul>
 </li>
 </ul>
@@ -472,18 +467,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_내_프로필_조회"><a class="link" href="#_내_프로필_조회">내 프로필 조회</a></h3>
 <div class="sect3">
-<h4 id="_http_request"><a class="link" href="#_http_request">HTTP Request</a></h4>
+<h4 id="_성공"><a class="link" href="#_성공">성공</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/mypage HTTP/1.1
+<pre>GET /api/mypage HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
-Host: localhost:8080</code></pre>
+Host: localhost:8080</pre>
 </div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_request_headers"><a class="link" href="#_request_headers">Request Headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -502,12 +508,16 @@ Host: localhost:8080</code></pre>
 </tr>
 </tbody>
 </table>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_http_response"><a class="link" href="#_http_response">HTTP Response</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+<pre>HTTP/1.1 200 OK
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -531,15 +541,19 @@ Content-Length: 290
     "name" : "pet",
     "representative" : true
   } ]
-}</code></pre>
+}</pre>
 </div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_response_body"><a class="link" href="#_response_body">Response Body</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code>{
+<pre>{
   "email" : "test@test.com",
   "nickname" : "nickname",
   "phoneNumber" : "010-0000-0000",
@@ -553,31 +567,34 @@ Content-Length: 290
     "name" : "pet",
     "representative" : true
   } ]
-}</code></pre>
+}</pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_닉네임_수정"><a class="link" href="#_닉네임_수정">닉네임 수정</a></h3>
 <div class="sect3">
-<h4 id="_http_request_2"><a class="link" href="#_http_request_2">HTTP Request</a></h4>
+<h4 id="_실패_회원_못_찾았을_때"><a class="link" href="#_실패_회원_못_찾았을_때">실패 - 회원 못 찾았을 때</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/mypage/nickname HTTP/1.1
+<pre>GET /api/mypage HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
-Content-Length: 37
-Host: localhost:8080
-
-{
-  "nickname" : "modifiedNickname"
-}</code></pre>
+Host: localhost:8080</pre>
 </div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_request_headers_2"><a class="link" href="#_request_headers_2">Request Headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -596,22 +613,121 @@ Host: localhost:8080
 </tr>
 </tbody>
 </table>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_request_body"><a class="link" href="#_request_body">Request Body</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code>{
+<pre>HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: SAMEORIGIN
+Content-Length: 75
+
+{
+  "code" : "E001",
+  "message" : "존재하지 않는 회원입니다."
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "code" : "E001",
+  "message" : "존재하지 않는 회원입니다."
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_닉네임_수정"><a class="link" href="#_닉네임_수정">닉네임 수정</a></h3>
+<div class="sect3">
+<h4 id="_성공_2"><a class="link" href="#_성공_2">성공</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>PATCH /api/mypage/nickname HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: accessToken
+Content-Length: 37
+Host: localhost:8080
+
+{
   "nickname" : "modifiedNickname"
-}</code></pre>
+}</pre>
 </div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
 </div>
-<div class="sect3">
-<h4 id="_http_response_2"><a class="link" href="#_http_response_2">HTTP Response</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Body</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+<pre>{
+  "nickname" : "modifiedNickname"
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 200 OK
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -623,17 +739,123 @@ Content-Length: 37
 
 {
   "nickname" : "modifiedNickname"
-}</code></pre>
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "nickname" : "modifiedNickname"
+}</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_body_2"><a class="link" href="#_response_body_2">Response Body</a></h4>
+<h4 id="_실패_회원_못_찾았을_때_2"><a class="link" href="#_실패_회원_못_찾았을_때_2">실패 - 회원 못 찾았을 때</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code>{
+<pre>PATCH /api/mypage/nickname HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: accessToken
+Content-Length: 37
+Host: localhost:8080
+
+{
   "nickname" : "modifiedNickname"
-}</code></pre>
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "nickname" : "modifiedNickname"
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: SAMEORIGIN
+Content-Length: 75
+
+{
+  "code" : "E001",
+  "message" : "존재하지 않는 회원입니다."
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "code" : "E001",
+  "message" : "존재하지 않는 회원입니다."
+}</pre>
 </div>
 </div>
 </div>
@@ -643,7 +865,7 @@ Content-Length: 37
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-08 17:03:34 +0900
+Last updated 2022-12-09 13:43:49 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">

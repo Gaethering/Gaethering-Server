@@ -11,31 +11,69 @@ BE 최영훈
 
 
 === 내 프로필 조회
-==== HTTP Request
-include::{snippets}/mypage/get-profile/http-request.adoc[]
 
-==== Request Headers
-include::{snippets}/mypage/get-profile/request-headers.adoc[]
+==== 성공
 
-==== HTTP Response
-include::{snippets}/mypage/get-profile/http-response.adoc[]
+* HTTP Request
+include::{snippets}/mypage/get-profile/success//http-request.adoc[]
 
-==== Response Body
-include::{snippets}/mypage/get-profile/response-body.adoc[]
+* Request Headers
+include::{snippets}/mypage/get-profile/success//request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/get-profile/success//http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/get-profile/success//response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/mypage/get-profile/failure/member-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/mypage/get-profile/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/get-profile/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/get-profile/failure/member-not-found/response-body.adoc[]
 
 
 === 닉네임 수정
-==== HTTP Request
-include::{snippets}/mypage/modify-nickname/http-request.adoc[]
 
-==== Request Headers
-include::{snippets}/mypage/modify-nickname/request-headers.adoc[]
+==== 성공
 
-==== Request Body
-include::{snippets}/mypage/modify-nickname/request-body.adoc[]
+* HTTP Request
+include::{snippets}/mypage/modify-nickname/success/http-request.adoc[]
 
-==== HTTP Response
-include::{snippets}/mypage/modify-nickname/http-response.adoc[]
+* Request Headers
+include::{snippets}/mypage/modify-nickname/success/request-headers.adoc[]
 
-==== Response Body
-include::{snippets}/mypage/modify-nickname/response-body.adoc[]
+* Request Body
+include::{snippets}/mypage/modify-nickname/success/request-body.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/modify-nickname/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/modify-nickname/success/response-body.adoc[]
+
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/mypage/modify-nickname/failure/member-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/mypage/modify-nickname/failure/member-not-found/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/mypage/modify-nickname/failure/member-not-found/request-body.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/modify-nickname/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/modify-nickname/failure/member-not-found/response-body.adoc[]
