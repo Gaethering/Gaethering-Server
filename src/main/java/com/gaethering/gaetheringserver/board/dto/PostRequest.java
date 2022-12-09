@@ -15,7 +15,6 @@ public class PostRequest {
     @NotEmpty
     private String content;
 
-    @NotEmpty
     private Long categoryId;
 
 }
