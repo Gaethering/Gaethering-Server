@@ -1,8 +1,8 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import com.gaethering.gaetheringserver.member.dto.FollowResponse;
-import com.gaethering.gaetheringserver.member.exception.FollowNotFoundException;
-import com.gaethering.gaetheringserver.member.service.FollowService;
+import com.gaethering.gaetheringserver.member.dto.follow.FollowResponse;
+import com.gaethering.gaetheringserver.member.exception.follow.FollowNotFoundException;
+import com.gaethering.gaetheringserver.member.service.follow.FollowService;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

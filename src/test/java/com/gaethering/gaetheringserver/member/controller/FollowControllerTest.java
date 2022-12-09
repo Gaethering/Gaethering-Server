@@ -20,9 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.gaethering.gaetheringserver.member.dto.FollowResponse;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.service.FollowService;
+import com.gaethering.gaetheringserver.member.dto.follow.FollowResponse;
+import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.service.follow.FollowService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

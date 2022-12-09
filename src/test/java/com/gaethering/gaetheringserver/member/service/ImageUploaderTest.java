@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.gaethering.gaetheringserver.member.config.AwsS3MockConfig;
 import com.gaethering.gaetheringserver.pet.exception.InvalidImageTypeException;
 import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
-import com.gaethering.gaetheringserver.util.ImageUploaderImpl;
+import com.gaethering.gaetheringserver.util.upload.ImageUploaderImpl;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

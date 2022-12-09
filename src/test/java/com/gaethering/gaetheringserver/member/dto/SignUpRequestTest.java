@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.member.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;

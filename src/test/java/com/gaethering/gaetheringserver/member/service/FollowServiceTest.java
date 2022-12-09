@@ -8,10 +8,11 @@ import static org.mockito.BDDMockito.given;
 
 import com.gaethering.gaetheringserver.member.domain.Follow;
 import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.dto.FollowResponse;
-import com.gaethering.gaetheringserver.member.exception.MemberNotFoundException;
+import com.gaethering.gaetheringserver.member.dto.follow.FollowResponse;
+import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
 import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
+import com.gaethering.gaetheringserver.member.service.follow.FollowServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

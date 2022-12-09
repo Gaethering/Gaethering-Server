@@ -3,7 +3,7 @@ package com.gaethering.gaetheringserver.pet.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gaethering.gaetheringserver.core.validator.EnumValid;
 import com.gaethering.gaetheringserver.core.validator.LocalDateValid;
-import com.gaethering.gaetheringserver.member.type.Gender;
+import com.gaethering.gaetheringserver.core.type.Gender;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
