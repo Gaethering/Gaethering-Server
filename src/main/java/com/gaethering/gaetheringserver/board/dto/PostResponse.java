@@ -1,6 +1,5 @@
 package com.gaethering.gaetheringserver.board.dto;
 
-import com.gaethering.gaetheringserver.board.domain.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class PostResponse {
 
     private List<String> imageUrls;
 
-    private Category category;
+    private String categoryName;
 
     private int viewCnt;
 
