@@ -138,7 +138,7 @@ class PetControllerTest {
             .description("귀여워요")
             .imageUrl("https://test")
             .build();
-        given(petService.updatePetProfile(1L, request.getWeight(), request.isNeutered(), request.getDescription()))
+        given(petService.updatePetProfile(1L, request))
             .willReturn(response);
 
         String requestString = objectMapper.writeValueAsString(request);

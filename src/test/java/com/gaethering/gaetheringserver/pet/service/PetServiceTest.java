@@ -16,6 +16,7 @@ import com.gaethering.gaetheringserver.member.type.Gender;
 import com.gaethering.gaetheringserver.pet.domain.Pet;
 import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
 import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
@@ -214,6 +215,11 @@ class PetServiceTest {
     @Test
     void updatePetProfileSuccess() {
         // given
+        PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
+            .weight(3.7f)
+            .isNeutered(true)
+            .description("깨발랄함")
+            .build();
         Pet pet = Pet.builder()
             .id(1L)
             .name("해")
@@ -223,19 +229,16 @@ class PetServiceTest {
             .description("하얗고 귀여움")
             .imageUrl("test")
             .build();
+
         given(petRepository.findById(anyLong()))
             .willReturn(Optional.of(pet));
 
-        float weight = 4.1f;
-        boolean isNeutered = true;
-        String description = "깨발랄함";
-
         // when
-        PetProfileResponse response = petService.updatePetProfile(1L, weight, isNeutered, description);
+        PetProfileResponse response = petService.updatePetProfile(1L,request);
 
         // then
-        assertThat(response.getWeight()).isEqualTo(weight);
-        assertThat(response.getDescription()).isEqualTo(description);
+        assertThat(response.getWeight()).isEqualTo(pet.getWeight());
+        assertThat(response.getDescription()).isEqualTo(pet.getDescription());
         assertThat(response.getName()).isEqualTo(pet.getName());
         assertThat(response.getBirth()).isEqualTo(pet.getBirth());
         assertThat(response.getBreed()).isEqualTo(pet.getBreed());
