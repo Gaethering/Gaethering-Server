@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import static com.gaethering.gaetheringserver.member.exception.errorcode.FollowErrorCode.FOLLOW_NOT_FOUND;
-import static com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.FollowErrorCode.FOLLOW_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,9 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.gaethering.gaetheringserver.member.dto.follow.FollowResponse;
-import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.service.follow.FollowService;
+import com.gaethering.gaetheringserver.domain.member.dto.follow.FollowResponse;
+import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.domain.member.service.follow.FollowService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -9,20 +9,20 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.dto.auth.LoginInfoResponse;
-import com.gaethering.gaetheringserver.member.dto.signup.SignUpRequest;
-import com.gaethering.gaetheringserver.member.dto.signup.SignUpResponse;
-import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
-import com.gaethering.gaetheringserver.member.exception.member.DuplicatedEmailException;
-import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.member.service.member.MemberServiceImpl;
-import com.gaethering.gaetheringserver.pet.domain.Pet;
-import com.gaethering.gaetheringserver.pet.exception.RepresentativePetNotFoundException;
-import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
-import com.gaethering.gaetheringserver.pet.repository.PetRepository;
-import com.gaethering.gaetheringserver.util.upload.ImageUploader;
+import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
+import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
+import com.gaethering.gaetheringserver.domain.member.entity.Member;
+import com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.domain.member.exception.member.DuplicatedEmailException;
+import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
+import com.gaethering.gaetheringserver.domain.member.service.member.MemberServiceImpl;
+import com.gaethering.gaetheringserver.domain.pet.entity.Pet;
+import com.gaethering.gaetheringserver.domain.pet.exception.RepresentativePetNotFoundException;
+import com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode;
+import com.gaethering.gaetheringserver.domain.pet.repository.PetRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private ImageUploader imageUploader;
+    private S3Service s3Service;
 
     @InjectMocks
     private MemberServiceImpl memberService;
@@ -67,7 +67,7 @@ class MemberServiceTest {
         MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
             "test".getBytes());
 
-        given(imageUploader.uploadImage(any()))
+        given(s3Service.uploadImage(any()))
             .willReturn(file.getName());
 
         given(memberRepository.existsByEmail(anyString()))

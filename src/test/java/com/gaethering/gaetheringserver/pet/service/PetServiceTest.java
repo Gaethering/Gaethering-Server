@@ -12,24 +12,25 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.gaethering.gaetheringserver.core.type.Gender;
-import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
-import com.gaethering.gaetheringserver.member.exception.member.MemberException;
-import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
-import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
-import com.gaethering.gaetheringserver.pet.domain.Pet;
-import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
-import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
-import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
-import com.gaethering.gaetheringserver.pet.dto.PetRegisterRequest;
-import com.gaethering.gaetheringserver.pet.dto.PetRegisterResponse;
-import com.gaethering.gaetheringserver.pet.exception.ExceedRegistrablePetException;
-import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
-import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
-import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
-import com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode;
-import com.gaethering.gaetheringserver.pet.repository.PetRepository;
-import com.gaethering.gaetheringserver.util.upload.ImageUploader;
+import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
+import com.gaethering.gaetheringserver.domain.member.entity.Member;
+import com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.domain.member.exception.member.MemberException;
+import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetImageUpdateResponse;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileUpdateRequest;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterRequest;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterResponse;
+import com.gaethering.gaetheringserver.domain.pet.entity.Pet;
+import com.gaethering.gaetheringserver.domain.pet.exception.ExceedRegistrablePetException;
+import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeletePetException;
+import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeleteRepresentativeException;
+import com.gaethering.gaetheringserver.domain.pet.exception.PetNotFoundException;
+import com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode;
+import com.gaethering.gaetheringserver.domain.pet.repository.PetRepository;
+import com.gaethering.gaetheringserver.domain.pet.service.PetServiceImpl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ import org.springframework.mock.web.MockMultipartFile;
 class PetServiceTest {
 
     @Mock
-    ImageUploader imageUploader;
+    S3Service s3Service;
     @Mock
     private PetRepository petRepository;
     @Mock
@@ -187,14 +188,14 @@ class PetServiceTest {
         given(petRepository.findById(anyLong()))
             .willReturn(Optional.of(pet));
 
-        willDoNothing().given(imageUploader).removeImage(anyString());
+        willDoNothing().given(s3Service).removeImage(anyString());
 
         String filename = "test.txt";
         String contentType = "image/png";
 
         MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
             "test".getBytes());
-        given(imageUploader.uploadImage(file))
+        given(s3Service.uploadImage(file))
             .willReturn(file.getName());
 
         // when
@@ -418,7 +419,7 @@ class PetServiceTest {
 
         given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member));
-        willDoNothing().given(imageUploader).removeImage(anyString());
+        willDoNothing().given(s3Service).removeImage(anyString());
 
         // when
         boolean result = petService.deletePetProfile("test@test.com", 2L);
@@ -452,7 +453,7 @@ class PetServiceTest {
         MockMultipartFile file = new MockMultipartFile("test", "test.txt", "image/png",
             "test".getBytes());
 
-        given(imageUploader.uploadImage(any()))
+        given(s3Service.uploadImage(any()))
             .willReturn(file.getName());
 
         ArgumentCaptor<Pet> captor = ArgumentCaptor.forClass(Pet.class);

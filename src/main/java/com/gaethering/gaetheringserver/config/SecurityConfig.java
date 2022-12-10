@@ -1,8 +1,8 @@
 package com.gaethering.gaetheringserver.config;
 
-import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
-import com.gaethering.gaetheringserver.util.auth.CustomAccessDeniedHandler;
-import com.gaethering.gaetheringserver.util.auth.CustomAuthenticationEntryPoint;
+import com.gaethering.gaetheringserver.domain.member.jwt.JwtAuthenticationFilter;
+import com.gaethering.gaetheringserver.domain.member.jwt.auth.CustomAccessDeniedHandler;
+import com.gaethering.gaetheringserver.domain.member.jwt.auth.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.core.exception;
 
-import com.gaethering.gaetheringserver.member.exception.auth.MemberAuthException;
-import com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode;
+import com.gaethering.gaetheringserver.domain.member.exception.auth.MemberAuthException;
+import com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.gaethering.gaetheringserver.config.JpaConfig;
 import com.gaethering.gaetheringserver.config.QuerydslConfig;
-import com.gaethering.gaetheringserver.member.domain.Follow;
-import com.gaethering.gaetheringserver.member.domain.Member;
-import com.gaethering.gaetheringserver.member.repository.follow.FollowRepository;
-import com.gaethering.gaetheringserver.member.repository.member.MemberRepository;
+import com.gaethering.gaetheringserver.domain.member.entity.Follow;
+import com.gaethering.gaetheringserver.domain.member.entity.Member;
+import com.gaethering.gaetheringserver.domain.member.repository.follow.FollowRepository;
+import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;

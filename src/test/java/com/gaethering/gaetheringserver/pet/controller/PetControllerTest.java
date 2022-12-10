@@ -1,9 +1,9 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
-import static com.gaethering.gaetheringserver.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_PET;
-import static com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_REPRESENTATIVE;
-import static com.gaethering.gaetheringserver.pet.exception.errorcode.PetErrorCode.PET_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_PET;
+import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_REPRESENTATIVE;
+import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.PET_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,17 +21,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.config.SecurityConfig;
 import com.gaethering.gaetheringserver.core.type.Gender;
-import com.gaethering.gaetheringserver.filter.JwtAuthenticationFilter;
-import com.gaethering.gaetheringserver.member.exception.member.MemberNotFoundException;
-import com.gaethering.gaetheringserver.pet.dto.PetImageUpdateResponse;
-import com.gaethering.gaetheringserver.pet.dto.PetProfileResponse;
-import com.gaethering.gaetheringserver.pet.dto.PetProfileUpdateRequest;
-import com.gaethering.gaetheringserver.pet.dto.PetRegisterRequest;
-import com.gaethering.gaetheringserver.pet.dto.PetRegisterResponse;
-import com.gaethering.gaetheringserver.pet.exception.FailedDeletePetException;
-import com.gaethering.gaetheringserver.pet.exception.FailedDeleteRepresentativeException;
-import com.gaethering.gaetheringserver.pet.exception.PetNotFoundException;
-import com.gaethering.gaetheringserver.pet.service.PetService;
+import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
+import com.gaethering.gaetheringserver.domain.member.jwt.JwtAuthenticationFilter;
+import com.gaethering.gaetheringserver.domain.pet.controller.PetController;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetImageUpdateResponse;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileResponse;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileUpdateRequest;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterRequest;
+import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterResponse;
+import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeletePetException;
+import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeleteRepresentativeException;
+import com.gaethering.gaetheringserver.domain.pet.exception.PetNotFoundException;
+import com.gaethering.gaetheringserver.domain.pet.service.PetService;
 import java.security.Principal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +50,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
