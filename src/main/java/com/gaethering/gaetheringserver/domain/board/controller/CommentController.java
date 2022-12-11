@@ -29,4 +29,18 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON).body(response);
     }
+
+    @PutMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> updateComment(Principal principal,
+                                                         @PathVariable Long postId,
+                                                         @PathVariable Long commentId,
+                                                         @RequestBody CommentRequest request) {
+
+        CommentResponse response =
+                commentService.updateComment(principal.getName(), postId, commentId, request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON).body(response);
+    }
+
 }
