@@ -5,6 +5,7 @@ import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.FailDeleteCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.FailUpdateCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
@@ -80,4 +81,27 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public boolean deleteComment (String email, Long postId, Long commentId) {
+
+        boolean result = postRepository.existsById(postId);
+
+        if(!result) {
+            throw new PostNotFoundException();
+        }
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new CommentNotFoundException());
+
+        if(!Objects.equals(member, comment.getMember())) {
+            throw new FailDeleteCommentException();
+        }
+        commentRepository.delete(comment);
+
+        return true;
+    }
 }
