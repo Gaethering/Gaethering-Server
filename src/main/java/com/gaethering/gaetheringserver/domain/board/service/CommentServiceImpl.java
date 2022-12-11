@@ -4,6 +4,8 @@ import com.gaethering.gaetheringserver.domain.board.dto.CommentRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
+import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.FailUpdateCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,4 +50,34 @@ public class CommentServiceImpl implements CommentService {
                 .createAt(comment.getCreatedAt())
                 .build();
     }
+    @Override
+    @Transactional
+    public CommentResponse updateComment (String email, Long postId, Long commentId,
+                                          CommentRequest request) {
+
+        boolean result = postRepository.existsById(postId);
+
+        if(!result) {
+            throw new PostNotFoundException();
+        }
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new CommentNotFoundException());
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        if(!Objects.equals(member, comment.getMember())) {
+            throw new FailUpdateCommentException();
+        }
+        comment.setComment(request.getComment());
+        commentRepository.save(comment);
+
+        return CommentResponse.builder()
+                .comment(comment.getComment())
+                .nickname(comment.getMember().getNickname())
+                .createAt(comment.getCreatedAt())
+                .build();
+    }
+
 }
