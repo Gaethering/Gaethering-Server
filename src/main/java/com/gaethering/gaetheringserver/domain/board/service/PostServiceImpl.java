@@ -47,6 +47,7 @@ public class PostServiceImpl implements PostService {
             .content(request.getContent())
             .category(category)
             .member(member)
+            .postImages(new ArrayList<>())
             .build();
 
         List<String> imgUrls = getImageUrlsInRequest(files);
@@ -77,7 +78,6 @@ public class PostServiceImpl implements PostService {
             .build();
     }
 
-    @Override
     public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
         List<String> imgUrls = new ArrayList<>();
 
