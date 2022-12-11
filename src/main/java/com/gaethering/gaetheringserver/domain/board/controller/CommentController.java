@@ -43,4 +43,12 @@ public class CommentController {
                 .contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(Principal principal,
+                                              @PathVariable Long postId,
+                                              @PathVariable Long commentId) {
+
+        commentService.deleteComment(principal.getName(), postId, commentId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
