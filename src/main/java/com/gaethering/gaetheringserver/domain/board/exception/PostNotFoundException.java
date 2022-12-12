@@ -5,6 +5,6 @@ import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErro
 public class PostNotFoundException extends PostException {
 
     public PostNotFoundException() {
-        super(PostErrorCode.POST_NOT_EXIST);
+        super(PostErrorCode.POST_NOT_FOUND);
     }
 }

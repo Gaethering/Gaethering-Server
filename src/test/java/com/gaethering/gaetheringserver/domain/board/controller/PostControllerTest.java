@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
-import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.CATEGORY_NOT_EXIST;
+import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.CATEGORY_NOT_FOUND;
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
@@ -199,8 +199,8 @@ class PostControllerTest {
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .header("Authorization", "accessToken"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(CATEGORY_NOT_EXIST.getCode()))
-                .andExpect(jsonPath("$.message").value(CATEGORY_NOT_EXIST.getMessage()))
+                .andExpect(jsonPath("$.code").value(CATEGORY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(CATEGORY_NOT_FOUND.getMessage()))
 
                 .andDo(print())
                 .andDo(document("boards/write-post/failure/category-not-found",

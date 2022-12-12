@@ -96,7 +96,7 @@ class PostServiceTest {
         CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
             () -> postService.writePost("test@gmail.com", null, request));
 
-        assertEquals(PostErrorCode.CATEGORY_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test

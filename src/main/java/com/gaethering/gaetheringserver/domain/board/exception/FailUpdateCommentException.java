@@ -5,6 +5,6 @@ import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErro
 public class FailUpdateCommentException extends PostException{
 
     public FailUpdateCommentException() {
-        super(PostErrorCode.CANNOT_UPDATE_COMMENT);
+        super(PostErrorCode.NO_PERMISSION_TO_UPDATE_COMMENT);
     }
 }

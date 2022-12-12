@@ -5,6 +5,6 @@ import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErro
 public class CommentNotFoundException extends PostException{
 
     public CommentNotFoundException() {
-        super(PostErrorCode.COMMENT_NOT_EXIST);
+        super(PostErrorCode.COMMENT_NOT_FOUND);
     }
 }

@@ -124,7 +124,7 @@ class CommentServiceTest {
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
                 () -> commentService.writeComment("test@gmail.com", 1L, request));
 
-        assertEquals(PostErrorCode.POST_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test
@@ -182,7 +182,7 @@ class CommentServiceTest {
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
                 () -> commentService.updateComment("test@gmail.com", 1L, 1L, request));
 
-        assertEquals(PostErrorCode.POST_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test
@@ -202,7 +202,7 @@ class CommentServiceTest {
         CommentNotFoundException exception = assertThrows(CommentNotFoundException.class,
                 () -> commentService.updateComment("test@gmail.com", 1L, 1L, request));
 
-        assertEquals(PostErrorCode.COMMENT_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.COMMENT_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test
@@ -269,7 +269,7 @@ class CommentServiceTest {
         FailUpdateCommentException exception = assertThrows(FailUpdateCommentException.class,
                 () -> commentService.updateComment("test@gmail.com", 1L, 1L, request));
 
-        assertEquals(PostErrorCode.CANNOT_UPDATE_COMMENT, exception.getErrorCode());
+        assertEquals(PostErrorCode.NO_PERMISSION_TO_UPDATE_COMMENT, exception.getErrorCode());
     }
 
     @Test
@@ -317,7 +317,7 @@ class CommentServiceTest {
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
 
-        assertEquals(PostErrorCode.POST_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test
@@ -357,7 +357,7 @@ class CommentServiceTest {
         CommentNotFoundException exception = assertThrows(CommentNotFoundException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
 
-        assertEquals(PostErrorCode.COMMENT_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.COMMENT_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test
@@ -392,6 +392,6 @@ class CommentServiceTest {
         FailDeleteCommentException exception = assertThrows(FailDeleteCommentException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
 
-        assertEquals(PostErrorCode.CANNOT_DELETE_COMMENT, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.NO_PERMISSION_TO_DELETE_COMMENT, exception.getPostErrorCode());
     }
 }

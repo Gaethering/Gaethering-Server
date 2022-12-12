@@ -5,6 +5,6 @@ import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErro
 public class FailDeleteCommentException extends PostException {
 
     public FailDeleteCommentException() {
-        super(PostErrorCode.CANNOT_DELETE_COMMENT);
+        super(PostErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
     }
 }
