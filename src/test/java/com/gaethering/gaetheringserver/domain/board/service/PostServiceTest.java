@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.board.service;
+package com.gaethering.gaetheringserver.domain.board.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +18,6 @@ import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundEx
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.repository.CategoryRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
-import com.gaethering.gaetheringserver.domain.board.service.PostServiceImpl;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
@@ -97,7 +96,7 @@ class PostServiceTest {
         CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
             () -> postService.writePost("test@gmail.com", null, request));
 
-        assertEquals(PostErrorCode.CATEGORY_NOT_EXIST, exception.getPostErrorCode());
+        assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
 
     @Test

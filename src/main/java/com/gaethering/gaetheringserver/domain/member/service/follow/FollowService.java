@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.domain.member.service.follow;
 
 import com.gaethering.gaetheringserver.domain.member.dto.follow.FollowResponse;
+
 import java.util.List;
 
 public interface FollowService {
