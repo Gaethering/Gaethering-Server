@@ -21,7 +21,7 @@ public class MemberProfileServiceImpl implements MemberProfileService {
     @Override
     public OwnProfileResponse getOwnProfile(String email) {
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
         Long followerCount = followRepository.countByFollowee(member);
         Long followingCount = followRepository.countByFollower(member);
         return OwnProfileResponse.of(member, followerCount, followingCount);
@@ -30,7 +30,7 @@ public class MemberProfileServiceImpl implements MemberProfileService {
     @Override
     public OtherProfileResponse getOtherProfile(Long memberId) {
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
         Long followerCount = followRepository.countByFollowee(member);
         Long followingCount = followRepository.countByFollower(member);
         return OtherProfileResponse.of(member, followerCount, followingCount);

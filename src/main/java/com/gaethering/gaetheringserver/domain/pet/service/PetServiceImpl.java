@@ -16,8 +16,10 @@ import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeletePetExcep
 import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.domain.pet.exception.PetNotFoundException;
 import com.gaethering.gaetheringserver.domain.pet.repository.PetRepository;
+
 import java.time.LocalDate;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +53,7 @@ public class PetServiceImpl implements PetService {
     @Transactional(readOnly = true)
     public PetProfileResponse getPetProfile(Long id) {
         Pet pet = petRepository.findById(id)
-            .orElseThrow(PetNotFoundException::new);
+                .orElseThrow(PetNotFoundException::new);
 
         return PetProfileResponse.fromEntity(pet);
     }
@@ -59,18 +61,18 @@ public class PetServiceImpl implements PetService {
     @Override
     public boolean setRepresentativePet(String email, Long petId) {
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
         List<Pet> pets = member.getPets();
         pets.forEach(pet -> pet.setRepresentative(false));
         pets.stream().filter(pet -> pet.getId().equals(petId)).findFirst()
-            .ifPresent(pet -> pet.setRepresentative(true));
+                .ifPresent(pet -> pet.setRepresentative(true));
         return true;
     }
 
     @Override
     public PetProfileResponse updatePetProfile(Long id, PetProfileUpdateRequest request) {
         Pet pet = petRepository.findById(id)
-            .orElseThrow(PetNotFoundException::new);
+                .orElseThrow(PetNotFoundException::new);
 
         pet.updatePetProfile(request.getWeight(), request.isNeutered(), request.getDescription());
 
@@ -80,14 +82,14 @@ public class PetServiceImpl implements PetService {
     @Override
     public boolean deletePetProfile(String email, Long id) {
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (member.getPets().size() == MIN_EXIST_PET) {
             throw new FailedDeletePetException();
         }
 
         Pet findPet = member.getPets().stream().filter(pet -> pet.getId().equals(id)).findFirst()
-            .orElseThrow(PetNotFoundException::new);
+                .orElseThrow(PetNotFoundException::new);
 
         if (findPet.isRepresentative()) {
             throw new FailedDeleteRepresentativeException();
@@ -103,10 +105,10 @@ public class PetServiceImpl implements PetService {
     @Override
     @Transactional
     public PetRegisterResponse registerPet(String email, MultipartFile multipartFile,
-        PetRegisterRequest petRegisterRequest
+                                           PetRegisterRequest petRegisterRequest
     ) {
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (member.getPets().size() == MAX_REGISTRABLE_PET) {
             throw new ExceedRegistrablePetException();
@@ -115,24 +117,24 @@ public class PetServiceImpl implements PetService {
         String imageUrl = s3Service.uploadImage(multipartFile);
 
         Pet newPet = Pet.builder()
-            .name(petRegisterRequest.getPetName())
-            .birth(LocalDate.parse(petRegisterRequest.getPetBirth()))
-            .weight(petRegisterRequest.getWeight())
-            .breed(petRegisterRequest.getBreed())
-            .gender(Gender.valueOf(petRegisterRequest.getPetGender()))
-            .isNeutered(petRegisterRequest.isNeutered())
-            .description(petRegisterRequest.getDescription())
-            .imageUrl(imageUrl)
-            .isRepresentative(false)
-            .build();
+                .name(petRegisterRequest.getPetName())
+                .birth(LocalDate.parse(petRegisterRequest.getPetBirth()))
+                .weight(petRegisterRequest.getWeight())
+                .breed(petRegisterRequest.getBreed())
+                .gender(Gender.valueOf(petRegisterRequest.getPetGender()))
+                .isNeutered(petRegisterRequest.isNeutered())
+                .description(petRegisterRequest.getDescription())
+                .imageUrl(imageUrl)
+                .isRepresentative(false)
+                .build();
 
         member.addPet(newPet);
 
         petRepository.save(newPet);
 
         return PetRegisterResponse.builder()
-            .petName(newPet.getName())
-            .imageUrl(newPet.getImageUrl())
-            .build();
+                .petName(newPet.getName())
+                .imageUrl(newPet.getImageUrl())
+                .build();
     }
 }

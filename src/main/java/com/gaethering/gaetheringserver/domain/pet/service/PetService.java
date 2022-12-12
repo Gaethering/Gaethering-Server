@@ -20,5 +20,5 @@ public interface PetService {
     boolean deletePetProfile(String email, Long id);
 
     PetRegisterResponse registerPet(String email, MultipartFile file,
-        PetRegisterRequest petRegisterRequest);
+                                    PetRegisterRequest petRegisterRequest);
 }

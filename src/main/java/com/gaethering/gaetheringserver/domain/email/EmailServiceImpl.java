@@ -3,8 +3,10 @@ package com.gaethering.gaetheringserver.domain.email;
 import com.gaethering.gaetheringserver.domain.member.exception.member.FailedSendEmailException;
 import com.gaethering.gaetheringserver.domain.member.exception.member.InvalidEmailAuthCodeException;
 import com.gaethering.gaetheringserver.domain.redis.RedisService;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -56,7 +58,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     private static void makeAuthEmail(String email, String authCode, MimeMessage message)
-        throws MessagingException {
+            throws MessagingException {
 
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, EMAIL_ENCODING);
 

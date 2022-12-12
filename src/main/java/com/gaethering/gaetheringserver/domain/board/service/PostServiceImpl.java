@@ -13,8 +13,10 @@ import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,31 +36,31 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponse writePost(String email,
-        List<MultipartFile> files, PostRequest request) {
+                                  List<MultipartFile> files, PostRequest request) {
 
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(() -> new MemberNotFoundException());
 
         Category category = categoryRepository.findById(request.getCategoryId())
-            .orElseThrow(() -> new CategoryNotFoundException());
+                .orElseThrow(() -> new CategoryNotFoundException());
 
         Post post = Post.builder()
-            .title(request.getTitle())
-            .content(request.getContent())
-            .category(category)
-            .member(member)
-            .postImages(new ArrayList<>())
-            .build();
+                .title(request.getTitle())
+                .content(request.getContent())
+                .category(category)
+                .member(member)
+                .postImages(new ArrayList<>())
+                .build();
 
         List<String> imgUrls = getImageUrlsInRequest(files);
 
         if (!imgUrls.isEmpty()) {
             for (String imgUrl : imgUrls) {
                 PostImage image = PostImage.builder()
-                    .imageUrl(imgUrl)
-                    .isRepresentative(false)
-                    .post(post)
-                    .build();
+                        .imageUrl(imgUrl)
+                        .isRepresentative(false)
+                        .post(post)
+                        .build();
 
                 post.addImage(postImageRepository.save(image));
             }
@@ -67,15 +69,15 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         return PostResponse.builder()
-            .categoryName(post.getCategory().getCategoryName())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .imageUrls(imgUrls)
-            .viewCnt(0)
-            .heartCnt(0)
-            .createAt(post.getCreatedAt())
-            .nickname(post.getMember().getNickname())
-            .build();
+                .categoryName(post.getCategory().getCategoryName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imageUrls(imgUrls)
+                .viewCnt(0)
+                .heartCnt(0)
+                .createAt(post.getCreatedAt())
+                .nickname(post.getMember().getNickname())
+                .build();
     }
 
     public List<String> getImageUrlsInRequest(List<MultipartFile> files) {

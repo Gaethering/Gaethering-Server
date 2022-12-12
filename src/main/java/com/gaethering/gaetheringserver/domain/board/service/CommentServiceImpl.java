@@ -51,22 +51,23 @@ public class CommentServiceImpl implements CommentService {
                 .createAt(comment.getCreatedAt())
                 .build();
     }
+
     @Override
     @Transactional
-    public CommentResponse updateComment (String email, Long postId, Long commentId,
-                                          CommentRequest request) {
+    public CommentResponse updateComment(String email, Long postId, Long commentId,
+                                         CommentRequest request) {
 
-        if(!postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(()-> new CommentNotFoundException());
+                .orElseThrow(() -> new CommentNotFoundException());
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
 
-        if(!Objects.equals(member, comment.getMember())) {
+        if (!Objects.equals(member, comment.getMember())) {
             throw new NoPermissionUpdateCommentException();
         }
         comment.setComment(request.getComment());
@@ -81,9 +82,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public boolean deleteComment (String email, Long postId, Long commentId) {
+    public boolean deleteComment(String email, Long postId, Long commentId) {
 
-        if(!postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
@@ -91,9 +92,9 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new MemberNotFoundException());
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(()-> new CommentNotFoundException());
+                .orElseThrow(() -> new CommentNotFoundException());
 
-        if(!Objects.equals(member, comment.getMember())) {
+        if (!Objects.equals(member, comment.getMember())) {
             throw new NoPermissionDeleteCommentException();
         }
         commentRepository.delete(comment);

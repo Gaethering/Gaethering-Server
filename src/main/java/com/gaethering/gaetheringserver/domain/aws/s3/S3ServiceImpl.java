@@ -8,11 +8,13 @@ import com.gaethering.gaetheringserver.core.type.FileExtension;
 import com.gaethering.gaetheringserver.domain.pet.exception.FailedUploadImageException;
 import com.gaethering.gaetheringserver.domain.pet.exception.ImageNotFoundException;
 import com.gaethering.gaetheringserver.domain.pet.exception.InvalidImageTypeException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,8 +29,8 @@ public class S3ServiceImpl implements S3Service {
 
     @Autowired
     public S3ServiceImpl(AmazonS3 amazonS3,
-        @Value("${cloud.aws.s3.bucket}") String bucket,
-        @Value("${dir}") String dir) {
+                         @Value("${cloud.aws.s3.bucket}") String bucket,
+                         @Value("${dir}") String dir) {
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.dir = dir;
@@ -45,8 +47,8 @@ public class S3ServiceImpl implements S3Service {
 
         try {
             amazonS3.putObject(new PutObjectRequest(
-                bucket + "/" + dir, fileName, multipartFile.getInputStream(), objectMetadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+                    bucket + "/" + dir, fileName, multipartFile.getInputStream(), objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
 
         } catch (IOException e) {
             throw new FailedUploadImageException();
@@ -58,7 +60,7 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public void removeImage(String filename) {
         amazonS3.deleteObject(bucket,
-            dir + "/" + filename.substring(filename.lastIndexOf("/") + 1));
+                dir + "/" + filename.substring(filename.lastIndexOf("/") + 1));
     }
 
     private String createFileName(String filename) {
@@ -76,8 +78,8 @@ public class S3ServiceImpl implements S3Service {
 
     private void validateFileExtension(String filename) {
         List<String> fileValidate = Stream.of(FileExtension.values())
-            .map(Enum::name)
-            .collect(Collectors.toList());
+                .map(Enum::name)
+                .collect(Collectors.toList());
 
         String idxFileName = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
 
