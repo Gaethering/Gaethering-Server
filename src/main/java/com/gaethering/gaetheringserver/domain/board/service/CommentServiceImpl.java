@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponse updateComment (String email, Long postId, Long commentId,
                                           CommentRequest request) {
 
-        if(postRepository.existsById(postId)) {
+        if(!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public boolean deleteComment (String email, Long postId, Long commentId) {
 
-        if(postRepository.existsById(postId)) {
+        if(!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
