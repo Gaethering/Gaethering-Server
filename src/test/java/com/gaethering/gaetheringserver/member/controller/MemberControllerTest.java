@@ -23,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostInfo;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse.ProfilePetResponse;
@@ -33,6 +35,7 @@ import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotF
 import com.gaethering.gaetheringserver.domain.member.service.member.MemberProfileService;
 import com.gaethering.gaetheringserver.domain.member.service.member.MemberService;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -349,6 +352,91 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.nickname").value(response.getNickname()))
             .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
             .andExpect(jsonPath("$.petName").value(response.getPetName()));
+    }
+
+    @Test
+    @DisplayName("내가 쓴 글 조회")
+    @WithMockUser
+    public void getMyPosts() throws Exception {
+        //given
+        MyPostInfo post1 = MyPostInfo.builder()
+            .postId(1L)
+            .title("제목1")
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        MyPostInfo post2 = MyPostInfo.builder()
+            .postId(1L)
+            .title("제목1")
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        MyPostInfo post3 = MyPostInfo.builder()
+            .postId(1L)
+            .title("제목1")
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        List<MyPostInfo> posts = List.of(post1, post2, post3);
+
+        MyPostsResponse response = MyPostsResponse.builder()
+            .postCount(posts.size())
+            .posts(posts)
+            .build();
+
+        //when
+        given(memberService.getMyPosts(anyString()))
+            .willReturn(response);
+
+        //then
+        mockMvc.perform(
+                get("/api/mypage/posts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "accessToken"))
+            .andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.postCount").value(response.getPostCount()))
+            .andExpect(jsonPath("$.posts[0].postId").value(post1.getPostId()))
+            .andExpect(jsonPath("$.posts[0].title").value(post1.getTitle()))
+            .andExpect(jsonPath("$.posts[0].createdAt").value(post1.getCreatedAt().toString()))
+            .andExpect(jsonPath("$.posts[1].postId").value(post2.getPostId()))
+            .andExpect(jsonPath("$.posts[1].title").value(post2.getTitle()))
+            .andExpect(jsonPath("$.posts[1].createdAt").value(post2.getCreatedAt().toString()))
+            .andExpect(jsonPath("$.posts[2].postId").value(post3.getPostId()))
+            .andExpect(jsonPath("$.posts[2].title").value(post3.getTitle()))
+            .andExpect(jsonPath("$.posts[2].createdAt").value(post3.getCreatedAt().toString()))
+            .andDo(document("mypage/get-my-posts/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("내가 쓴 글 조회 - 회원 못 찾았을 때")
+    @WithMockUser
+    public void getMyPosts_ExceptionThrown_MemberNotFound() throws Exception {
+        //given
+        given(memberService.getMyPosts(anyString()))
+            .willThrow(new MemberNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/api/mypage/posts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "accessToken"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+            .andDo(document("mypage/get-my-posts/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
     }
 
 }
