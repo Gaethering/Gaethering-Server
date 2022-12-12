@@ -1,17 +1,23 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
 import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.CATEGORY_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.NO_PERMISSION_TO_UPDATE_POST;
+import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.POST_NOT_FOUND;
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,7 +25,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse.PostImageUrlResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
+import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 
@@ -38,6 +50,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -210,5 +223,159 @@ class PostControllerTest {
                                 headerWithName("Authorization").description("Access Token"))
                 ));
     }
+
+    @Test
+    @DisplayName("게시물 수정 성공")
+    @WithMockUser
+    void updatePostSuccess() throws Exception {
+        LocalDateTime date = LocalDateTime.of(2020, 12, 31, 23, 59, 59);
+
+        PostUpdateRequest request = PostUpdateRequest.builder()
+            .title("게시글 제목 수정")
+            .content("게시글 수정 내용입니다.")
+            .build();
+
+        PostImageUrlResponse postImageUrlResponse = PostImageUrlResponse.builder()
+            .imageUrl("https://test~")
+            .representative(false)
+            .build();
+
+        PostUpdateResponse response = PostUpdateResponse.builder()
+            .title("게시글 제목 수정")
+            .content("게시글 수정 내용입니다.")
+            .categoryName("질문 있어요")
+            .heartCnt(0)
+            .viewCnt(0)
+            .nickname("닉네임")
+            .imageUrls(List.of(postImageUrlResponse))
+            .createdAt(date)
+            .updatedAt(date)
+            .build();
+
+        given(postService.updatePost(anyString(), anyLong(), any()))
+            .willReturn(response);
+
+        String requestString = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken")
+                .content(requestString))
+
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value(response.getTitle()))
+            .andExpect(jsonPath("$.content").value(response.getContent()))
+            .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()))
+            .andExpect(jsonPath("$.heartCnt").value(response.getHeartCnt()))
+            .andExpect(jsonPath("$.viewCnt").value(String.valueOf(response.getViewCnt())))
+            .andExpect(jsonPath("$.nickname").value(response.getNickname()))
+            .andExpect(jsonPath("$.imageUrls[0].imageUrl").value(response.getImageUrls().get(0).getImageUrl()))
+            .andExpect(jsonPath("$.imageUrls[0].isRepresentative").value(response.getImageUrls().get(0).isRepresentative()))
+            .andExpect(jsonPath("$.createdAt").value(response.getCreatedAt().toString()))
+            .andExpect(jsonPath("$.updatedAt").value(response.getUpdatedAt().toString()))
+            .andDo(print())
+            .andDo(document("boards/update-post/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @DisplayName("게시물 수정 실패 - 회원 찾을 수 없는 경우")
+    @WithMockUser
+    void updatePostFailure_MemberNotFound() throws Exception {
+        //given
+        PostUpdateRequest request = PostUpdateRequest.builder()
+            .title("게시글 제목 수정")
+            .content("게시글 수정 내용입니다.")
+            .build();
+        given(postService.updatePost(anyString(), anyLong(), any()))
+            .willThrow(new MemberNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken")
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("boards/update-post/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @DisplayName("게시물 수정 실패 - 게시물 찾을 수 없는 경우")
+    @WithMockUser
+    void updatePostFailure_PostNotFound() throws Exception {
+        //given
+        PostUpdateRequest request = PostUpdateRequest.builder()
+            .title("게시글 제목 수정")
+            .content("게시글 수정 내용입니다.")
+            .build();
+        given(postService.updatePost(anyString(), anyLong(), any()))
+            .willThrow(new PostNotFoundException());
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken")
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(POST_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("boards/update-post/failure/post-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @DisplayName("게시물 수정 실패 - 게시물 작성자가 아닐 경우")
+    @WithMockUser
+    void updatePostFailure_NoPermissionUpdatePost() throws Exception {
+        //given
+        PostUpdateRequest request = PostUpdateRequest.builder()
+            .title("게시글 제목 수정")
+            .content("게시글 수정 내용입니다.")
+            .build();
+        given(postService.updatePost(anyString(), anyLong(), any()))
+            .willThrow(new NoPermissionUpdatePostException());
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "accessToken")
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(NO_PERMISSION_TO_UPDATE_POST.getCode()))
+            .andExpect(jsonPath("$.message").value(NO_PERMISSION_TO_UPDATE_POST.getMessage()))
+            .andDo(print())
+            .andDo(document("boards/update-post/failure/no-permission-update-post",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+
 
 }
