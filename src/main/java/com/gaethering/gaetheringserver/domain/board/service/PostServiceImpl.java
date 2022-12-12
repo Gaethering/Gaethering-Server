@@ -23,76 +23,95 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private final S3Service s3Service;
-    private final MemberRepository memberRepository;
-    private final PostImageRepository postImageRepository;
-    private final PostRepository postRepository;
-    private final CategoryRepository categoryRepository;
-    private final HeartRepository heartRepository;
+	private final S3Service s3Service;
+	private final MemberRepository memberRepository;
+	private final PostImageRepository postImageRepository;
+	private final PostRepository postRepository;
+	private final CategoryRepository categoryRepository;
+	private final HeartRepository heartRepository;
 
-    @Override
-    @Transactional
-    public PostResponse writePost(String email,
-                                  List<MultipartFile> files, PostRequest request) {
+	@Override
+	@Transactional
+	public PostResponse writePost(String email,
+		List<MultipartFile> files, PostRequest request) {
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException());
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new MemberNotFoundException());
 
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException());
+		Category category = categoryRepository.findById(request.getCategoryId())
+			.orElseThrow(() -> new CategoryNotFoundException());
 
-        Post post = Post.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .category(category)
-                .member(member)
-                .postImages(new ArrayList<>())
-                .build();
+		Post post = Post.builder()
+			.title(request.getTitle())
+			.content(request.getContent())
+			.category(category)
+			.member(member)
+			.postImages(new ArrayList<>())
+			.build();
 
-        postRepository.save(post);
+		postRepository.save(post);
 
-        List<String> imgUrls = getImageUrlsInRequest(files);
+		List<String> imgUrls = getImageUrlsInRequest(files);
 
-        if (!imgUrls.isEmpty()) {
-            for (String imgUrl : imgUrls) {
-                PostImage image = PostImage.builder()
-                        .imageUrl(imgUrl)
-                        .isRepresentative(false)
-                        .post(post)
-                        .build();
+		if (!imgUrls.isEmpty()) {
+			for (String imgUrl : imgUrls) {
+				PostImage image = PostImage.builder()
+					.imageUrl(imgUrl)
+					.isRepresentative(false)
+					.post(post)
+					.build();
 
-                post.addImage(postImageRepository.save(image));
-            }
-        }
+				post.addImage(postImageRepository.save(image));
+			}
+		}
 
-        return PostResponse.builder()
-                .categoryName(post.getCategory().getCategoryName())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .imageUrls(imgUrls)
-                .viewCnt(0)
-                .heartCnt(0)
-                .createAt(post.getCreatedAt())
-                .nickname(post.getMember().getNickname())
-                .build();
-    }
+		return PostResponse.builder()
+			.categoryName(post.getCategory().getCategoryName())
+			.title(post.getTitle())
+			.content(post.getContent())
+			.imageUrls(imgUrls)
+			.viewCnt(0)
+			.heartCnt(0)
+			.createAt(post.getCreatedAt())
+			.nickname(post.getMember().getNickname())
+			.build();
+	}
 
-    public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
-        List<String> imgUrls = new ArrayList<>();
+	@Override
+	@Transactional
+	public PostUpdateResponse updatePost(String email, Long postId, PostUpdateRequest request) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(MemberNotFoundException::new);
 
-        if (!CollectionUtils.isEmpty(files)) {
-            for (MultipartFile file : files) {
+		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+		if (!member.getId().equals(post.getMember().getId())) {
+			throw new NoPermissionUpdatePostException();
+		}
+
+		Long heartCount = heartRepository.countByPost(post);
+
+		post.updatePost(request.getTitle(), request.getContent());
+
+		return PostUpdateResponse.from(post, member, heartCount.intValue());
+	}
+
+	public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
+		List<String> imgUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
                 String imgUrl = s3Service.uploadImage(file);
                 imgUrls.add(imgUrl);
             }
         }
-        return imgUrls;
-    }
+
+		return imgUrls;
+	}
 }
