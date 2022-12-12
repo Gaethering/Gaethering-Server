@@ -5,8 +5,8 @@ import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailDeleteCommentException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailUpdateCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionDeleteCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdateCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
@@ -266,7 +266,7 @@ class CommentServiceTest {
                 .comment("수정한 댓글입니다")
                 .build();
 
-        FailUpdateCommentException exception = assertThrows(FailUpdateCommentException.class,
+        NoPermissionUpdateCommentException exception = assertThrows(NoPermissionUpdateCommentException.class,
                 () -> commentService.updateComment("test@gmail.com", 1L, 1L, request));
 
         assertEquals(PostErrorCode.NO_PERMISSION_TO_UPDATE_COMMENT, exception.getErrorCode());
@@ -389,7 +389,7 @@ class CommentServiceTest {
         given(commentRepository.findById(anyLong()))
                 .willReturn(Optional.of(comment));
 
-        FailDeleteCommentException exception = assertThrows(FailDeleteCommentException.class,
+        NoPermissionDeleteCommentException exception = assertThrows(NoPermissionDeleteCommentException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
 
         assertEquals(PostErrorCode.NO_PERMISSION_TO_DELETE_COMMENT, exception.getPostErrorCode());

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailDeleteCommentException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailUpdateCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionDeleteCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdateCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.service.CommentService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
@@ -250,7 +250,7 @@ class CommentControllerTest {
     void delete_Comment_fail_UNMATCH_writer () throws Exception {
 
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
-                .willThrow(new FailDeleteCommentException());
+                .willThrow(new NoPermissionDeleteCommentException());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
@@ -410,7 +410,7 @@ class CommentControllerTest {
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
-                .willThrow(new FailUpdateCommentException());
+                .willThrow(new NoPermissionUpdateCommentException());
 
         String requestJson = objectMapper.writeValueAsString(request);
 

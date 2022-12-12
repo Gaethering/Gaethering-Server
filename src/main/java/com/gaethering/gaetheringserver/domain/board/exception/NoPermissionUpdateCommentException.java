@@ -2,9 +2,9 @@ package com.gaethering.gaetheringserver.domain.board.exception;
 
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 
-public class FailUpdateCommentException extends PostException{
+public class NoPermissionUpdateCommentException extends PostException{
 
-    public FailUpdateCommentException() {
+    public NoPermissionUpdateCommentException() {
         super(PostErrorCode.NO_PERMISSION_TO_UPDATE_COMMENT);
     }
 }

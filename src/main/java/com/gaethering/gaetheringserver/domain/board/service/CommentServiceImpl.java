@@ -5,8 +5,8 @@ import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailDeleteCommentException;
-import com.gaethering.gaetheringserver.domain.board.exception.FailUpdateCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionDeleteCommentException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdateCommentException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new MemberNotFoundException());
 
         if(!Objects.equals(member, comment.getMember())) {
-            throw new FailUpdateCommentException();
+            throw new NoPermissionUpdateCommentException();
         }
         comment.setComment(request.getComment());
         commentRepository.save(comment);
@@ -98,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(()-> new CommentNotFoundException());
 
         if(!Objects.equals(member, comment.getMember())) {
-            throw new FailDeleteCommentException();
+            throw new NoPermissionDeleteCommentException();
         }
         commentRepository.delete(comment);
 
