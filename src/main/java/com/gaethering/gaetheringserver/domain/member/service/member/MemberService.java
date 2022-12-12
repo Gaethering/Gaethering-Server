@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.domain.member.service.member;
 
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,4 +17,6 @@ public interface MemberService {
     boolean modifyNickname(String email, String nickname);
 
     LoginInfoResponse getLoginInfo(String email);
+
+    MyPostsResponse getMyPosts(String email);
 }
