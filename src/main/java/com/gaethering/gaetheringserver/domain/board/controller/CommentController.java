@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("${api-prefix-comment}")
 @RequiredArgsConstructor
 public class CommentController {
 
