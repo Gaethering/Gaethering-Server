@@ -100,6 +100,7 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // querydsl 설정
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
