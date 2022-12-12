@@ -5,7 +5,6 @@ import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
 import com.gaethering.gaetheringserver.domain.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +25,7 @@ public class CommentController {
         CommentResponse response
                 = commentService.writeComment(principal.getName(), postId, request);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
@@ -39,8 +37,7 @@ public class CommentController {
         CommentResponse response =
                 commentService.updateComment(principal.getName(), postId, commentId, request);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
