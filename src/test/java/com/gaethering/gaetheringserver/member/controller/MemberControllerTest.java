@@ -13,6 +13,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -53,6 +55,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -89,14 +92,14 @@ class MemberControllerTest {
             .phone("010-1230-1234")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         MockMultipartFile image = new MockMultipartFile("image", "test.png",
@@ -104,8 +107,8 @@ class MemberControllerTest {
 
         String requestString = objectMapper.writeValueAsString(request);
 
-        MockPart data = new MockPart("data", requestString.getBytes());
-        data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        MockMultipartFile data = new MockMultipartFile("data", "",
+            "application/json", requestString.getBytes());
 
         given(memberService.signUp(any(), any()))
             .willReturn(SignUpResponse.builder()
@@ -118,7 +121,7 @@ class MemberControllerTest {
         mockMvc.perform(
                 multipart("/api/members/sign-up")
                     .file(image)
-                    .part(data)
+                    .file(data)
                     .contentType(MediaType.MULTIPART_FORM_DATA)
             )
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -130,6 +133,27 @@ class MemberControllerTest {
                 relaxedRequestParts(
                     partWithName("image").description("펫 프로필 사진"),
                     partWithName("data").description("회원 가입에 필요한 데이터")
+                )
+            ))
+            .andDo(document("member/sign-up/success",
+                requestPartFields("data",
+                    fieldWithPath("email").type(JsonFieldType.STRING).description("사용자 이메일"),
+                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("사용자 닉네임"),
+                    fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                    fieldWithPath("passwordCheck").type(JsonFieldType.STRING).description("비밀번호 확인"),
+                    fieldWithPath("name").type(JsonFieldType.STRING).description("사용자 이름"),
+                    fieldWithPath("phone").type(JsonFieldType.STRING).description("사용자 전화번호"),
+                    fieldWithPath("birth").type(JsonFieldType.STRING).description("사용자 생일"),
+                    fieldWithPath("gender").type(JsonFieldType.STRING).description("사용자 성별"),
+                    fieldWithPath("isEmailAuth").type(JsonFieldType.BOOLEAN).description("이메일 인증 여부"),
+                    fieldWithPath("petName").type(JsonFieldType.STRING).description("반려동물 이름"),
+                    fieldWithPath("petBirth").type(JsonFieldType.STRING).description("반려동물 생일"),
+                    fieldWithPath("breed").type(JsonFieldType.STRING).description("반려동물 견종"),
+                    fieldWithPath("weight").type(JsonFieldType.NUMBER).description("반려동물 몸무게"),
+                    fieldWithPath("petGender").type(JsonFieldType.STRING).description("반려동물 성별"),
+                    fieldWithPath("description").type(JsonFieldType.STRING).description("반려동물 설명"),
+                    fieldWithPath("isNeutered").type(JsonFieldType.BOOLEAN)
+                        .description("반려동물 중성화 여부")
                 )
             ))
             .andDo(document("member/sign-up/success",
@@ -153,14 +177,14 @@ class MemberControllerTest {
             .phone("010-1230-1234")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         String filename = "test.png";

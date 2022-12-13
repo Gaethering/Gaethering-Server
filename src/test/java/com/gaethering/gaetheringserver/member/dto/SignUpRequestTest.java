@@ -33,14 +33,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -63,14 +63,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -93,14 +93,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -123,14 +123,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -153,14 +153,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -183,14 +183,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -212,14 +212,14 @@ class SignUpRequestTest {
             .name("asdf")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -242,14 +242,14 @@ class SignUpRequestTest {
             .phone("01012341234")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -272,14 +272,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("20211224")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -302,14 +302,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2017-03-15")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -332,14 +332,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2021-12-24")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("20220315")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -362,14 +362,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2021-12-24")
             .gender("MALE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(-5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -392,14 +392,14 @@ class SignUpRequestTest {
             .phone("010-3230-2498")
             .birth("2021-12-24")
             .gender("MALEE")
-            .isEmailAuth(true)
+            .emailAuth(true)
             .petName("뽀삐")
             .petBirth("2022-03-15")
             .weight(5.5f)
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when

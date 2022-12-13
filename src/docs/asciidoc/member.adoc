@@ -19,6 +19,9 @@ include::{snippets}/member/sign-up/success/http-request.adoc[]
 * HTTP Request Parts
 include::{snippets}/member/sign-up/success/request-parts.adoc[]
 
+* HTTP Request Parts Data
+include::{snippets}/member/sign-up/success/request-part-data-fields.adoc[]
+
 * HTTP Response
 include::{snippets}/member/sign-up/success/http-response.adoc[]
 

@@ -44,7 +44,7 @@ public class SignUpRequest {
     @EnumValid(enumClass = Gender.class, message = "성별은 MALE, FEMALE 둘 중 하나여야 합니다.")
     private String gender;
     @JsonProperty("isEmailAuth")
-    private boolean isEmailAuth;
+    private boolean emailAuth;
     @NotBlank(message = "반려동물 이름은 필수 입력 사항입니다.")
     private String petName;
     @LocalDateValid(message = "8자리의 yyyy-MM-dd 형식이어야 합니다.", pattern = "yyyy-MM-dd")
@@ -57,7 +57,7 @@ public class SignUpRequest {
     @NotEmpty
     private String description;
     @JsonProperty("isNeutered")
-    private boolean isNeutered;
+    private boolean neutered;
 
     @AssertTrue(message = "비밀번호가 일치하지 않습니다.")
     boolean isMatchPassword() {

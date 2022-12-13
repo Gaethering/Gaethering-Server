@@ -139,7 +139,7 @@ class PetControllerTest {
                     .file(data)
                     .header("Authorization", "accessToken")
                     .with(csrf())
-            ).andDo(print())
+            )
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.petName").value(request.getPetName()))
