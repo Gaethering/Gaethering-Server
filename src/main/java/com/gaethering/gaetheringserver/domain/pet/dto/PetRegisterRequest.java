@@ -30,6 +30,6 @@ public class PetRegisterRequest {
     @NotEmpty
     private String description;
     @JsonProperty("isNeutered")
-    private boolean isNeutered;
+    private boolean neutered;
 
 }

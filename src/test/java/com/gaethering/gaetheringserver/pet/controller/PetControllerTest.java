@@ -1,20 +1,30 @@
 package com.gaethering.gaetheringserver.pet.controller;
 
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.EXCEED_REGISTRABLE_PET;
 import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_PET;
 import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.FAILED_DELETE_REPRESENTATIVE;
 import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.PET_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
+import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParts;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +39,7 @@ import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileResponse;
 import com.gaethering.gaetheringserver.domain.pet.dto.PetProfileUpdateRequest;
 import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterRequest;
 import com.gaethering.gaetheringserver.domain.pet.dto.PetRegisterResponse;
+import com.gaethering.gaetheringserver.domain.pet.exception.ExceedRegistrablePetException;
 import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeletePetException;
 import com.gaethering.gaetheringserver.domain.pet.exception.FailedDeleteRepresentativeException;
 import com.gaethering.gaetheringserver.domain.pet.exception.PetNotFoundException;
@@ -39,18 +50,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockPart;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 @WebMvcTest(controllers = PetController.class, excludeFilters = {
@@ -58,6 +69,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
         classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
 })
 @ActiveProfiles("test")
+@AutoConfigureRestDocs
 class PetControllerTest {
 
     @MockBean
@@ -87,9 +99,9 @@ class PetControllerTest {
     }
 
     @Test
-    @DisplayName("펫 등록")
+    @DisplayName("펫 등록 성공")
     @WithMockUser
-    void petRegister() throws Exception {
+    void petRegister_Success() throws Exception {
         //given
         String email = "test@test.com";
         Principal principal = Mockito.mock(Principal.class);
@@ -102,7 +114,81 @@ class PetControllerTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
+            .build();
+
+        MockMultipartFile image = new MockMultipartFile("image", "test.png",
+            "image/png", "test".getBytes());
+
+        String requestString = objectMapper.writeValueAsString(request);
+
+        MockMultipartFile data = new MockMultipartFile("data", "",
+            "application/json", requestString.getBytes());
+
+        given(petService.registerPet(anyString(), any(), any()))
+            .willReturn(PetRegisterResponse.builder()
+                .imageUrl(image.getName())
+                .petName(request.getPetName())
+                .build());
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart("/api/pets/register")
+                    .file(image)
+                    .file(data)
+                    .header("Authorization", "accessToken")
+                    .with(csrf())
+            ).andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.petName").value(request.getPetName()))
+            .andExpect(jsonPath("$.imageUrl").value(image.getName()))
+            .andDo(print())
+            .andDo(document("pet/register/success",
+                relaxedRequestParts(
+                    partWithName("image").description("펫 프로필 사진"),
+                    partWithName("data").description("펫 등록에 필요한 데이터")
+                )
+            ))
+            .andDo(document("pet/register/success",
+                requestPartFields("data",
+                    fieldWithPath("petName").type(JsonFieldType.STRING).description("반려동물 이름"),
+                    fieldWithPath("petBirth").type(JsonFieldType.STRING).description("반려동물 생일"),
+                    fieldWithPath("breed").type(JsonFieldType.STRING).description("반려동물 견종"),
+                    fieldWithPath("weight").type(JsonFieldType.NUMBER).description("반려동물 몸무게"),
+                    fieldWithPath("petGender").type(JsonFieldType.STRING).description("반려동물 성별"),
+                    fieldWithPath("description").type(JsonFieldType.STRING).description("반려동물 설명"),
+                    fieldWithPath("isNeutered").type(JsonFieldType.BOOLEAN)
+                        .description("반려동물 중성화 여부")
+                )
+            ))
+            .andDo(document("pet/register/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("펫 등록 실패_최대 등록 수를 넘은 경우")
+    @WithMockUser
+    void petRegister_Failure_ExceedRegistrablePet() throws Exception {
+        //given
+        String email = "test@test.com";
+        Principal principal = Mockito.mock(Principal.class);
+        given(principal.getName()).willReturn(email);
+
+        PetRegisterRequest request = PetRegisterRequest.builder()
+            .petName("뽀삐")
+            .petBirth("2022-03-15")
+            .weight(5.5f)
+            .breed("말티즈")
+            .petGender("FEMALE")
+            .description("___")
+            .neutered(true)
             .build();
 
         String filename = "test.png";
@@ -113,30 +199,38 @@ class PetControllerTest {
 
         String requestString = objectMapper.writeValueAsString(request);
 
-        MockPart data = new MockPart("data", requestString.getBytes());
-        data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        MockMultipartFile data = new MockMultipartFile("data", "",
+            "application/json", requestString.getBytes());
 
-        given(petService.registerPet("user", image, request))
-            .willReturn(PetRegisterResponse.builder()
-                .imageUrl(image.getName())
-                .petName(request.getPetName())
-                .build());
+        given(petService.registerPet(anyString(), any(), any()))
+            .willThrow(new ExceedRegistrablePetException());
 
         //when
         //then
-        MultipartHttpServletRequest mockRequest = (MultipartHttpServletRequest) mockMvc.perform(
+        mockMvc.perform(
                 multipart("/api/pets/register")
                     .file(image)
-                    .part(data)
+                    .file(data)
+                    .header("Authorization", "accessToken")
                     .with(csrf())
             ).andDo(print())
-            .andExpect(status().isCreated())
-            .andReturn().getRequest();
-
-        assertEquals(1, mockRequest.getParts().size());
-
-        assertEquals(filename,
-            mockRequest.getMultiFileMap().get("image").get(0).getOriginalFilename());
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(EXCEED_REGISTRABLE_PET.getCode()))
+            .andExpect(jsonPath("$.message").value(EXCEED_REGISTRABLE_PET.getMessage()))
+            .andDo(print())
+            .andDo(document("pet/register/failure/exceed-max",
+                relaxedRequestParts(
+                    partWithName("image").description("펫 프로필 사진"),
+                    partWithName("data").description("펫 등록에 필요한 데이터")
+                )
+            ))
+            .andDo(document("pet/register/failure/exceed-max",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
     }
 
     @Test

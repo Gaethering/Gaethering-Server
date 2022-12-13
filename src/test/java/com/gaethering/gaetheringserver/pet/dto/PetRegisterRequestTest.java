@@ -31,7 +31,7 @@ class PetRegisterRequestTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -52,7 +52,7 @@ class PetRegisterRequestTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -73,7 +73,7 @@ class PetRegisterRequestTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
@@ -94,7 +94,7 @@ class PetRegisterRequestTest {
             .breed("말티즈")
             .petGender("MIDDLE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         //when
