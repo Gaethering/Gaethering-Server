@@ -31,7 +31,6 @@ import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse.PostI
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
-import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 
@@ -236,8 +235,11 @@ class PostControllerTest {
             .build();
 
         PostImageUrlResponse postImageUrlResponse = PostImageUrlResponse.builder()
+            .imageId(1L)
             .imageUrl("https://test~")
             .representative(false)
+            .createdAt(date)
+            .updatedAt(date)
             .build();
 
         PostUpdateResponse response = PostUpdateResponse.builder()
@@ -269,8 +271,11 @@ class PostControllerTest {
             .andExpect(jsonPath("$.heartCnt").value(response.getHeartCnt()))
             .andExpect(jsonPath("$.viewCnt").value(String.valueOf(response.getViewCnt())))
             .andExpect(jsonPath("$.nickname").value(response.getNickname()))
+            .andExpect(jsonPath("$.imageUrls[0].imageId").value(response.getImageUrls().get(0).getImageId()))
             .andExpect(jsonPath("$.imageUrls[0].imageUrl").value(response.getImageUrls().get(0).getImageUrl()))
             .andExpect(jsonPath("$.imageUrls[0].isRepresentative").value(response.getImageUrls().get(0).isRepresentative()))
+            .andExpect(jsonPath("$.imageUrls[0].createdAt").value(response.getImageUrls().get(0).getCreatedAt().toString()))
+            .andExpect(jsonPath("$.imageUrls[0].updatedAt").value(response.getImageUrls().get(0).getUpdatedAt().toString()))
             .andExpect(jsonPath("$.createdAt").value(response.getCreatedAt().toString()))
             .andExpect(jsonPath("$.updatedAt").value(response.getUpdatedAt().toString()))
             .andDo(print())

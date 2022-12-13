@@ -291,6 +291,7 @@ class PostServiceTest {
         PostUpdateResponse response = postService.updatePost(member1.getEmail(), 1L, request);
 
         // then
+        assertThat(response.getImageUrls().get(0).getImageId()).isEqualTo(postImage.getId());
         assertThat(response.getTitle()).isEqualTo(post.getTitle());
         assertThat(response.getContent()).isEqualTo(post.getContent());
         assertThat(response.getCreatedAt()).isEqualTo(post.getCreatedAt());
