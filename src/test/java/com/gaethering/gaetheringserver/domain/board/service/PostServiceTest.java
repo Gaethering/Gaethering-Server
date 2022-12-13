@@ -9,8 +9,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
+import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
@@ -24,6 +26,7 @@ import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundExcept
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.repository.CategoryRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.HeartRepository;
+import com.gaethering.gaetheringserver.domain.board.repository.PostImageRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode;
@@ -56,6 +59,8 @@ class PostServiceTest {
     private CategoryRepository categoryRepository;
     @Mock
     private HeartRepository heartRepository;
+    @Mock
+    private PostImageRepository postImageRepository;
     @Mock
     private S3Service s3Service;
     @InjectMocks
@@ -296,5 +301,156 @@ class PostServiceTest {
         assertThat(response.getContent()).isEqualTo(post.getContent());
         assertThat(response.getCreatedAt()).isEqualTo(post.getCreatedAt());
         assertThat(response.getUpdatedAt()).isEqualTo(post.getUpdatedAt());
+    }
+
+    @Test
+    @DisplayName("게시물 사진 업로드 실패_회원 존재하지 않음")
+    void uploadPostImageFailure_MemberNotFound() {
+        // given
+        String filename = "test.txt";
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
+            "test".getBytes());
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        // when
+        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
+            () -> postService.uploadPostImage("test@test.com", 1L, file));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 업로드 실패_게시물 존재하지 않음")
+    void uploadPostImageFailure_PostNotFound() {
+        // given
+        String filename = "test.txt";
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
+            "test".getBytes());
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        // when
+        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
+            () -> postService.uploadPostImage("test@test.com", 1L, file));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 업로드 실패_게시물 작성자가 아닌 경우")
+    void uploadPostImageFailure_NoPermissionUpdatePost() {
+        // given
+        String filename = "test.txt";
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
+            "test".getBytes());
+
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+        Member member2 = Member.builder()
+            .id(2L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .build();
+        PostImage postImage = PostImage.builder()
+            .imageUrl("https://test~")
+            .isRepresentative(false)
+            .post(post)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member2));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+
+        // when
+        NoPermissionUpdatePostException exception = assertThrows(NoPermissionUpdatePostException.class,
+            () -> postService.uploadPostImage(member2.getEmail(), 1L, file));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.NO_PERMISSION_TO_UPDATE_POST);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 업로드 성공")
+    void uploadPostImageSuccess() {
+        // given
+        String filename = "test.txt";
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
+            "test".getBytes());
+
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .build();
+        PostImage postImage = PostImage.builder()
+            .imageUrl("https://test~")
+            .isRepresentative(false)
+            .post(post)
+            .build();
+
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+        given(s3Service.uploadImage(any()))
+            .willReturn(file.getName());
+
+        PostImage savedPostImage = PostImage.builder()
+            .id(1L)
+            .imageUrl("https://test~")
+            .isRepresentative(false)
+            .post(post)
+            .build();
+
+        // when
+        when(postImageRepository.save(any(PostImage.class))).thenReturn(savedPostImage);
+        PostImageUploadResponse response = postService.uploadPostImage(member1.getEmail(), 1L,
+            file);
+
+        // then
+        assertThat(response.getImageId()).isEqualTo(savedPostImage.getId());
+        assertThat(response.getImageUrl()).isEqualTo(savedPostImage.getImageUrl());
+        assertThat(response.isRepresentative()).isEqualTo(savedPostImage.isRepresentative());
+        assertThat(response.getCreatedAt()).isEqualTo(savedPostImage.getCreatedAt());
     }
 }
