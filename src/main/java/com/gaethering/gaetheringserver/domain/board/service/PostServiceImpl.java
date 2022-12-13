@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
@@ -106,7 +106,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional
-	public PostImageUpdateResponse uploadPostImage(String email, Long postId, MultipartFile file) {
+	public PostImageUploadResponse uploadPostImage(String email, Long postId, MultipartFile file) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(MemberNotFoundException::new);
 
@@ -126,12 +126,34 @@ public class PostServiceImpl implements PostService {
 
 		PostImage savedPostImage = postImageRepository.save(postImage);
 
-		return PostImageUpdateResponse.builder()
+		return PostImageUploadResponse.builder()
 			.imageId(savedPostImage.getId())
 			.imageUrl(savedPostImage.getImageUrl())
 			.representative(savedPostImage.isRepresentative())
 			.createdAt(savedPostImage.getCreatedAt())
 			.build();
+	}
+
+	@Override
+	@Transactional
+	public boolean deletePostImage(String email, Long postId, Long imageId) {
+
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(MemberNotFoundException::new);
+
+		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+		if (!member.getId().equals(post.getMember().getId())) {
+			throw new NoPermissionUpdatePostException();
+		}
+
+		PostImage postImage = postImageRepository.findById(imageId)
+			.orElseThrow(PostImageNotFoundException::new);
+
+		s3Service.removeImage(postImage.getImageUrl());
+		postImageRepository.delete(postImage);
+
+		return true;
 	}
 
 	public List<String> getImageUrlsInRequest(List<MultipartFile> files) {

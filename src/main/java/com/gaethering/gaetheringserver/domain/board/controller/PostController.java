@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
@@ -51,11 +51,21 @@ public class PostController {
 	}
 
 	@PostMapping("/boards/{postId}/images")
-	public ResponseEntity<PostImageUpdateResponse> uploadPostImage(@PathVariable Long postId,
+	public ResponseEntity<PostImageUploadResponse> uploadPostImage(@PathVariable Long postId,
 		@RequestPart(value = "image", required = false) MultipartFile file,
 		Principal principal) {
 
 		return ResponseEntity.ok(
 			postService.uploadPostImage(principal.getName(), postId, file));
+	}
+
+	@DeleteMapping("/boards/{postId}/images/{imageId}")
+	public ResponseEntity<Void> deletePostImage(@PathVariable Long postId,
+		@PathVariable Long imageId,
+		Principal principal) {
+
+		postService.deletePostImage(principal.getName(), postId, imageId);
+
+		return ResponseEntity.ok().build();
 	}
 }

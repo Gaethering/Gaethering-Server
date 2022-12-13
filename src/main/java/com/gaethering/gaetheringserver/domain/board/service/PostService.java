@@ -1,6 +1,6 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
@@ -14,5 +14,7 @@ public interface PostService {
 
     PostUpdateResponse updatePost(String email, Long postId, PostUpdateRequest request);
 
-	PostImageUpdateResponse uploadPostImage(String email, Long postId, MultipartFile file);
+	PostImageUploadResponse uploadPostImage(String email, Long postId, MultipartFile file);
+
+	boolean deletePostImage(String email, Long postId, Long imageId);
 }
