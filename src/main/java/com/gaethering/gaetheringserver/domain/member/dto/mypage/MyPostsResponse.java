@@ -12,6 +12,6 @@ public class MyPostsResponse {
 
     private int postCount;
 
-    private List<MyPostInfo> posts;
+    private List<PostInfo> posts;
 
 }

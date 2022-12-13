@@ -6,7 +6,7 @@ import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.email.EmailService;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
-import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostInfo;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.PostInfo;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
@@ -140,7 +140,7 @@ public class MemberServiceImpl implements MemberService {
 
         return MyPostsResponse.builder()
             .postCount(posts.size())
-            .posts(posts.stream().map(MyPostInfo::of).collect(Collectors.toList()))
+            .posts(posts.stream().map(PostInfo::of).collect(Collectors.toList()))
             .build();
     }
 }

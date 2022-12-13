@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
-import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostInfo;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.PostInfo;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse;
@@ -359,25 +359,25 @@ class MemberControllerTest {
     @WithMockUser
     public void getMyPosts() throws Exception {
         //given
-        MyPostInfo post1 = MyPostInfo.builder()
+        PostInfo post1 = PostInfo.builder()
             .postId(1L)
             .title("제목1")
             .createdAt(LocalDateTime.now())
             .build();
 
-        MyPostInfo post2 = MyPostInfo.builder()
+        PostInfo post2 = PostInfo.builder()
             .postId(1L)
             .title("제목1")
             .createdAt(LocalDateTime.now())
             .build();
 
-        MyPostInfo post3 = MyPostInfo.builder()
+        PostInfo post3 = PostInfo.builder()
             .postId(1L)
             .title("제목1")
             .createdAt(LocalDateTime.now())
             .build();
 
-        List<MyPostInfo> posts = List.of(post1, post2, post3);
+        List<PostInfo> posts = List.of(post1, post2, post3);
 
         MyPostsResponse response = MyPostsResponse.builder()
             .postCount(posts.size())

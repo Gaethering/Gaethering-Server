@@ -9,14 +9,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MyPostInfo {
+public class PostInfo {
 
     private Long postId;
     private String title;
     private LocalDateTime createdAt;
 
-    public static MyPostInfo of(Post post) {
-        return MyPostInfo.builder()
+    public static PostInfo of(Post post) {
+        return PostInfo.builder()
             .postId(post.getId())
             .title(post.getTitle())
             .createdAt(post.getCreatedAt())
