@@ -77,3 +77,39 @@ include::{snippets}/mypage/modify-nickname/failure/member-not-found/http-respons
 
 * Response Body
 include::{snippets}/mypage/modify-nickname/failure/member-not-found/response-body.adoc[]
+
+=== 내가 쓴 글 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/mypage/get-my-posts/success/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/mypage/get-my-posts/success/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/mypage/get-my-posts/success/request-body.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/get-my-posts/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/get-my-posts/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/mypage/get-my-posts/failure/member-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/mypage/get-my-posts/failure/member-not-found/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/mypage/get-my-posts/failure/member-not-found/request-body.adoc[]
+
+* HTTP Response
+include::{snippets}/mypage/get-my-posts/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/mypage/get-my-posts/failure/member-not-found/response-body.adoc[]

@@ -2,8 +2,12 @@ package com.gaethering.gaetheringserver.domain.member.service.member;
 
 import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
+import com.gaethering.gaetheringserver.domain.board.entity.Post;
+import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.email.EmailService;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.PostInfo;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
@@ -18,8 +22,10 @@ import com.gaethering.gaetheringserver.domain.pet.repository.PetRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
     private final PetRepository petRepository;
     private final S3Service s3Service;
 
@@ -122,5 +129,18 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         return LoginInfoResponse.of(member);
+    }
+
+    @Override
+    public MyPostsResponse getMyPosts(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
+
+        List<Post> posts = postRepository.findAllByMember(member);
+
+        return MyPostsResponse.builder()
+            .postCount(posts.size())
+            .posts(posts.stream().map(PostInfo::of).collect(Collectors.toList()))
+            .build();
     }
 }

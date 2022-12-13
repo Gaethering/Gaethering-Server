@@ -12,13 +12,13 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("${api-prefix-comment}")
+@RequestMapping("${api-prefix}")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/{postId}/comments")
+    @PostMapping("/boards/{postId}/comments")
     public ResponseEntity<CommentResponse> writeComment (Principal principal,
                                                          @PathVariable Long postId,
                                                          @RequestBody @Valid CommentRequest request) {
@@ -28,7 +28,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{postId}/comments/{commentId}")
+    @PutMapping("/boards/{postId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(Principal principal,
                                                          @PathVariable Long postId,
                                                          @PathVariable Long commentId,
@@ -40,7 +40,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{postId}/comments/{commentId}")
+    @DeleteMapping("/boards/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(Principal principal,
                                               @PathVariable Long postId,
                                               @PathVariable Long commentId) {

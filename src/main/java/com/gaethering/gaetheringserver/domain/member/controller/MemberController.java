@@ -7,6 +7,7 @@ import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.LogoutRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.ReissueTokenRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.auth.ReissueTokenResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse;
@@ -109,6 +110,12 @@ public class MemberController {
     public ResponseEntity<Void> reissueAccessToken(@RequestBody LogoutRequest request) {
         authService.logout(request);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/mypage/posts")
+    public ResponseEntity<MyPostsResponse> getMyPosts(Principal principal) {
+        MyPostsResponse response = memberService.getMyPosts(principal.getName());
+        return ResponseEntity.ok(response);
     }
 
 }
