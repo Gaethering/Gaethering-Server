@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
+import com.gaethering.gaetheringserver.domain.board.dto.PostImageUpdateResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
@@ -10,6 +11,7 @@ import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
+import com.gaethering.gaetheringserver.domain.board.exception.PostImageNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.repository.CategoryRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.HeartRepository;
@@ -102,15 +104,45 @@ public class PostServiceImpl implements PostService {
 		return PostUpdateResponse.from(post, member, heartCount.intValue());
 	}
 
+	@Override
+	@Transactional
+	public PostImageUpdateResponse uploadPostImage(String email, Long postId, MultipartFile file) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(MemberNotFoundException::new);
+
+		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+		if (!member.getId().equals(post.getMember().getId())) {
+			throw new NoPermissionUpdatePostException();
+		}
+
+		String imageUrl = s3Service.uploadImage(file);
+
+		PostImage postImage = PostImage.builder()
+			.imageUrl(imageUrl)
+			.isRepresentative(false)
+			.post(post)
+			.build();
+
+		PostImage savedPostImage = postImageRepository.save(postImage);
+
+		return PostImageUpdateResponse.builder()
+			.imageId(savedPostImage.getId())
+			.imageUrl(savedPostImage.getImageUrl())
+			.representative(savedPostImage.isRepresentative())
+			.createdAt(savedPostImage.getCreatedAt())
+			.build();
+	}
+
 	public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
 		List<String> imgUrls = new ArrayList<>();
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String imgUrl = s3Service.uploadImage(file);
-                imgUrls.add(imgUrl);
-            }
-        }
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String imgUrl = s3Service.uploadImage(file);
+				imgUrls.add(imgUrl);
+			}
+		}
 
 		return imgUrls;
 	}
