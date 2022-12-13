@@ -9,6 +9,32 @@ BE 최영훈
 
 == Member Api
 
+=== 회원 가입
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/sign-up/success/http-request.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/member/sign-up/success/request-parts.adoc[]
+
+* HTTP Response
+include::{snippets}/member/sign-up/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/sign-up/success/response-body.adoc[]
+
+==== 실패 - 중복된 이메일인 경우
+
+* HTTP Request
+include::{snippets}/member/sign-up/failure/duplicated-email/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/sign-up/failure/duplicated-email/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/sign-up/failure/duplicated-email/response-body.adoc[]
 
 === 회원(타인) 프로필 조회
 
