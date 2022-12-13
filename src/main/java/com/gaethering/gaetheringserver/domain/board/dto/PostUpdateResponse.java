@@ -47,15 +47,22 @@ public class PostUpdateResponse {
 	@Builder
 	public static class PostImageUrlResponse {
 
+		private Long imageId;
 		private String imageUrl;
 
 		@JsonProperty("isRepresentative")
 		private boolean representative;
 
+		private LocalDateTime createdAt;
+		private LocalDateTime updatedAt;
+
 		public static PostImageUrlResponse of(PostImage postImage) {
 			return PostImageUrlResponse.builder()
+				.imageId(postImage.getId())
 				.imageUrl(postImage.getImageUrl())
 				.representative(postImage.isRepresentative())
+				.createdAt(postImage.getCreatedAt())
+				.updatedAt(postImage.getUpdatedAt())
 				.build();
 		}
 	}
