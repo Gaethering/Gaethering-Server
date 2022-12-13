@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.domain.board.entity;
 
+import com.gaethering.gaetheringserver.core.entity.BaseTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostImage {
+public class PostImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
