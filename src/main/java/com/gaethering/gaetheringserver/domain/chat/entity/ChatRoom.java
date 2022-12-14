@@ -23,11 +23,11 @@ import lombok.NoArgsConstructor;
 public class ChatRoom extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "chatroom_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_room_id", nullable = false)
     private Long id;
 
-    private String key;
+    private String roomKey;
     private String description;
 
     @OneToMany(mappedBy = "chatRoom")
@@ -35,6 +35,10 @@ public class ChatRoom extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void addWalkingTime(WalkingTime walkingTime) {
         walkingTimes.add(walkingTime);

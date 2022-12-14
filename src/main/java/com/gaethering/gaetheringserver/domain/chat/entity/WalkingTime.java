@@ -22,15 +22,15 @@ import lombok.NoArgsConstructor;
 public class WalkingTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "walkingtime_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "walking_time_id", nullable = false)
     private Long id;
 
-    private String day;
+    private String dayOfWeek;
     private String time;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id")
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
     public void setChatRoom(ChatRoom chatRoom) {

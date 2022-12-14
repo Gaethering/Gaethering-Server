@@ -24,12 +24,12 @@ import lombok.NoArgsConstructor;
 public class ChatroomMember extends BaseCreatedTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_member_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_ID")
+    @JoinColumn(name = "chatroom_Id")
     private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
