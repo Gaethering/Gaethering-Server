@@ -66,7 +66,6 @@ class PostServiceTest {
     @InjectMocks
     private PostServiceImpl postService;
 
-
     @Test
     @DisplayName("게시물 작성 실패 - 회원 찾을 수 없는 경우")
     void writePost_Fail_NoUser() {
@@ -378,11 +377,6 @@ class PostServiceTest {
             .content("게시물 내용")
             .member(member1)
             .build();
-        PostImage postImage = PostImage.builder()
-            .imageUrl("https://test~")
-            .isRepresentative(false)
-            .post(post)
-            .build();
 
         given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member1));
@@ -424,11 +418,6 @@ class PostServiceTest {
             .content("게시물 내용")
             .member(member1)
             .build();
-        PostImage postImage = PostImage.builder()
-            .imageUrl("https://test~")
-            .isRepresentative(false)
-            .post(post)
-            .build();
 
         given(postRepository.findById(anyLong()))
             .willReturn(Optional.of(post));
@@ -452,5 +441,119 @@ class PostServiceTest {
         assertThat(response.getImageUrl()).isEqualTo(savedPostImage.getImageUrl());
         assertThat(response.isRepresentative()).isEqualTo(savedPostImage.isRepresentative());
         assertThat(response.getCreatedAt()).isEqualTo(savedPostImage.getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("게시물 사진 삭제 실패_회원 존재하지 않음")
+    void deletePostImageFailure_MemberNotFound() {
+        // given
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        // when
+        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
+            () -> postService.deletePostImage("test@test.com", 1L, 1L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 삭제 실패_게시물 존재하지 않음")
+    void deletePostImageFailure_PostNotFound() {
+        // given
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        // when
+        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
+            () -> postService.deletePostImage("test@test.com", 1L, 1L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 삭제 실패_게시물 작성자가 아닌 경우")
+    void deletePostImageFailure_NoPermissionUpdatePost() {
+        // given
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+        Member member2 = Member.builder()
+            .id(2L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member2));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+
+        // when
+        NoPermissionUpdatePostException exception = assertThrows(NoPermissionUpdatePostException.class,
+            () -> postService.deletePostImage(member2.getEmail(), 1L, 1L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.NO_PERMISSION_TO_UPDATE_POST);
+    }
+
+    @Test
+    @DisplayName("게시물 사진 삭제 성공")
+    void deletePostImageSuccess() {
+        // given
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+
+        given(memberRepository.findByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .build();
+
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+
+        PostImage postImage = PostImage.builder()
+            .id(1L)
+            .imageUrl("https://test~")
+            .isRepresentative(false)
+            .post(post)
+            .build();
+
+        given(postImageRepository.findById(anyLong()))
+            .willReturn(Optional.of(postImage));
+
+        // when
+        boolean result = postService.deletePostImage(member1.getEmail(), 1L, 1L);
+
+        // then
+        assertThat(result).isTrue();
     }
 }
