@@ -62,14 +62,16 @@ public class PostServiceImpl implements PostService {
 		List<String> imgUrls = getImageUrlsInRequest(files);
 
 		if (!imgUrls.isEmpty()) {
+			boolean representative = true;
 			for (String imgUrl : imgUrls) {
 				PostImage image = PostImage.builder()
 					.imageUrl(imgUrl)
-					.isRepresentative(false)
+					.isRepresentative(representative)
 					.post(post)
 					.build();
 
 				post.addImage(postImageRepository.save(image));
+				representative = false;
 			}
 		}
 
