@@ -149,3 +149,75 @@ include::{snippets}/boards/upload-post-image/failure/no-permission-update-post/h
 
 * Response Body
 include::{snippets}/boards/upload-post-image/failure/no-permission-update-post/response-body.adoc[]
+
+
+=== 게시글 이미지 삭제
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/delete-post-image/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/delete-post-image/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/delete-post-image/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/delete-post-image/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/delete-post-image/success/response-body.adoc[]
+
+
+==== 실패 - 회원 못 찾았을 경우
+
+* HTTP Request
+include::{snippets}/boards/delete-post-image/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/delete-post-image/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/delete-post-image/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/delete-post-image/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/delete-post-image/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 게시물이 존재하지 않을 경우
+
+* HTTP Request
+include::{snippets}/boards/delete-post-image/failure/post-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/delete-post-image/failure/post-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/delete-post-image/failure/post-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/delete-post-image/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/delete-post-image/failure/post-not-found/response-body.adoc[]
+
+==== 실패 - 게시물 작성자가 아닐 경우
+
+* HTTP Request
+include::{snippets}/boards/delete-post-image/failure/no-permission-update-post/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/delete-post-image/failure/no-permission-update-post/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/delete-post-image/failure/no-permission-update-post/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/delete-post-image/failure/no-permission-update-post/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/delete-post-image/failure/no-permission-update-post/response-body.adoc[]
