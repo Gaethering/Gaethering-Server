@@ -29,7 +29,7 @@ public class ChatroomMember extends BaseCreatedTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_Id")
+    @JoinColumn(name = "chat_room_Id")
     private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
