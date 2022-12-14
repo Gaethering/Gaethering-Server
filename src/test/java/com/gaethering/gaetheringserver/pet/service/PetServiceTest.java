@@ -447,7 +447,7 @@ class PetServiceTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         MockMultipartFile file = new MockMultipartFile("test", "test.txt", "image/png",
@@ -479,7 +479,7 @@ class PetServiceTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         MockMultipartFile file = new MockMultipartFile("test", "test.txt", "image/png",
@@ -519,7 +519,7 @@ class PetServiceTest {
             .breed("말티즈")
             .petGender("FEMALE")
             .description("___")
-            .isNeutered(true)
+            .neutered(true)
             .build();
 
         MockMultipartFile file = new MockMultipartFile("test", "test.txt", "image/png",
