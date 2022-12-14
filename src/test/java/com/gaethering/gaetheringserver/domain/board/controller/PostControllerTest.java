@@ -14,11 +14,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParts;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -417,7 +415,7 @@ class PostControllerTest {
             .andDo(document("boards/upload-post-image/failure/member-not-found",
                 getDocumentRequest(),
                 getDocumentResponse(),
-                pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+                pathParameters(parameterWithName("postId").description("이미지 수정할 게시글 Id")),
                 requestHeaders(
                     headerWithName("Authorization").description("Access Token"))
             ));
@@ -452,7 +450,7 @@ class PostControllerTest {
 			.andDo(document("boards/upload-post-image/failure/post-not-found",
 				getDocumentRequest(),
 				getDocumentResponse(),
-				pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+				pathParameters(parameterWithName("postId").description("이미지 수정할 게시글 Id")),
 				requestHeaders(
 					headerWithName("Authorization").description("Access Token"))
 			));
@@ -487,7 +485,7 @@ class PostControllerTest {
 			.andDo(document("boards/upload-post-image/failure/no-permission-update-post",
 				getDocumentRequest(),
 				getDocumentResponse(),
-				pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+				pathParameters(parameterWithName("postId").description("이미지 수정할 게시글 Id")),
 				requestHeaders(
 					headerWithName("Authorization").description("Access Token"))
 			));
@@ -533,7 +531,129 @@ class PostControllerTest {
 			.andDo(document("boards/upload-post-image/success",
 				getDocumentRequest(),
 				getDocumentResponse(),
-				pathParameters(parameterWithName("postId").description("수정할 게시글 Id")),
+				pathParameters(parameterWithName("postId").description("이미지 수정할 게시글 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 이미지 삭제 실패 - 회원 찾을 수 없는 경우")
+	@WithMockUser
+	void deletePostImageFailure_MemberNotFound() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
+
+		given(postService.deletePostImage(anyString(), anyLong(), anyLong()))
+			.willThrow(new MemberNotFoundException());
+
+		//when
+		//then
+		mockMvc.perform(delete("/api/boards/{postId}/images/{imageId}", 1L, 1L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post-image/failure/member-not-found",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("이미지 삭제할 게시글 Id"),
+					parameterWithName("imageId").description("삭제할 이미지 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 이미지 삭제 실패 - 게시물 찾을 수 없는 경우")
+	@WithMockUser
+	void deletePostImageFailure_PostNotFound() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
+
+		given(postService.deletePostImage(anyString(), anyLong(), anyLong()))
+			.willThrow(new PostNotFoundException());
+
+		//when
+		//then
+		mockMvc.perform(delete("/api/boards/{postId}/images/{imageId}", 1L, 1L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(POST_NOT_FOUND.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post-image/failure/post-not-found",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("이미지 삭제할 게시글 Id"),
+					parameterWithName("imageId").description("삭제할 이미지 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 이미지 삭제 실패 - 게시물 작성자가 아닐 경우")
+	@WithMockUser
+	void deletePostImageFailure_NoPermissionUpdatePost() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
+
+		given(postService.deletePostImage(anyString(), anyLong(), anyLong()))
+			.willThrow(new NoPermissionUpdatePostException());
+
+		//when
+		//then
+		mockMvc.perform(delete("/api/boards/{postId}/images/{imageId}", 1L, 1L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(NO_PERMISSION_TO_UPDATE_POST.getCode()))
+			.andExpect(jsonPath("$.message").value(NO_PERMISSION_TO_UPDATE_POST.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post-image/failure/no-permission-update-post",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("이미지 삭제할 게시글 Id"),
+					parameterWithName("imageId").description("삭제할 이미지 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 이미지 삭제 성공")
+	@WithMockUser
+	void deletePostImageSuccess() throws Exception {
+		//given
+		String email = "test@test.com";
+		Principal principal = Mockito.mock(Principal.class);
+		given(principal.getName()).willReturn(email);
+
+		given(postService.deletePostImage(anyString(), anyLong(), anyLong()))
+			.willReturn(true);
+
+		//when
+		//then
+		mockMvc.perform(delete("/api/boards/{postId}/images/{imageId}", 1L, 1L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("boards/delete-post-image/success",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("이미지 삭제할 게시글 Id"),
+					parameterWithName("imageId").description("삭제할 이미지 Id")),
 				requestHeaders(
 					headerWithName("Authorization").description("Access Token"))
 			));
