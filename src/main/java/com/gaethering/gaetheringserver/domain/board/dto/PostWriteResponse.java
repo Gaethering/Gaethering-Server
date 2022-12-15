@@ -18,7 +18,7 @@ public class PostWriteResponse {
 
     private String content;
 
-    private List<String> imageUrls;
+    private List<PostWriteImageUrlResponse> imageUrls;
 
     private String categoryName;
 
@@ -28,5 +28,5 @@ public class PostWriteResponse {
 
     private String nickname;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 }
