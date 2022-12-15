@@ -27,7 +27,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     restart: always
     volumes:
-      - mysql_data = /var/lib/mysql
+      - /var/lib/mysql
 
   redis:
     image: redis

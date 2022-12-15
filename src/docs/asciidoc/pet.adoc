@@ -1,0 +1,49 @@
+= Spring REST DOCS
+BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Pet Api
+
+=== 펫 추가 등록
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/pet/register/success/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/member/get-profile/success/request-headers.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/pet/register/success/request-parts.adoc[]
+
+* HTTP Request Parts Data
+include::{snippets}/pet/register/success/request-part-data-fields.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/register/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/register/success/response-body.adoc[]
+
+==== 실패 - 최대 등록 가능 수인 3마리를 넘었을 경우
+
+* HTTP Request
+include::{snippets}/pet/register/failure/exceed-max/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/pet/register/failure/exceed-max/request-headers.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/pet/register/failure/exceed-max/request-parts.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/register/failure/exceed-max/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/register/failure/exceed-max/response-body.adoc[]
