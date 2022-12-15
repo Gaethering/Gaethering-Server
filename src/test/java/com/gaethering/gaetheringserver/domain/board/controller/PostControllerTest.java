@@ -23,11 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse.PostImageUrlResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
@@ -87,6 +83,17 @@ class PostControllerTest {
 			.categoryId(1L)
 			.build();
 
+
+		PostWriteImageUrlResponse response1 = PostWriteImageUrlResponse.builder()
+				.imageUrl("https://test1")
+				.representative(true)
+				.build();
+
+		PostWriteImageUrlResponse response2 = PostWriteImageUrlResponse.builder()
+				.imageUrl("https://test2")
+				.representative(false)
+				.build();
+
 		LocalDateTime date = LocalDateTime.of(2020, 12, 31, 23, 59, 59);
 
 		PostWriteResponse response = PostWriteResponse.builder()
@@ -94,10 +101,10 @@ class PostControllerTest {
 			.content("내용입니다")
 			.categoryName("카테고리")
 			.nickname("닉네임")
-			.imageUrls(List.of("test1", "test2"))
+			.imageUrls(List.of(response1, response2))
 			.heartCnt(0)
 			.viewCnt(0)
-			.createAt(date)
+			.createdAt(date)
 			.build();
 
 		Mockito.when(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
@@ -117,7 +124,10 @@ class PostControllerTest {
 				.header("Authorization", "accessToken"))
 			.andExpect(jsonPath("$.title").value(response.getTitle()))
 			.andExpect(jsonPath("$.content").value(response.getContent()))
-			.andExpect(jsonPath("$.imageUrls.[0]").value(response.getImageUrls().get(0)))
+			.andExpect(jsonPath("$.imageUrls[0].imageUrl").value(
+						response.getImageUrls().get(0).getImageUrl()))
+			.andExpect(jsonPath("$.imageUrls[0].isRepresentative").value(
+						response.getImageUrls().get(0).isRepresentative()))
 			.andExpect(
 				jsonPath("$.categoryName").value(String.valueOf(response.getCategoryName())))
 			.andExpect(
@@ -125,7 +135,7 @@ class PostControllerTest {
 			.andExpect(
 				jsonPath("$.heartCnt").value(String.valueOf(response.getHeartCnt())))
 			.andExpect(jsonPath("$.nickname").value(response.getNickname()))
-			.andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
+			.andExpect(jsonPath("$.createdAt").value(String.valueOf(response.getCreatedAt())))
 			.andExpect(status().isCreated())
 			.andDo(print())
 			.andDo(document("boards/write-post/success",
