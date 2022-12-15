@@ -18,11 +18,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
@@ -42,6 +44,13 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:5173")
+            .allowedMethods("*");
     }
 
     @Bean
@@ -68,7 +77,8 @@ public class SecurityConfig {
         http.authorizeRequests()
             .antMatchers("/api/members/sign-up", "/api/members/auth/login",
                 "/api/members/auth/reissue-token", "/exception/accessDenied",
-                "/exception/authenticationFailed", "/docs/**").permitAll()
+                "/exception/authenticationFailed", "/docs/**", "/api/members/email-auth",
+                "/api/members/email-confirm").permitAll()
 
             .antMatchers("/**/admin/**").hasAuthority("ROLE_ADMIN")
             .anyRequest().authenticated();
