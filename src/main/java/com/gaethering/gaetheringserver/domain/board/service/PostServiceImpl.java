@@ -1,11 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
@@ -20,14 +16,13 @@ import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +57,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         List<String> imgUrls = getImageUrlsInRequest(files);
+        List<PostWriteImageUrlResponse> imageUrlResponses = new ArrayList<>();
 
         if (!imgUrls.isEmpty()) {
             boolean representative = true;
@@ -73,6 +69,12 @@ public class PostServiceImpl implements PostService {
                         .build();
 
                 post.addImage(postImageRepository.save(image));
+
+                imageUrlResponses.add(PostWriteImageUrlResponse.builder()
+                        .representative(representative)
+                        .imageUrl(image.getImageUrl())
+                        .build());
+
                 representative = false;
             }
         }
@@ -81,10 +83,10 @@ public class PostServiceImpl implements PostService {
                 .categoryName(post.getCategory().getCategoryName())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .imageUrls(imgUrls)
+                .imageUrls(imageUrlResponses)
                 .viewCnt(0)
                 .heartCnt(0)
-                .createAt(post.getCreatedAt())
+                .createdAt(post.getCreatedAt())
                 .nickname(post.getMember().getNickname())
                 .build();
     }
