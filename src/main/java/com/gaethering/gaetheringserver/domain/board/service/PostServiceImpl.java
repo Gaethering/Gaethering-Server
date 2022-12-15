@@ -2,8 +2,8 @@ package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
 import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
@@ -40,8 +40,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional
-	public PostResponse writePost(String email,
-		List<MultipartFile> files, PostRequest request) {
+	public PostWriteResponse writePost(String email,
+									   List<MultipartFile> files, PostWriteRequest request) {
 
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new MemberNotFoundException());
@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
 			}
 		}
 
-		return PostResponse.builder()
+		return PostWriteResponse.builder()
 			.categoryName(post.getCategory().getCategoryName())
 			.title(post.getTitle())
 			.content(post.getContent())
