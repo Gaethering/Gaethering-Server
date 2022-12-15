@@ -8,6 +8,51 @@
 
 == Board Api
 
+=== 게시글 작성하기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/write-post/success/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/write-post/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/write-post/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/write-post/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 경우
+
+* HTTP Request
+include::{snippets}/boards/write-post/failure/member-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/write-post/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/write-post/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/write-post/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 카테고리 못 찾았을 경우
+
+* HTTP Request
+include::{snippets}/boards/write-post/failure/category-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/write-post/failure/category-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/write-post/failure/category-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/write-post/failure/category-not-found/response-body.adoc[]
+
+
 === 게시글 수정하기
 
 ==== 성공
