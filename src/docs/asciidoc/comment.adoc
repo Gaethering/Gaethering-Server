@@ -1,0 +1,238 @@
+= Spring REST DOCS
+BE 오은정
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Comment Api
+
+
+=== 댓글 작성
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/comments/write-comment/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/write-comment/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/write-comment/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/write-comment/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/write-comment/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/write-comment/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/write-comment/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/write-comment/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/write-comment/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/write-comment/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 게시물 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/write-comment/failure/post-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/write-comment/failure/post-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/write-comment/failure/post-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/write-comment/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/write-comment/failure/post-not-found/response-body.adoc[]
+
+=== 댓글 수정
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/comments/update-comment/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/update-comment/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/update-comment/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/update-comment/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/update-comment/success/response-body.adoc[]
+
+==== 실패 - 게시물 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/update-comment/failure/post-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/update-comment/failure/post-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/update-comment/failure/post-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/update-comment/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/update-comment/failure/post-not-found/response-body.adoc[]
+
+==== 실패 - 댓글 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/update-comment/failure/comment-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/update-comment/failure/comment-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/update-comment/failure/comment-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/update-comment/failure/comment-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/update-comment/failure/comment-not-found/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/update-comment/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/update-comment/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/update-comment/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/update-comment/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/update-comment/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 수정 권한이 없을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/update-comment/failure/un-match-writer/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/update-comment/failure/un-match-writer/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/update-comment/failure/un-match-writer/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/update-comment/failure/un-match-writer/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/update-comment/failure/un-match-writer/response-body.adoc[]
+
+=== 댓글 삭제
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/comments/delete-comment/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/delete-comment/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/delete-comment/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/delete-comment/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/delete-comment/success/response-body.adoc[]
+
+==== 실패 - 게시물 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/delete-comment/failure/post-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/delete-comment/failure/post-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/delete-comment/failure/post-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/delete-comment/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/delete-comment/failure/post-not-found/response-body.adoc[]
+
+==== 실패 - 댓글 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/delete-comment/failure/comment-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/delete-comment/failure/comment-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/delete-comment/failure/comment-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/delete-comment/failure/comment-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/delete-comment/failure/comment-not-found/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/delete-comment/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/delete-comment/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/delete-comment/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/delete-comment/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/delete-comment/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 삭제 권한이 없을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/response-body.adoc[]
