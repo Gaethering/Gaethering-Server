@@ -11,6 +11,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentResponse {
 
+    private Long commentId;
+
+    private Long memberId;
+
     private String comment;
 
     private String nickname;
