@@ -98,7 +98,6 @@ include::{snippets}/boards/upload-post-image/success/http-response.adoc[]
 * Response Body
 include::{snippets}/boards/upload-post-image/success/response-body.adoc[]
 
-
 ==== 실패 - 회원 못 찾았을 경우
 
 * HTTP Request
@@ -169,7 +168,6 @@ include::{snippets}/boards/delete-post-image/success/http-response.adoc[]
 
 * Response Body
 include::{snippets}/boards/delete-post-image/success/response-body.adoc[]
-
 
 ==== 실패 - 회원 못 찾았을 경우
 
