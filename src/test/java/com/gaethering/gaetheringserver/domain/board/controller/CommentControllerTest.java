@@ -60,13 +60,13 @@ class CommentControllerTest {
     void writeComment_Success () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         LocalDateTime date = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
 
         CommentResponse response = CommentResponse.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .nickname("닉네임")
                 .createAt(date)
                 .build();
@@ -81,7 +81,7 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
-                .andExpect(jsonPath("$.comment").value(response.getComment()))
+                .andExpect(jsonPath("$.comment").value(response.getContent()))
                 .andExpect(jsonPath("$.nickname").value(response.getNickname()))
                 .andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
                 .andExpect(status().isCreated())
@@ -99,7 +99,7 @@ class CommentControllerTest {
     void write_Comment_fail_NoUser () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
@@ -129,7 +129,7 @@ class CommentControllerTest {
     void write_Comment_fail_NoPost () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
@@ -273,13 +273,13 @@ class CommentControllerTest {
     void updateComment_Success () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정 댓글입니다")
+                .content("수정 댓글입니다")
                 .build();
 
         LocalDateTime date = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
 
         CommentResponse response = CommentResponse.builder()
-                .comment("수정 댓글입니다")
+                .content("수정 댓글입니다")
                 .nickname("닉네임")
                 .createAt(date)
                 .build();
@@ -294,7 +294,7 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
-                .andExpect(jsonPath("$.comment").value(response.getComment()))
+                .andExpect(jsonPath("$.comment").value(response.getContent()))
                 .andExpect(jsonPath("$.nickname").value(response.getNickname()))
                 .andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
                 .andExpect(status().isOk())
@@ -313,7 +313,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoUser () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -344,7 +344,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoPost () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -375,7 +375,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoComment () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -406,7 +406,7 @@ class CommentControllerTest {
     void update_Comment_fail_UNMATCH_writer () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))

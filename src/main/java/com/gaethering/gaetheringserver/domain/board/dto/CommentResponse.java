@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentResponse {
 
-    private String comment;
+    private String content;
 
     private String nickname;
 

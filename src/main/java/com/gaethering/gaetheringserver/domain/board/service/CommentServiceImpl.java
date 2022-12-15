@@ -40,13 +40,13 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = Comment.builder()
                 .post(post)
                 .member(member)
-                .comment(request.getComment())
+                .content(request.getContent())
                 .build();
 
         commentRepository.save(comment);
 
         return CommentResponse.builder()
-                .comment(comment.getComment())
+                .content(comment.getContent())
                 .nickname(comment.getMember().getNickname())
                 .createAt(comment.getCreatedAt())
                 .build();
@@ -70,11 +70,11 @@ public class CommentServiceImpl implements CommentService {
         if (!Objects.equals(member, comment.getMember())) {
             throw new NoPermissionUpdateCommentException();
         }
-        comment.setComment(request.getComment());
+        comment.setComment(request.getContent());
         commentRepository.save(comment);
 
         return CommentResponse.builder()
-                .comment(comment.getComment())
+                .content(comment.getContent())
                 .nickname(comment.getMember().getNickname())
                 .createAt(comment.getCreatedAt())
                 .build();

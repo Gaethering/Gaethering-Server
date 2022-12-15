@@ -11,5 +11,5 @@ import javax.validation.constraints.NotBlank;
 public class CommentRequest {
 
     @NotBlank
-    private String comment;
+    private String content;
 }
