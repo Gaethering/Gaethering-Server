@@ -46,9 +46,11 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         return CommentResponse.builder()
+                .memberId(comment.getMember().getId())
+                .commentId(comment.getId())
                 .content(comment.getContent())
                 .nickname(comment.getMember().getNickname())
-                .createAt(comment.getCreatedAt())
+                .createdAt(comment.getCreatedAt())
                 .build();
     }
 
@@ -74,9 +76,11 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         return CommentResponse.builder()
+                .memberId(comment.getMember().getId())
+                .commentId(comment.getId())
                 .content(comment.getContent())
                 .nickname(comment.getMember().getNickname())
-                .createAt(comment.getCreatedAt())
+                .createdAt(comment.getCreatedAt())
                 .build();
     }
 
