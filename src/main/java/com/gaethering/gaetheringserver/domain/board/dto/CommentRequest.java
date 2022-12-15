@@ -10,6 +10,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CommentRequest {
 
-    @NotBlank
+    @NotBlank(message = "댓글은 필수 입력사항입니다.")
     private String content;
 }
