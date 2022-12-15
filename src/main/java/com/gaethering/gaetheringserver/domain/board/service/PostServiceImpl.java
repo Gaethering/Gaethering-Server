@@ -20,8 +20,10 @@ import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,143 +33,143 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-	private final S3Service s3Service;
-	private final MemberRepository memberRepository;
-	private final PostImageRepository postImageRepository;
-	private final PostRepository postRepository;
-	private final CategoryRepository categoryRepository;
-	private final HeartRepository heartRepository;
+    private final S3Service s3Service;
+    private final MemberRepository memberRepository;
+    private final PostImageRepository postImageRepository;
+    private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
+    private final HeartRepository heartRepository;
 
-	@Override
-	@Transactional
-	public PostWriteResponse writePost(String email,
-									   List<MultipartFile> files, PostWriteRequest request) {
+    @Override
+    @Transactional
+    public PostWriteResponse writePost(String email,
+                                       List<MultipartFile> files, PostWriteRequest request) {
 
-		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> new MemberNotFoundException());
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
 
-		Category category = categoryRepository.findById(request.getCategoryId())
-			.orElseThrow(() -> new CategoryNotFoundException());
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException());
 
-		Post post = Post.builder()
-			.title(request.getTitle())
-			.content(request.getContent())
-			.category(category)
-			.member(member)
-			.postImages(new ArrayList<>())
-			.build();
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .category(category)
+                .member(member)
+                .postImages(new ArrayList<>())
+                .build();
 
-		postRepository.save(post);
+        postRepository.save(post);
 
-		List<String> imgUrls = getImageUrlsInRequest(files);
+        List<String> imgUrls = getImageUrlsInRequest(files);
 
-		if (!imgUrls.isEmpty()) {
-			boolean representative = true;
-			for (String imgUrl : imgUrls) {
-				PostImage image = PostImage.builder()
-					.imageUrl(imgUrl)
-					.isRepresentative(representative)
-					.post(post)
-					.build();
+        if (!imgUrls.isEmpty()) {
+            boolean representative = true;
+            for (String imgUrl : imgUrls) {
+                PostImage image = PostImage.builder()
+                        .imageUrl(imgUrl)
+                        .isRepresentative(representative)
+                        .post(post)
+                        .build();
 
-				post.addImage(postImageRepository.save(image));
-				representative = false;
-			}
-		}
+                post.addImage(postImageRepository.save(image));
+                representative = false;
+            }
+        }
 
-		return PostWriteResponse.builder()
-			.categoryName(post.getCategory().getCategoryName())
-			.title(post.getTitle())
-			.content(post.getContent())
-			.imageUrls(imgUrls)
-			.viewCnt(0)
-			.heartCnt(0)
-			.createAt(post.getCreatedAt())
-			.nickname(post.getMember().getNickname())
-			.build();
-	}
+        return PostWriteResponse.builder()
+                .categoryName(post.getCategory().getCategoryName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imageUrls(imgUrls)
+                .viewCnt(0)
+                .heartCnt(0)
+                .createAt(post.getCreatedAt())
+                .nickname(post.getMember().getNickname())
+                .build();
+    }
 
-	@Override
-	@Transactional
-	public PostUpdateResponse updatePost(String email, Long postId, PostUpdateRequest request) {
-		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(MemberNotFoundException::new);
+    @Override
+    @Transactional
+    public PostUpdateResponse updatePost(String email, Long postId, PostUpdateRequest request) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
 
-		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
-		if (!member.getId().equals(post.getMember().getId())) {
-			throw new NoPermissionUpdatePostException();
-		}
+        if (!member.getId().equals(post.getMember().getId())) {
+            throw new NoPermissionUpdatePostException();
+        }
 
-		Long heartCount = heartRepository.countByPost(post);
+        Long heartCount = heartRepository.countByPost(post);
 
-		post.updatePost(request.getTitle(), request.getContent());
+        post.updatePost(request.getTitle(), request.getContent());
 
-		return PostUpdateResponse.from(post, member, heartCount.intValue());
-	}
+        return PostUpdateResponse.from(post, member, heartCount.intValue());
+    }
 
-	@Override
-	@Transactional
-	public PostImageUploadResponse uploadPostImage(String email, Long postId, MultipartFile file) {
-		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(MemberNotFoundException::new);
+    @Override
+    @Transactional
+    public PostImageUploadResponse uploadPostImage(String email, Long postId, MultipartFile file) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
 
-		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
-		if (!member.getId().equals(post.getMember().getId())) {
-			throw new NoPermissionUpdatePostException();
-		}
+        if (!member.getId().equals(post.getMember().getId())) {
+            throw new NoPermissionUpdatePostException();
+        }
 
-		String imageUrl = s3Service.uploadImage(file);
+        String imageUrl = s3Service.uploadImage(file);
 
-		PostImage postImage = PostImage.builder()
-			.imageUrl(imageUrl)
-			.isRepresentative(false)
-			.post(post)
-			.build();
+        PostImage postImage = PostImage.builder()
+                .imageUrl(imageUrl)
+                .isRepresentative(false)
+                .post(post)
+                .build();
 
-		PostImage savedPostImage = postImageRepository.save(postImage);
+        PostImage savedPostImage = postImageRepository.save(postImage);
 
-		return PostImageUploadResponse.builder()
-			.imageId(savedPostImage.getId())
-			.imageUrl(savedPostImage.getImageUrl())
-			.representative(savedPostImage.isRepresentative())
-			.createdAt(savedPostImage.getCreatedAt())
-			.build();
-	}
+        return PostImageUploadResponse.builder()
+                .imageId(savedPostImage.getId())
+                .imageUrl(savedPostImage.getImageUrl())
+                .representative(savedPostImage.isRepresentative())
+                .createdAt(savedPostImage.getCreatedAt())
+                .build();
+    }
 
-	@Override
-	@Transactional
-	public boolean deletePostImage(String email, Long postId, Long imageId) {
+    @Override
+    @Transactional
+    public boolean deletePostImage(String email, Long postId, Long imageId) {
 
-		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
 
-		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
-		if (!member.getId().equals(post.getMember().getId())) {
-			throw new NoPermissionUpdatePostException();
-		}
+        if (!member.getId().equals(post.getMember().getId())) {
+            throw new NoPermissionUpdatePostException();
+        }
 
-		PostImage postImage = postImageRepository.findById(imageId)
-			.orElseThrow(PostImageNotFoundException::new);
+        PostImage postImage = postImageRepository.findById(imageId)
+                .orElseThrow(PostImageNotFoundException::new);
 
-		s3Service.removeImage(postImage.getImageUrl());
-		postImageRepository.delete(postImage);
+        s3Service.removeImage(postImage.getImageUrl());
+        postImageRepository.delete(postImage);
 
-		return true;
-	}
+        return true;
+    }
 
-	public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
-		List<String> imgUrls = new ArrayList<>();
+    public List<String> getImageUrlsInRequest(List<MultipartFile> files) {
+        List<String> imgUrls = new ArrayList<>();
 
-		for (MultipartFile file : files) {
-			if (!file.isEmpty()) {
-				String imgUrl = s3Service.uploadImage(file);
-				imgUrls.add(imgUrl);
-			}
-		}
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String imgUrl = s3Service.uploadImage(file);
+                imgUrls.add(imgUrl);
+            }
+        }
 
-		return imgUrls;
-	}
+        return imgUrls;
+    }
 }
