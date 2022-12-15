@@ -17,8 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
@@ -69,7 +69,7 @@ class PostControllerTest {
         MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
                 MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .categoryId(1L)
@@ -77,7 +77,7 @@ class PostControllerTest {
 
         LocalDateTime date = LocalDateTime.of(2020, 12, 31, 23, 59, 59);
 
-        PostResponse response = PostResponse.builder()
+        PostWriteResponse response = PostWriteResponse.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .categoryName("카테고리")
@@ -88,7 +88,7 @@ class PostControllerTest {
                 .createAt(date)
                 .build();
 
-        Mockito.when(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+        Mockito.when(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
                 .thenReturn(response);
 
         String requestJson = objectMapper.writeValueAsString(request);
@@ -135,13 +135,13 @@ class PostControllerTest {
         MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
                 MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .categoryId(1L)
                 .build();
 
-        given(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+        given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
                 .willThrow(new MemberNotFoundException());
 
         String requestJson = objectMapper.writeValueAsString(request);
@@ -178,13 +178,13 @@ class PostControllerTest {
         MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
                 MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .categoryId(1L)
                 .build();
 
-        given(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+        given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
                 .willThrow(new CategoryNotFoundException());
 
         String requestJson = objectMapper.writeValueAsString(request);

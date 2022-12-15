@@ -10,8 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
-import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
@@ -59,7 +59,7 @@ class PostServiceTest {
         given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.empty());
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
             .categoryId(1L)
@@ -87,7 +87,7 @@ class PostServiceTest {
         given(categoryRepository.findById(anyLong()))
             .willReturn(Optional.empty());
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
             .categoryId(1L)
@@ -137,7 +137,7 @@ class PostServiceTest {
         given(categoryRepository.findById(anyLong()))
             .willReturn(Optional.of(category));
 
-        PostRequest request = PostRequest.builder()
+        PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
             .categoryId(1L)
@@ -145,7 +145,7 @@ class PostServiceTest {
 
         ArgumentCaptor<Post> captor = ArgumentCaptor.forClass(Post.class);
 
-        PostResponse response
+        PostWriteResponse response
             = postService.writePost(anyString(), null, request);
 
         assertEquals(0, response.getImageUrls().size());

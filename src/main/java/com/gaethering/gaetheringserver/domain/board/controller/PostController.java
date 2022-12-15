@@ -1,7 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
-import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
 import java.security.Principal;
 import java.util.List;
@@ -24,13 +24,13 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/boards")
-    public ResponseEntity<PostResponse> writePost
-        (@RequestPart(value = "data") @Valid PostRequest request,
+    public ResponseEntity<PostWriteResponse> writePost
+        (@RequestPart(value = "data") @Valid PostWriteRequest request,
             @RequestPart(value = "images", required = false) List<MultipartFile> files,
             Principal principal) {
 
         String email = principal.getName();
-        PostResponse response = postService.writePost(email, files, request);
+        PostWriteResponse response = postService.writePost(email, files, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .contentType(MediaType.APPLICATION_JSON).body(response);
