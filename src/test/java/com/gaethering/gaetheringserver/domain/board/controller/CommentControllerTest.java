@@ -18,10 +18,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
 
@@ -34,6 +34,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,15 +62,17 @@ class CommentControllerTest {
     void writeComment_Success () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         LocalDateTime date = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
 
         CommentResponse response = CommentResponse.builder()
-                .comment("댓글입니다")
+                .commentId(1L)
+                .memberId(1L)
+                .content("댓글입니다")
                 .nickname("닉네임")
-                .createAt(date)
+                .createdAt(date)
                 .build();
 
         Mockito.when(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
@@ -76,19 +80,22 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
-                .andExpect(jsonPath("$.comment").value(response.getComment()))
+                .andExpect(jsonPath("$.commentId").value(String.valueOf(response.getCommentId())))
+                .andExpect(jsonPath("$.memberId").value(String.valueOf(response.getMemberId())))
+                .andExpect(jsonPath("$.content").value(response.getContent()))
                 .andExpect(jsonPath("$.nickname").value(response.getNickname()))
-                .andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
+                .andExpect(jsonPath("$.createdAt").value(String.valueOf(response.getCreatedAt())))
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("boards/comments/write-comment/success",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("댓글 작성하고자 하는 게시물 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -99,7 +106,7 @@ class CommentControllerTest {
     void write_Comment_fail_NoUser () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
@@ -107,7 +114,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -119,6 +126,7 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/write-comment/failure/member-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("댓글 작성하고자 하는 게시물 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -129,7 +137,7 @@ class CommentControllerTest {
     void write_Comment_fail_NoPost () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
@@ -137,7 +145,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -149,6 +157,7 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/write-comment/failure/post-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("댓글 작성하고자 하는 게시물 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -162,7 +171,7 @@ class CommentControllerTest {
         Mockito.when(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .thenReturn(true);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(status().isOk())
@@ -170,6 +179,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/delete-comment/success",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("삭제하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("삭제하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -183,7 +194,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new MemberNotFoundException());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
@@ -193,6 +204,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/delete-comment/failure/member-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("삭제하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("삭제하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -206,7 +219,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new PostNotFoundException());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
@@ -216,6 +229,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/delete-comment/failure/post-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("삭제하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("삭제하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -229,7 +244,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new CommentNotFoundException());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(COMMENT_NOT_FOUND.getCode()))
@@ -239,6 +254,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/delete-comment/failure/comment-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("삭제하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("삭제하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -252,7 +269,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new NoPermissionDeleteCommentException());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(NO_PERMISSION_TO_DELETE_COMMENT.getCode()))
@@ -262,6 +279,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/delete-comment/failure/un-match-writer",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("삭제하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("삭제하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -273,15 +292,17 @@ class CommentControllerTest {
     void updateComment_Success () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정 댓글입니다")
+                .content("수정 댓글입니다")
                 .build();
 
         LocalDateTime date = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
 
         CommentResponse response = CommentResponse.builder()
-                .comment("수정 댓글입니다")
+                .commentId(1L)
+                .memberId(1L)
+                .content("수정 댓글입니다")
                 .nickname("닉네임")
-                .createAt(date)
+                .createdAt(date)
                 .build();
 
         Mockito.when(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -289,19 +310,23 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
-                .andExpect(jsonPath("$.comment").value(response.getComment()))
+                .andExpect(jsonPath("$.commentId").value(String.valueOf(response.getCommentId())))
+                .andExpect(jsonPath("$.memberId").value(String.valueOf(response.getMemberId())))
+                .andExpect(jsonPath("$.content").value(response.getContent()))
                 .andExpect(jsonPath("$.nickname").value(response.getNickname()))
-                .andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
+                .andExpect(jsonPath("$.createdAt").value(String.valueOf(response.getCreatedAt())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("boards/comments/update-comment/success",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("수정하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("수정하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -313,7 +338,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoUser () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -321,7 +346,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -333,6 +358,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/update-comment/failure/member-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("수정하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("수정하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -344,7 +371,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoPost () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -352,7 +379,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -364,6 +391,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/update-comment/failure/post-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("수정하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("수정하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -375,7 +404,7 @@ class CommentControllerTest {
     void update_Comment_fail_NoComment () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -383,7 +412,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -395,6 +424,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/update-comment/failure/comment-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("수정하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("수정하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));
@@ -406,7 +437,7 @@ class CommentControllerTest {
     void update_Comment_fail_UNMATCH_writer () throws Exception {
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
@@ -414,7 +445,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -426,6 +457,8 @@ class CommentControllerTest {
                 .andDo(document("boards/comments/update-comment/failure/un-match-writer",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(parameterWithName("postId").description("수정하고자 하는 댓글의 게시물 id"),
+                                parameterWithName("commentId").description("수정하고자 하는 댓글 id")),
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token"))
                 ));

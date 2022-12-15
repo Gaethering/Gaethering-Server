@@ -23,11 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse.PostImageUrlResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
@@ -81,26 +77,37 @@ class PostControllerTest {
 		MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
 			MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-		PostRequest request = PostRequest.builder()
+		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
 			.categoryId(1L)
 			.build();
 
+
+		PostWriteImageUrlResponse response1 = PostWriteImageUrlResponse.builder()
+				.imageUrl("https://test1")
+				.representative(true)
+				.build();
+
+		PostWriteImageUrlResponse response2 = PostWriteImageUrlResponse.builder()
+				.imageUrl("https://test2")
+				.representative(false)
+				.build();
+
 		LocalDateTime date = LocalDateTime.of(2020, 12, 31, 23, 59, 59);
 
-		PostResponse response = PostResponse.builder()
+		PostWriteResponse response = PostWriteResponse.builder()
 			.title("제목입니다")
 			.content("내용입니다")
 			.categoryName("카테고리")
 			.nickname("닉네임")
-			.imageUrls(List.of("test1", "test2"))
+			.imageUrls(List.of(response1, response2))
 			.heartCnt(0)
 			.viewCnt(0)
-			.createAt(date)
+			.createdAt(date)
 			.build();
 
-		Mockito.when(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+		Mockito.when(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
 			.thenReturn(response);
 
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -117,7 +124,10 @@ class PostControllerTest {
 				.header("Authorization", "accessToken"))
 			.andExpect(jsonPath("$.title").value(response.getTitle()))
 			.andExpect(jsonPath("$.content").value(response.getContent()))
-			.andExpect(jsonPath("$.imageUrls.[0]").value(response.getImageUrls().get(0)))
+			.andExpect(jsonPath("$.imageUrls[0].imageUrl").value(
+						response.getImageUrls().get(0).getImageUrl()))
+			.andExpect(jsonPath("$.imageUrls[0].isRepresentative").value(
+						response.getImageUrls().get(0).isRepresentative()))
 			.andExpect(
 				jsonPath("$.categoryName").value(String.valueOf(response.getCategoryName())))
 			.andExpect(
@@ -125,7 +135,7 @@ class PostControllerTest {
 			.andExpect(
 				jsonPath("$.heartCnt").value(String.valueOf(response.getHeartCnt())))
 			.andExpect(jsonPath("$.nickname").value(response.getNickname()))
-			.andExpect(jsonPath("$.createAt").value(String.valueOf(response.getCreateAt())))
+			.andExpect(jsonPath("$.createdAt").value(String.valueOf(response.getCreatedAt())))
 			.andExpect(status().isCreated())
 			.andDo(print())
 			.andDo(document("boards/write-post/success",
@@ -147,13 +157,13 @@ class PostControllerTest {
 		MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
 			MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-		PostRequest request = PostRequest.builder()
+		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
 			.categoryId(1L)
 			.build();
 
-		given(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+		given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
 			.willThrow(new MemberNotFoundException());
 
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -190,13 +200,13 @@ class PostControllerTest {
 		MockMultipartFile file2 = new MockMultipartFile("test2", "test2.PNG",
 			MediaType.IMAGE_PNG_VALUE, "test2".getBytes(StandardCharsets.UTF_8));
 
-		PostRequest request = PostRequest.builder()
+		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
 			.categoryId(1L)
 			.build();
 
-		given(postService.writePost(anyString(), anyList(), any(PostRequest.class)))
+		given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
 			.willThrow(new CategoryNotFoundException());
 
 		String requestJson = objectMapper.writeValueAsString(request);

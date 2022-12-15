@@ -73,7 +73,7 @@ class CommentServiceTest {
                 .willReturn(Optional.of(post));
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         ArgumentCaptor<Comment> captor = ArgumentCaptor.forClass(Comment.class);
@@ -82,7 +82,7 @@ class CommentServiceTest {
                 commentService.writeComment("test@gmail.com", 1L, request);
 
         verify(commentRepository, times(1)).save(captor.capture());
-        assertEquals("댓글입니다", response.getComment());
+        assertEquals("댓글입니다", response.getContent());
     }
 
     @Test
@@ -93,7 +93,7 @@ class CommentServiceTest {
                 .willReturn(Optional.empty());
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
@@ -118,7 +118,7 @@ class CommentServiceTest {
                 .willReturn(Optional.empty());
 
         CommentRequest request = CommentRequest.builder()
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
@@ -152,20 +152,20 @@ class CommentServiceTest {
                 .id(1L)
                 .post(post)
                 .member(member)
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentRepository.findById(anyLong()))
                 .willReturn(Optional.of(comment));
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정한 댓글입니다")
+                .content("수정한 댓글입니다")
                 .build();
 
         CommentResponse response =
                 commentService.updateComment("test@gmail.com", 1L, 1L, request);
 
-        assertEquals("수정한 댓글입니다", response.getComment());
+        assertEquals("수정한 댓글입니다", response.getContent());
     }
 
     @Test
@@ -176,7 +176,7 @@ class CommentServiceTest {
                 .willReturn(false);
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정한 댓글입니다")
+                .content("수정한 댓글입니다")
                 .build();
 
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
@@ -196,7 +196,7 @@ class CommentServiceTest {
                 .willReturn(Optional.empty());
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정한 댓글입니다")
+                .content("수정한 댓글입니다")
                 .build();
 
         CommentNotFoundException exception = assertThrows(CommentNotFoundException.class,
@@ -217,14 +217,14 @@ class CommentServiceTest {
 
         Comment comment = Comment.builder()
                 .id(1L)
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .build();
 
         given(commentRepository.findById(anyLong()))
                 .willReturn(Optional.of(comment));
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정한 댓글입니다")
+                .content("수정한 댓글입니다")
                 .build();
 
         MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
@@ -255,7 +255,7 @@ class CommentServiceTest {
 
         Comment comment = Comment.builder()
                 .id(1L)
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .member(member2)
                 .build();
 
@@ -263,7 +263,7 @@ class CommentServiceTest {
                 .willReturn(Optional.of(comment));
 
         CommentRequest request = CommentRequest.builder()
-                .comment("수정한 댓글입니다")
+                .content("수정한 댓글입니다")
                 .build();
 
         NoPermissionUpdateCommentException exception = assertThrows(NoPermissionUpdateCommentException.class,
@@ -295,7 +295,7 @@ class CommentServiceTest {
 
         Comment comment = Comment.builder()
                 .id(1L)
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .member(member)
                 .post(post)
                 .build();
@@ -382,7 +382,7 @@ class CommentServiceTest {
 
         Comment comment = Comment.builder()
                 .id(1L)
-                .comment("댓글입니다")
+                .content("댓글입니다")
                 .member(member2)
                 .build();
 
