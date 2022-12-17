@@ -22,7 +22,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         if (!request.getRequestURI().contains("/login")
-            && !request.getRequestURI().contains("/exception")) {
+            && !request.getRequestURI().contains("/exception")
+                && !request.getRequestURI().contains("/reissue-token")
+        ) {
             String token = jwtProvider.resolveToken(request);
 
             if (token != null && jwtProvider.validateToken(token)) {

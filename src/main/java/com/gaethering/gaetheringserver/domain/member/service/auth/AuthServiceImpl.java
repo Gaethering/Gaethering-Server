@@ -49,8 +49,7 @@ public class AuthServiceImpl implements AuthService {
             throw new TokenInvalidException(MemberErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        Authentication authentication = jwtProvider.getAuthentication(request.getAccessToken());
-        String email = authentication.getName();
+        String email = jwtProvider.getUserEmail(request.getRefreshToken());
 
         String refreshToken = redisService.getData(email);
 
