@@ -47,16 +47,16 @@ public class JwtProvider {
 
     @PostConstruct
     protected void init() {
-        key = Base64.getEncoder().encodeToString(key.getBytes()); // Base64 인코딩
+        key = Base64.getEncoder().encodeToString(key.getBytes());
     }
 
     public String createAccessToken(String email, Long tokenValid) {
-        Claims claims = Jwts.claims().setSubject(email); // JWT payload 에 저장되는 정보단위
+        Claims claims = Jwts.claims().setSubject(email);
         Date date = new Date();
         return Jwts.builder()
-            .setClaims(claims)  // 정보 저장
-            .setIssuedAt(date) // 토큰 발행 시간 정보
-            .setExpiration(new Date(date.getTime() + tokenValid)) // set Expire Time
+            .setClaims(claims)
+            .setIssuedAt(date)
+            .setExpiration(new Date(date.getTime() + tokenValid))
             .signWith(SignatureAlgorithm.HS256, key)
             .compact();
     }
@@ -64,8 +64,8 @@ public class JwtProvider {
     public String createRefreshToken(Long tokenValid) {
         Date date = new Date();
         return Jwts.builder()
-            .setIssuedAt(date) // 토큰 발행 시간 정보
-            .setExpiration(new Date(date.getTime() + tokenValid)) // set Expire Time
+            .setIssuedAt(date)
+            .setExpiration(new Date(date.getTime() + tokenValid))
             .signWith(SignatureAlgorithm.HS256, key)
             .compact();
     }
