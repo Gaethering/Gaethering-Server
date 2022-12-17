@@ -61,9 +61,11 @@ public class JwtProvider {
             .compact();
     }
 
-    public String createRefreshToken(Long tokenValid) {
+    public String createRefreshToken(String email, Long tokenValid) {
+        Claims claims = Jwts.claims().setSubject(email);
         Date date = new Date();
         return Jwts.builder()
+            .setClaims(claims)
             .setIssuedAt(date)
             .setExpiration(new Date(date.getTime() + tokenValid))
             .signWith(SignatureAlgorithm.HS256, key)
@@ -75,7 +77,7 @@ public class JwtProvider {
         String email = authentication.getName();
 
         String accessToken = createAccessToken(email, accessTokenValid);
-        String refreshToken = createRefreshToken(refreshTokenValid);
+        String refreshToken = createRefreshToken(email, refreshTokenValid);
 
         redisService.setDataExpire(email, refreshToken, refreshTokenValid);
         return new LoginResponse(accessToken, refreshToken);
