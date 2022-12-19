@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
 import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.CATEGORY_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.NO_PERMISSION_TO_DELETE_POST;
 import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.NO_PERMISSION_TO_UPDATE_POST;
 import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode.POST_NOT_FOUND;
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse.PostImageUrlResponse;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionDeletePostException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
@@ -664,6 +666,107 @@ class PostControllerTest {
 				getDocumentResponse(),
 				pathParameters(parameterWithName("postId").description("이미지 삭제할 게시글 Id"),
 					parameterWithName("imageId").description("삭제할 이미지 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 삭제 실패 - 회원 찾을 수 없는 경우")
+	@WithMockUser
+	void deletePostFailure_MemberNotFound() throws Exception {
+		//given
+		given(postService.deletePost(anyString(), anyLong()))
+			.willThrow(new MemberNotFoundException());
+
+		//when
+		//then
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post/failure/member-not-found",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("삭제할 게시글 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 삭제 실패 - 게시물 찾을 수 없는 경우")
+	@WithMockUser
+	void deletePostFailure_PostNotFound() throws Exception {
+		//given
+		given(postService.deletePost(anyString(), anyLong()))
+			.willThrow(new PostNotFoundException());
+
+		//when
+		//then
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
+			.andExpect(jsonPath("$.message").value(POST_NOT_FOUND.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post/failure/post-not-found",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("삭제할 게시글 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 삭제 실패 - 게시물 작성자가 아닐 경우")
+	@WithMockUser
+	void deletePostFailure_NoPermissionDeletePost() throws Exception {
+		//given
+		given(postService.deletePost(anyString(), anyLong()))
+			.willThrow(new NoPermissionDeletePostException());
+
+		//when
+		//then
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().is4xxClientError())
+			.andExpect(jsonPath("$.code").value(NO_PERMISSION_TO_DELETE_POST.getCode()))
+			.andExpect(jsonPath("$.message").value(NO_PERMISSION_TO_DELETE_POST.getMessage()))
+			.andDo(print())
+			.andDo(document("boards/delete-post/failure/no-permission-update-post",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("삭제할 게시글 Id")),
+				requestHeaders(
+					headerWithName("Authorization").description("Access Token"))
+			));
+	}
+
+	@Test
+	@DisplayName("게시물 삭제 성공")
+	@WithMockUser
+	void deletePostSuccess() throws Exception {
+		//given
+		given(postService.deletePost(anyString(), anyLong()))
+			.willReturn(true);
+
+		//then
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "accessToken"))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("boards/delete-post/success",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(parameterWithName("postId").description("삭제할 게시글 Id")),
 				requestHeaders(
 					headerWithName("Authorization").description("Access Token"))
 			));
