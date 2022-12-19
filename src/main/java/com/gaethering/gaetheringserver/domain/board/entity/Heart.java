@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -25,6 +27,7 @@ public class Heart {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
@@ -32,11 +35,8 @@ public class Heart {
     @JoinColumn(name = "post_id", updatable = false)
     private Post post;
 
-    public void setPost(Post post) {
+    public void mappingPost (Post post) {
         this.post = post;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
+        post.pushPostHeart(this);
     }
 }
