@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,18 +14,20 @@ import static org.mockito.Mockito.when;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
 import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
+import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
+import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionDeletePostException;
 import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdatePostException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.repository.CategoryRepository;
+import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.HeartRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostImageRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
@@ -61,6 +64,8 @@ class PostServiceTest {
     private HeartRepository heartRepository;
     @Mock
     private PostImageRepository postImageRepository;
+    @Mock
+    private CommentRepository commentRepository;
     @Mock
     private S3Service s3Service;
     @InjectMocks
@@ -555,5 +560,120 @@ class PostServiceTest {
 
         // then
         assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패-회원 찾을 수 없는 경우")
+    void deletePostFailure_MemberNotFound() {
+        // given
+        given(memberRepository.findMembersByEmail(anyString()))
+            .willReturn(Optional.empty());
+
+        // when
+        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
+            () -> postService.deletePost("test@test.com", anyLong()));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패-게시물 찾을 수 없는 경우")
+    void deletePostFailure_PostNotFound() {
+        // given
+        Member member = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .build();
+        given(memberRepository.findMembersByEmail(anyString()))
+            .willReturn(Optional.of(member));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        // when
+        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
+            () -> postService.deletePost(anyString(), 1L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패-게시물 작성자가 아닐 경우")
+    void deletePostFailure_NoPermissionUpdatePost() {
+        // given
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .build();
+        Member member2 = Member.builder()
+            .id(2L)
+            .email("test@gmail.com")
+            .build();
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .build();
+        given(memberRepository.findMembersByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+        given(memberRepository.findMembersByEmail(anyString()))
+            .willReturn(Optional.of(member2));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+
+        // when
+        NoPermissionDeletePostException exception = assertThrows(NoPermissionDeletePostException.class,
+            () -> postService.deletePost(member2.getEmail(), 1L));
+
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(PostErrorCode.NO_PERMISSION_TO_DELETE_POST);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    void deletePostSuccess() {
+        // given
+        Member member1 = Member.builder()
+            .id(1L)
+            .email("gaethering@gmail.com")
+            .nickname("닉네임")
+            .build();
+        Category category = Category.builder()
+            .id(1L)
+            .categoryName("질문 있어요")
+            .build();
+        PostImage postImage = PostImage.builder()
+            .id(1L)
+            .isRepresentative(false)
+            .imageUrl("https://test~")
+            .build();
+        Post post = Post.builder()
+            .id(1L)
+            .title("게시물 제목")
+            .content("게시물 내용")
+            .member(member1)
+            .postImages(List.of(postImage))
+            .category(category)
+            .build();
+
+        given(memberRepository.findMembersByEmail(anyString()))
+            .willReturn(Optional.of(member1));
+        given(postRepository.findById(anyLong()))
+            .willReturn(Optional.of(post));
+        given(postImageRepository.findAllByPost(post))
+            .willReturn(List.of(postImage));
+
+        ArgumentCaptor<Post> captorPost = ArgumentCaptor.forClass(Post.class);
+
+        // when
+        boolean result = postService.deletePost(member1.getEmail(), 1L);
+
+        // then
+        verify(heartRepository).deleteHeartAllByPostId(eq(post));
+        verify(commentRepository).deleteCommentsAllByPostId(eq(post));
+        assertThat(result).isTrue();
+        verify(postRepository, times(1)).delete(captorPost.capture());
     }
 }
