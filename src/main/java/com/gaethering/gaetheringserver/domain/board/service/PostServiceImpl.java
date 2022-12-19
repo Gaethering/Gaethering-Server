@@ -185,7 +185,9 @@ public class PostServiceImpl implements PostService {
         heartRepository.deleteHeartAllByPostId(post);
         commentRepository.deleteCommentsAllByPostId(post);
 
-        deletePostImages(postImages);
+        if (!postImages.isEmpty()) {
+            deletePostImages(postImages);
+        }
         postRepository.delete(post);
 
         return true;
