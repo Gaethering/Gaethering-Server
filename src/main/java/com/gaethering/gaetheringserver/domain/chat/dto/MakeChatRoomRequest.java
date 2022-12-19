@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class MakeChatRoomRequest {
 
     private String description;
-    private List<WalkingTime> walkingTimes;
+    private List<WalkingTimeInfo> walkingTimes;
 }
