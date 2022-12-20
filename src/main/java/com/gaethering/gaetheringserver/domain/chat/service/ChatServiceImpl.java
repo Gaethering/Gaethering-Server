@@ -28,6 +28,7 @@ public class ChatServiceImpl implements ChatService {
     private final WalkingTimeRepository walkingTimeRepository;
 
     @Override
+    @Transactional
     public void makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest) {
         memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
 
