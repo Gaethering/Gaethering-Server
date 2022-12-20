@@ -17,16 +17,9 @@ public class HeartController {
     private final HeartService heartService;
 
     @PostMapping("/boards/{postId}/hearts")
-    public ResponseEntity<HeartResponse> pushHeart (@PathVariable Long postId, Principal principal) {
+    public ResponseEntity<HeartResponse> pushHeart(@PathVariable Long postId, Principal principal) {
 
         HeartResponse response = heartService.pushHeart(postId, principal.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @DeleteMapping("/boards/{postId}/hearts")
-    public ResponseEntity<HeartResponse> cancelHeart (@PathVariable Long postId, Principal principal) {
-
-        HeartResponse response = heartService.cancelHeart(postId, principal.getName());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
