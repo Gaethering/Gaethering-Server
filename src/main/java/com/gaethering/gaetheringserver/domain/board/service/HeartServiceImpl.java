@@ -13,6 +13,7 @@ import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotF
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class HeartServiceImpl implements HeartService {
     private final HeartRepository heartRepository;
 
     @Override
+    @Transactional
     public HeartResponse pushHeart(Long postId, String email) {
 
         Post post = postRepository.findById(postId)
@@ -52,6 +54,7 @@ public class HeartServiceImpl implements HeartService {
     }
 
     @Override
+    @Transactional
     public HeartResponse cancelHeart(Long postId, String email) {
 
         Post post = postRepository.findById(postId)
