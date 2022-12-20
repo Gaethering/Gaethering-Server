@@ -566,7 +566,7 @@ class PostServiceTest {
     @DisplayName("게시글 삭제 실패-회원 찾을 수 없는 경우")
     void deletePostFailure_MemberNotFound() {
         // given
-        given(memberRepository.findMembersByEmail(anyString()))
+        given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.empty());
 
         // when
@@ -585,7 +585,7 @@ class PostServiceTest {
             .id(1L)
             .email("gaethering@gmail.com")
             .build();
-        given(memberRepository.findMembersByEmail(anyString()))
+        given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member));
         given(postRepository.findById(anyLong()))
             .willReturn(Optional.empty());
@@ -616,9 +616,9 @@ class PostServiceTest {
             .content("게시물 내용")
             .member(member1)
             .build();
-        given(memberRepository.findMembersByEmail(anyString()))
+        given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member1));
-        given(memberRepository.findMembersByEmail(anyString()))
+        given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member2));
         given(postRepository.findById(anyLong()))
             .willReturn(Optional.of(post));
@@ -658,7 +658,7 @@ class PostServiceTest {
             .category(category)
             .build();
 
-        given(memberRepository.findMembersByEmail(anyString()))
+        given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member1));
         given(postRepository.findById(anyLong()))
             .willReturn(Optional.of(post));

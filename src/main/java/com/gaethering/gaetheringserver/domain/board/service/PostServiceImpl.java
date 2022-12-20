@@ -172,7 +172,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public boolean deletePost(String email, Long postId) {
-        Member member = memberRepository.findMembersByEmail(email)
+        Member member = memberRepository.findByEmail(email)
             .orElseThrow(MemberNotFoundException::new);
 
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
