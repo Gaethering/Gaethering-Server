@@ -41,7 +41,7 @@ public class ChatServiceImpl implements ChatService {
             .build();
 
         List<WalkingTime> walkingTimes = makeChatRoomRequest.getWalkingTimes().stream()
-            .map(WalkingTimeInfo::fromEntity).collect(
+            .map(WalkingTimeInfo::toEntity).collect(
                 Collectors.toList());
 
         walkingTimes.forEach(chatRoom::addWalkingTime);

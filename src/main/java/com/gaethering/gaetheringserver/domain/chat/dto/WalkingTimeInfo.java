@@ -15,7 +15,7 @@ public class WalkingTimeInfo {
     private String dayOfWeek;
     private String time;
 
-    public static WalkingTime fromEntity(WalkingTimeInfo walkingTimeInfo) {
+    public static WalkingTime toEntity(WalkingTimeInfo walkingTimeInfo) {
         return WalkingTime.builder()
             .dayOfWeek(walkingTimeInfo.getDayOfWeek())
             .time(walkingTimeInfo.getTime())
