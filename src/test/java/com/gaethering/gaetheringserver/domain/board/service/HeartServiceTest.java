@@ -3,8 +3,6 @@ package com.gaethering.gaetheringserver.domain.board.service;
 import com.gaethering.gaetheringserver.domain.board.dto.HeartResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Heart;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
-import com.gaethering.gaetheringserver.domain.board.exception.AlreadyPushHeartException;
-import com.gaethering.gaetheringserver.domain.board.exception.HeartNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.exception.errorCode.PostErrorCode;
 import com.gaethering.gaetheringserver.domain.board.repository.HeartRepository;
@@ -75,6 +73,7 @@ class HeartServiceTest {
 
         verify(heartRepository, times(1)).save(captor.capture());
         assertEquals(1L, response.getPostId());
+        assertEquals(1L, response.getMemberId());
     }
 
     @Test
@@ -112,40 +111,10 @@ class HeartServiceTest {
         assertEquals(MemberErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
     }
 
-    @Test
-    @DisplayName("좋아요 누르기 실패 - 이미 누름")
-    void pushHeart_Fail_AlreadyPush () {
-
-        Member member = Member.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .build();
-
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(member));
-
-        Post post = Post.builder()
-                .id(1L)
-                .title("제목")
-                .content("내용")
-                .hearts(new ArrayList<>())
-                .build();
-
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.of(post));
-
-        given(heartRepository.existsByPostAndMember(post, member))
-                .willReturn(true);
-
-        AlreadyPushHeartException exception = assertThrows(AlreadyPushHeartException.class,
-                () -> heartService.pushHeart(1L, "test@gmail.com"));
-
-        assertEquals(PostErrorCode.HEART_ALREADY_PUSH, exception.getPostErrorCode());
-    }
 
     @Test
-    @DisplayName("좋아요 취소 성공")
-    void cancelHeart_Success () {
+    @DisplayName("좋아요 누르기 (취소) 성공")
+    void pushHeart_toCancel_Success () {
 
         Member member = Member.builder()
                 .id(1L)
@@ -174,74 +143,8 @@ class HeartServiceTest {
         given(heartRepository.findByPostAndMember(post, member))
                 .willReturn(Optional.of(heart));
 
-        HeartResponse response = heartService.cancelHeart(1L, "test@gmail.com");
+        HeartResponse response = heartService.pushHeart(1L, "test@gmail.com");
         assertEquals(1L, response.getPostId());
-    }
-
-    @Test
-    @DisplayName("좋아요 취소 실패 - 게시물 없음")
-    void cancelHeart_Fail_NoPost () {
-
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.empty());
-
-        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
-                () -> heartService.cancelHeart(1L, "test@gmail.com"));
-
-        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
-    }
-
-    @Test
-    @DisplayName("좋아요 취소 실패 - 회원 없음")
-    void cancelHeart_Fail_NoMember () {
-
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.empty());
-
-        Post post = Post.builder()
-                .id(1L)
-                .title("제목")
-                .content("내용")
-                .hearts(new ArrayList<>())
-                .build();
-
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.of(post));
-
-        MemberNotFoundException exception = assertThrows(MemberNotFoundException.class,
-                () -> heartService.cancelHeart(1L, "test@gmail.com"));
-
-        assertEquals(MemberErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
-    }
-
-    @Test
-    @DisplayName("좋아요 취소 실패 - 좋아요 누른 적 없음")
-    void cancelHeart_Fail_NoPush () {
-
-        Member member = Member.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .build();
-
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(member));
-
-        Post post = Post.builder()
-                .id(1L)
-                .title("제목")
-                .content("내용")
-                .hearts(new ArrayList<>())
-                .build();
-
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.of(post));
-
-        given(heartRepository.findByPostAndMember(post, member))
-                .willReturn(Optional.empty());
-
-        HeartNotFoundException exception = assertThrows(HeartNotFoundException.class,
-                () -> heartService.cancelHeart(1L, "test@gmail.com"));
-
-        assertEquals(PostErrorCode.HEART_NOT_FOUND, exception.getPostErrorCode());
+        assertEquals(0, response.getLikeCnt());
     }
 }
