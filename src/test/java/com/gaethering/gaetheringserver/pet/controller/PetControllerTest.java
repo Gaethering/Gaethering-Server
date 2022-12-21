@@ -22,7 +22,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParts;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -386,7 +385,8 @@ class PetControllerTest {
 
     @Test
     @WithMockUser
-    public void updatePetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 수정 성공")
+    public void updatePetProfile_Success() throws Exception {
         //given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.5f)
@@ -403,19 +403,35 @@ class PetControllerTest {
             .description("귀여워요")
             .imageUrl("https://test")
             .build();
-        given(petService.updatePetProfile(1L, request))
+        given(petService.updatePetProfile(anyLong(), any()))
             .willReturn(response);
 
         String requestString = objectMapper.writeValueAsString(request);
 
         //when
         //then
-        mockMvc.perform(patch("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
+                .header("Authorization", "accessToken")
                 .content(requestString))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value(response.getName()))
+            .andExpect(jsonPath("$.birth").value(String.valueOf(response.getBirth())))
+            .andExpect(jsonPath("$.gender").value(String.valueOf(response.getGender())))
+            .andExpect(jsonPath("$.breed").value(response.getBreed()))
+            .andExpect(jsonPath("$.isNeutered").value(response.isNeutered()))
+            .andExpect(jsonPath("$.weight").value(response.getWeight()))
+            .andExpect(jsonPath("$.description").value(response.getDescription()))
+            .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andDo(document("pet/update-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("수정할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -435,14 +451,22 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(patch("/api/mypage/pets/100")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
+                .header("Authorization", "accessToken")
                 .content(requestString))
-            .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("pet/update-pet-profile/failure/pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("수정할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
