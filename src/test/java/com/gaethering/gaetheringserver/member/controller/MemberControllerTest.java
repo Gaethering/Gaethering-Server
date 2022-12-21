@@ -1,6 +1,7 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.*;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.DUPLICATED_EMAIL;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.core.type.Gender;
-import com.gaethering.gaetheringserver.domain.member.dto.auth.*;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.PostInfo;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameRequest;
@@ -36,12 +37,8 @@ import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileRes
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OwnProfileResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
-import com.gaethering.gaetheringserver.domain.member.exception.auth.TokenIncorrectException;
-import com.gaethering.gaetheringserver.domain.member.exception.auth.TokenInvalidException;
-import com.gaethering.gaetheringserver.domain.member.exception.auth.TokenNotExistException;
 import com.gaethering.gaetheringserver.domain.member.exception.member.DuplicatedEmailException;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
-import com.gaethering.gaetheringserver.domain.member.service.auth.AuthService;
 import com.gaethering.gaetheringserver.domain.member.service.member.MemberProfileService;
 import com.gaethering.gaetheringserver.domain.member.service.member.MemberService;
 import java.security.Principal;
@@ -58,7 +55,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -73,9 +69,6 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
-
-    @MockBean
-    private AuthService authService;
 
     @MockBean
     private MemberProfileService memberProfileService;
@@ -225,148 +218,6 @@ class MemberControllerTest {
                 getDocumentResponse()
             ));
     }
-
-    @Test
-    @DisplayName("로그인 성공")
-    public void login () throws Exception{
-
-        LoginResponse response = LoginResponse.builder()
-                .refreshToken("refresh-token")
-                .accessToken("access-token")
-                .build();
-
-        LoginRequest request = LoginRequest.builder()
-                .email("test-email")
-                .password("test-password")
-                .build();
-
-        Mockito.when(authService.login(any(LoginRequest.class)))
-                .thenReturn(response);
-
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
-                .andExpect(jsonPath("$.refreshToken").value(response.getRefreshToken()))
-
-                .andDo(print())
-                .andDo(document("member/auth/login/success",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
-
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("access token 재발급 성공")
-    public void reissueAccessToken_Success () throws Exception {
-
-        ReissueTokenResponse response = ReissueTokenResponse.builder()
-                .accessToken("new-access-token")
-                .build();
-
-        ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
-
-        Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenReturn(response);
-
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/success",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("access token 재발급 실패 - 유효하지 않은 refresh token")
-    public void reissueAccessToken_Failure_INVALID () throws Exception {
-
-        ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
-
-        Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenInvalidException(INVALID_REFRESH_TOKEN));
-
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(INVALID_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(INVALID_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/invalid-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("access token 재발급 실패 - 존재하지 않은 refresh token")
-    public void reissueAccessToken_Failure_NOEXIST () throws Exception {
-
-        ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
-
-        Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenNotExistException(NOT_EXIST_REFRESH_TOKEN));
-
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(NOT_EXIST_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(NOT_EXIST_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/not-exist-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("access token 재발급 실패 - 일치하지 않은 refresh token")
-    public void reissueAccessToken_Failure_INCORRECT () throws Exception {
-
-        ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
-
-        Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenIncorrectException(INCORRECT_REFRESH_TOKEN));
-
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(INCORRECT_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(INCORRECT_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/incorrect-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
-    }
-
-
 
     @Test
     @WithMockUser

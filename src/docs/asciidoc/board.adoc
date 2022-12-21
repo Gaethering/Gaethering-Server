@@ -18,9 +18,6 @@ include::{snippets}/boards/write-post/success/http-request.adoc[]
 * Request Headers
 include::{snippets}/boards/write-post/success/request-headers.adoc[]
 
-* HTTP Request Parts
-include::{snippets}/boards/write-post/success/request-parts.adoc[]
-
 * HTTP Response
 include::{snippets}/boards/write-post/success/http-response.adoc[]
 
@@ -35,9 +32,6 @@ include::{snippets}/boards/write-post/failure/member-not-found/http-request.adoc
 * Request Headers
 include::{snippets}/boards/write-post/failure/member-not-found/request-headers.adoc[]
 
-* HTTP Request Parts
-include::{snippets}/boards/write-post/failure/member-not-found/request-parts.adoc[]
-
 * HTTP Response
 include::{snippets}/boards/write-post/failure/member-not-found/http-response.adoc[]
 
@@ -51,9 +45,6 @@ include::{snippets}/boards/write-post/failure/category-not-found/http-request.ad
 
 * Request Headers
 include::{snippets}/boards/write-post/failure/category-not-found/request-headers.adoc[]
-
-* HTTP Request Parts
-include::{snippets}/boards/write-post/failure/category-not-found/request-parts.adoc[]
 
 * HTTP Response
 include::{snippets}/boards/write-post/failure/category-not-found/http-response.adoc[]

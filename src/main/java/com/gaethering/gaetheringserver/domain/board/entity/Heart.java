@@ -32,8 +32,11 @@ public class Heart {
     @JoinColumn(name = "post_id", updatable = false)
     private Post post;
 
-    public void mappingPost (Post post) {
+    public void setPost(Post post) {
         this.post = post;
-        post.pushPostHeart(this);
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }

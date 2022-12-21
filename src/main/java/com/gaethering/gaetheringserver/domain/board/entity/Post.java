@@ -44,18 +44,16 @@ public class Post extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(mappedBy = "post",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REMOVE,
             orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post",
-        cascade = CascadeType.ALL,
+        cascade = CascadeType.REMOVE,
         orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "post")
     private List<Heart> hearts = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,13 +70,5 @@ public class Post extends BaseTimeEntity {
     public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
-    }
-
-    public void pushPostHeart (Heart heart) {
-        this.hearts.add(heart);
-    }
-
-    public void cancelPostHeart (Heart heart) {
-        this.hearts.remove(heart);
     }
 }
