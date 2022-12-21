@@ -1,0 +1,40 @@
+= Spring REST DOCS
+BE 김진호
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Chat Api
+
+=== 채팅방 만들기
+
+==== 성공
+
+* Http Request
+include::{snippets}/chat/make-chatroom/success/http-request.adoc[]
+
+* Request Header
+include::{snippets}/chat/make-chatroom/success/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/chat/make-chatroom/success/request-body.adoc[]
+
+* Http Response
+include::{snippets}/chat/make-chatroom/success/http-response.adoc[]
+
+==== 실패 - 사용자 찾을 수 없음
+
+* Http Request
+include::{snippets}/chat/make-chatroom/failure/member-not-found/http-request.adoc[]
+
+* Request Header
+include::{snippets}/chat/make-chatroom/failure/member-not-found/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/chat/make-chatroom/failure/member-not-found/request-body.adoc[]
+
+* Http Response
+include::{snippets}/chat/make-chatroom/failure/member-not-found/http-response.adoc[]
