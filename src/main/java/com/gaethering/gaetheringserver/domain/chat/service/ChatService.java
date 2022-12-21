@@ -6,4 +6,6 @@ public interface ChatService {
 
     void makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest);
 
+    void deleteChatRoom(String email, String chatRoomKey);
+
 }
