@@ -16,8 +16,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -144,7 +143,11 @@ class PostControllerTest {
 				getDocumentRequest(),
 				getDocumentResponse(),
 				requestHeaders(
-					headerWithName("Authorization").description("Access Token"))
+					headerWithName("Authorization").description("Access Token")),
+					relaxedRequestParts(
+							partWithName("images").description("게시물 이미지들"),
+							partWithName("data").description("게시물 제목 및 내용")
+					)
 			));
 	}
 
@@ -188,7 +191,11 @@ class PostControllerTest {
 				getDocumentRequest(),
 				getDocumentResponse(),
 				requestHeaders(
-					headerWithName("Authorization").description("Access Token"))
+					headerWithName("Authorization").description("Access Token")),
+					relaxedRequestParts(
+							partWithName("images").description("게시물 이미지들"),
+							partWithName("data").description("게시물 제목 및 내용")
+					)
 			));
 	}
 
@@ -231,7 +238,11 @@ class PostControllerTest {
 				getDocumentRequest(),
 				getDocumentResponse(),
 				requestHeaders(
-					headerWithName("Authorization").description("Access Token"))
+					headerWithName("Authorization").description("Access Token")),
+					relaxedRequestParts(
+							partWithName("images").description("게시물 이미지들"),
+							partWithName("data").description("게시물 제목 및 내용")
+					)
 			));
 	}
 
