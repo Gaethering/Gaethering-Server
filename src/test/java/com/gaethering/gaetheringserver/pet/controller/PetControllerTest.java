@@ -471,7 +471,8 @@ class PetControllerTest {
 
     @Test
     @WithMockUser
-    public void deletePetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 삭제 성공")
+    public void deletePetProfile_Success() throws Exception {
         //given
         String email = "test@test.com";
         Principal principal = Mockito.mock(Principal.class);
@@ -482,11 +483,19 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andDo(print())
-            .andExpect(status().isOk());
+            .andDo(document("pet/delete-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -503,13 +512,21 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -526,13 +543,21 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(FAILED_DELETE_PET.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()));
+            .andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/minimum-one-more-pet",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -549,12 +574,20 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(FAILED_DELETE_REPRESENTATIVE.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()));
+            .andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/failed-delete-representative",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 }
