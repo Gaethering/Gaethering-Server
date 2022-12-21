@@ -65,7 +65,14 @@ public class PostController {
 		Principal principal) {
 
 		postService.deletePostImage(principal.getName(), postId, imageId);
+		return ResponseEntity.ok().build();
+	}
 
+	@DeleteMapping("/boards/{postId}")
+	public ResponseEntity<Void> deletePost(@PathVariable Long postId,
+		Principal principal) {
+
+		postService.deletePost(principal.getName(), postId);
 		return ResponseEntity.ok().build();
 	}
 }

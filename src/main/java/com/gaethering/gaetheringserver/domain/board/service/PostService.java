@@ -17,4 +17,6 @@ public interface PostService {
 	PostImageUploadResponse uploadPostImage(String email, Long postId, MultipartFile file);
 
 	boolean deletePostImage(String email, Long postId, Long imageId);
+
+	boolean deletePost(String email, Long postId);
 }
