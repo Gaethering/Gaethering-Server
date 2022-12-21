@@ -47,3 +47,45 @@ include::{snippets}/pet/register/failure/exceed-max/http-response.adoc[]
 
 * Response Body
 include::{snippets}/pet/register/failure/exceed-max/response-body.adoc[]
+
+=== 펫 프로필 이미지 수정
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/pet/update-pet-image/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/pet/update-pet-image/success/path-parameters.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/pet/update-pet-image/success/request-parts.adoc[]
+
+* Request Headers
+include::{snippets}/pet/update-pet-image/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/update-pet-image/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/update-pet-image/success/response-body.adoc[]
+
+==== 실패 - 반려동물 없을 경우
+
+* HTTP Request
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/path-parameters.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/request-parts.adoc[]
+
+* Request Headers
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/update-pet-image/failure/pet-not-found/response-body.adoc[]
