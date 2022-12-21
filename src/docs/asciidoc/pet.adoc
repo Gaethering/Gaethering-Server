@@ -89,3 +89,39 @@ include::{snippets}/pet/update-pet-image/failure/pet-not-found/http-response.ado
 
 * Response Body
 include::{snippets}/pet/update-pet-image/failure/pet-not-found/response-body.adoc[]
+
+=== 펫 프로필 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/pet/get-pet-profile/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/pet/get-pet-profile/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/pet/get-pet-profile/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/get-pet-profile/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/get-pet-profile/success/response-body.adoc[]
+
+==== 실패 - 반려동물 없을 경우
+
+* HTTP Request
+include::{snippets}/pet/get-pet-profile/failure/pet-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/pet/get-pet-profile/failure/pet-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/pet/get-pet-profile/failure/pet-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/pet/get-pet-profile/failure/pet-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/pet/get-pet-profile/failure/pet-not-found/response-body.adoc[]

@@ -320,7 +320,8 @@ class PetControllerTest {
 
     @Test
     @WithMockUser
-    public void getPetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 조회 성공")
+    public void getPetProfile_Success() throws Exception {
         //given
         PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
             .birth(LocalDate.parse("2021-12-01"))
@@ -334,8 +335,11 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/pets/{petId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value(petProfile.getName()))
             .andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
             .andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
@@ -344,7 +348,14 @@ class PetControllerTest {
             .andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
             .andExpect(jsonPath("$.description").value(petProfile.getDescription()))
             .andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
-            .andDo(print()).andExpect(status().isOk());
+            .andDo(print())
+            .andDo(document("pet/get-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("조회할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -356,12 +367,21 @@ class PetControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/pets/{petId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("pet/get-pet-profile/failure/pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("조회할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
