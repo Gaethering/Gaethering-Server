@@ -15,8 +15,7 @@ public enum PostErrorCode implements ErrorCode {
     NO_PERMISSION_TO_DELETE_COMMENT("E805", "댓글 삭제 권한은 작성자에게 있습니다."),
     NO_PERMISSION_TO_UPDATE_POST("E806", "게시물 수정 권한은 작성자에게 있습니다."),
     POST_IMAGE_NOT_FOUND("E807", "해당 게시물 이미지가 존재하지 않습니다."),
-    HEART_NOT_FOUND ("E808", "좋아요를 누른 적이 없습니다."),
-    HEART_ALREADY_PUSH("E809", "이미 좋아요를 눌렀습니다.");
+    NO_PERMISSION_TO_DELETE_POST("E808", "게시물 삭제 권한은 작성자에게 있습니다.");
 
     private final String code;
     private final String message;
