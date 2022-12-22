@@ -75,6 +75,8 @@ class ChatControllerTest {
             .build();
 
         MakeChatRoomRequest request = MakeChatRoomRequest.builder()
+            .name("채팅방 이름")
+            .maxParticipantCount(6)
             .description("설명")
             .walkingTimes(List.of(walkingTime1, walkingTime2))
             .build();
@@ -116,6 +118,8 @@ class ChatControllerTest {
             .build();
 
         MakeChatRoomRequest request = MakeChatRoomRequest.builder()
+            .name("채팅방 이름")
+            .maxParticipantCount(6)
             .description("설명")
             .walkingTimes(List.of(walkingTime1, walkingTime2))
             .build();
