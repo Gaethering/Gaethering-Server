@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="BE 최영훈">
+<meta name="author" content="BE 오은정">
 <title>Spring REST DOCS</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -436,36 +436,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Spring REST DOCS</h1>
 <div class="details">
-<span id="author" class="author">BE 최영훈</span><br>
+<span id="author" class="author">BE 오은정</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_follow_api">Follow Api</a>
+<li><a href="#_heart_api">Heart Api</a>
 <ul class="sectlevel2">
-<li><a href="#_팔로우_하기">팔로우 하기</a>
+<li><a href="#_좋아요_누르기">좋아요 누르기</a>
 <ul class="sectlevel3">
 <li><a href="#_성공">성공</a></li>
 <li><a href="#_실패_회원_못_찾았을_때">실패 - 회원 못 찾았을 때</a></li>
-</ul>
-</li>
-<li><a href="#_팔로워_목록">팔로워 목록</a>
-<ul class="sectlevel3">
-<li><a href="#_성공_2">성공</a></li>
-<li><a href="#_실패_회원_못_찾았을_때_2">실패 - 회원 못 찾았을 때</a></li>
-</ul>
-</li>
-<li><a href="#_팔로잉_목록">팔로잉 목록</a>
-<ul class="sectlevel3">
-<li><a href="#_성공_3">성공</a></li>
-<li><a href="#_실패_회원_못_찾았을_때_3">실패 - 회원 못 찾았을 때</a></li>
-</ul>
-</li>
-<li><a href="#_팔로잉_취소">팔로잉 취소</a>
-<ul class="sectlevel3">
-<li><a href="#_성공_4">성공</a></li>
-<li><a href="#_실패_회원_못_찾았을_때_4">실패 - 회원 못 찾았을 때</a></li>
-<li><a href="#_실패_팔로우_관계가_존재하지_않을_때">실패 - 팔로우 관계가 존재하지 않을 때</a></li>
+<li><a href="#_실패_게시물_못_찾았을_때">실패 - 게시물 못 찾았을 때</a></li>
 </ul>
 </li>
 </ul>
@@ -475,10 +457,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_follow_api"><a class="link" href="#_follow_api">Follow Api</a></h2>
+<h2 id="_heart_api"><a class="link" href="#_heart_api">Heart Api</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_팔로우_하기"><a class="link" href="#_팔로우_하기">팔로우 하기</a></h3>
+<h3 id="_좋아요_누르기"><a class="link" href="#_좋아요_누르기">좋아요 누르기</a></h3>
 <div class="sect3">
 <h4 id="_성공"><a class="link" href="#_성공">성공</a></h4>
 <div class="ulist">
@@ -490,16 +472,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/1/follow HTTP/1.1
+<pre>POST /api/boards/1/hearts HTTP/1.1
 Authorization: accessToken
-Host: localhost:8080</pre>
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+
+_csrf=8b8ccc0a-a47a-4ba3-936d-84d5f571f33f</pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>Path Parameter
-./api/members/{memberId}/follow</p>
+./api/boards/{postId}/hearts</p>
 </li>
 </ul>
 </div>
@@ -516,8 +501,8 @@ Host: localhost:8080</pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">팔로우 하려는 회원 id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 누르고자 하는 게시물 id</p></td>
 </tr>
 </tbody>
 </table>
@@ -555,16 +540,24 @@ Host: localhost:8080</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 201 Created
+<pre>HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
+Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
-X-Frame-Options: SAMEORIGIN</pre>
+X-Frame-Options: SAMEORIGIN
+Content-Length: 54
+
+{
+  "memberId" : 2,
+  "postId" : 1,
+  "likeCnt" : 10
+}</pre>
 </div>
 </div>
 <div class="ulist">
@@ -576,7 +569,11 @@ X-Frame-Options: SAMEORIGIN</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre></pre>
+<pre>{
+  "memberId" : 2,
+  "postId" : 1,
+  "likeCnt" : 10
+}</pre>
 </div>
 </div>
 </div>
@@ -591,130 +588,19 @@ X-Frame-Options: SAMEORIGIN</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/1/follow HTTP/1.1
+<pre>POST /api/boards/1/hearts HTTP/1.1
 Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/follow</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">팔로우 하려는 회원 Id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 400 Bad Request
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN
-Content-Length: 75
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
 
-{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_팔로워_목록"><a class="link" href="#_팔로워_목록">팔로워 목록</a></h3>
-<div class="sect3">
-<h4 id="_성공_2"><a class="link" href="#_성공_2">성공</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>GET /api/members/1/follower HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
+_csrf=3f864f7e-00d9-4b35-9693-618e646a1fe7</pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>Path Parameter
-./api/members/{memberId}/follower</p>
+./api/boards/{postId}/hearts</p>
 </li>
 </ul>
 </div>
@@ -731,579 +617,8 @@ Host: localhost:8080</pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 Id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN
-Content-Length: 130
-
-[ {
-  "id" : 1,
-  "name" : "name1",
-  "nickname" : "nickname1"
-}, {
-  "id" : 2,
-  "name" : "name2",
-  "nickname" : "nickname2"
-} ]</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>[ {
-  "id" : 1,
-  "name" : "name1",
-  "nickname" : "nickname1"
-}, {
-  "id" : 2,
-  "name" : "name2",
-  "nickname" : "nickname2"
-} ]</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_실패_회원_못_찾았을_때_2"><a class="link" href="#_실패_회원_못_찾았을_때_2">실패 - 회원 못 찾았을 때</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>GET /api/members/1/follower HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/follower</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">대상 회원 Id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 400 Bad Request
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN
-Content-Length: 75
-
-{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_팔로잉_목록"><a class="link" href="#_팔로잉_목록">팔로잉 목록</a></h3>
-<div class="sect3">
-<h4 id="_성공_3"><a class="link" href="#_성공_3">성공</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>GET /api/members/1/following HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/following</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 Id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN
-Content-Length: 130
-
-[ {
-  "id" : 1,
-  "name" : "name1",
-  "nickname" : "nickname1"
-}, {
-  "id" : 2,
-  "name" : "name2",
-  "nickname" : "nickname2"
-} ]</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>[ {
-  "id" : 1,
-  "name" : "name1",
-  "nickname" : "nickname1"
-}, {
-  "id" : 2,
-  "name" : "name2",
-  "nickname" : "nickname2"
-} ]</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_실패_회원_못_찾았을_때_3"><a class="link" href="#_실패_회원_못_찾았을_때_3">실패 - 회원 못 찾았을 때</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>GET /api/members/1/following HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/following</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">대상 회원 Id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 400 Bad Request
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN
-Content-Length: 75
-
-{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
-}</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_팔로잉_취소"><a class="link" href="#_팔로잉_취소">팔로잉 취소</a></h3>
-<div class="sect3">
-<h4 id="_성공_4"><a class="link" href="#_성공_4">성공</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>DELETE /api/members/1/follow HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/follow</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">팔로우 취소할 회원 id</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>Request Headers</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Response</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: SAMEORIGIN</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Response Body</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_실패_회원_못_찾았을_때_4"><a class="link" href="#_실패_회원_못_찾았을_때_4">실패 - 회원 못 찾았을 때</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTP Request</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>DELETE /api/members/1/follow HTTP/1.1
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Path Parameter
-./api/members/{memberId}/follow</p>
-</li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">팔로우 취소할 회원 id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 누르고자 하는 게시물 id</p></td>
 </tr>
 </tbody>
 </table>
@@ -1377,7 +692,7 @@ Content-Length: 75
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_팔로우_관계가_존재하지_않을_때"><a class="link" href="#_실패_팔로우_관계가_존재하지_않을_때">실패 - 팔로우 관계가 존재하지 않을 때</a></h4>
+<h4 id="_실패_게시물_못_찾았을_때"><a class="link" href="#_실패_게시물_못_찾았을_때">실패 - 게시물 못 찾았을 때</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1387,16 +702,19 @@ Content-Length: 75
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>DELETE /api/members/1/follow HTTP/1.1
+<pre>POST /api/boards/1/hearts HTTP/1.1
 Authorization: accessToken
-Host: localhost:8080</pre>
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+
+_csrf=28b83eff-ff07-4926-926a-032ed4199e7c</pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>Path Parameter
-./api/members/{memberId}/follow</p>
+./api/boards/{postId}/hearts</p>
 </li>
 </ul>
 </div>
@@ -1413,8 +731,8 @@ Host: localhost:8080</pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">팔로우 취소할 회원 id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 누르고자 하는 게시물 id</p></td>
 </tr>
 </tbody>
 </table>
@@ -1463,11 +781,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: SAMEORIGIN
-Content-Length: 99
+Content-Length: 78
 
 {
-  "code" : "E002",
-  "message" : "해당 하는 팔로우 관계가 존재하지 않습니다."
+  "code" : "E801",
+  "message" : "존재하지 않는 게시물입니다."
 }</pre>
 </div>
 </div>
@@ -1481,8 +799,8 @@ Content-Length: 99
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E002",
-  "message" : "해당 하는 팔로우 관계가 존재하지 않습니다."
+  "code" : "E801",
+  "message" : "존재하지 않는 게시물입니다."
 }</pre>
 </div>
 </div>
@@ -1493,7 +811,7 @@ Content-Length: 99
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-22 21:48:01 +0900
+Last updated 2022-12-22 11:08:06 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">

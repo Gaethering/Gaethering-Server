@@ -1,5 +1,5 @@
 = Spring REST DOCS
-BE 김진호
+BE 김진호, BE 최영훈
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -38,3 +38,56 @@ include::{snippets}/chat/make-chatroom/failure/member-not-found/request-body.ado
 
 * Http Response
 include::{snippets}/chat/make-chatroom/failure/member-not-found/http-response.adoc[]
+
+=== 채팅방 만들기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/member-not-found/response-body.adoc[]
+
+==== 실패 - 대표 반려동물이 지정되지 않은 회원이 있을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/response-body.adoc[]
