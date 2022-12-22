@@ -11,6 +11,6 @@ public interface WalkingTimeRepository extends JpaRepository<WalkingTime, Long> 
 
     @Modifying
     @Query("delete from WalkingTime w where w.chatRoom = :chatRoom")
-    void deleteAllByChatRoomId(@Param("chatRoom") ChatRoom chatRoom);
+    void deleteAllByChatRoom(@Param("chatRoom") ChatRoom chatRoom);
 
 }

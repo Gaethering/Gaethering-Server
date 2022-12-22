@@ -11,6 +11,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     @Modifying
     @Query("delete from ChatMessage c where c.chatRoom = :chatRoom")
-    void deleteAllByChatRoomId(@Param("chatRoom") ChatRoom chatRoom);
+    void deleteAllByChatRoom(@Param("chatRoom") ChatRoom chatRoom);
 
 }

@@ -61,8 +61,8 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByRoomKey(chatRoomKey)
             .orElseThrow(ChatRoomNotFoundException::new);
 
-        chatMessageRepository.deleteAllByChatRoomId(chatRoom);
-        walkingTimeRepository.deleteAllByChatRoomId(chatRoom);
+        chatMessageRepository.deleteAllByChatRoom(chatRoom);
+        walkingTimeRepository.deleteAllByChatRoom(chatRoom);
         chatRoomRepository.delete(chatRoom);
     }
 }

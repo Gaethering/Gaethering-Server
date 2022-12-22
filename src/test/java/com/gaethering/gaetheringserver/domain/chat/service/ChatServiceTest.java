@@ -144,8 +144,8 @@ class ChatServiceTest {
         chatService.deleteChatRoom(anyString(), chatRoom.getRoomKey());
 
         //then
-        verify(chatMessageRepository).deleteAllByChatRoomId(eq(chatRoom));
-        verify(walkingTimeRepository).deleteAllByChatRoomId(eq(chatRoom));
+        verify(chatMessageRepository).deleteAllByChatRoom(eq(chatRoom));
+        verify(walkingTimeRepository).deleteAllByChatRoom(eq(chatRoom));
         verify(chatRoomRepository, times(1)).delete(captor.capture());
     }
 
