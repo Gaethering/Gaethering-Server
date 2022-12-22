@@ -39,6 +39,8 @@ public class ChatServiceImpl implements ChatService {
 
         ChatRoom chatRoom = ChatRoom.builder()
             .roomKey(roomKey)
+            .name(makeChatRoomRequest.getName())
+            .maxParticipantCount(makeChatRoomRequest.getMaxParticipantCount())
             .description(makeChatRoomRequest.getDescription())
             .walkingTimes(new ArrayList<>())
             .build();
