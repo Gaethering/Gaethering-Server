@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MakeChatRoomRequest {
 
+    private String name;
+    private int maxParticipantCount;
     private String description;
     private List<WalkingTimeInfo> walkingTimes;
 }
