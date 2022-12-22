@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatRoomInfo {
 
-    private String roomName;
+    private String name;
     private String roomKey;
     private String description;
     private Integer maxParticipant;
     private List<WalkingTimeInfo> walkingTimeInfos;
-    private List<ChatRoomMemberInfo> participants;
+    private List<ChatRoomMemberInfo> chatRoomMemberInfos;
 
     public static ChatRoomInfo of(ChatRoom chatRoom) {
         List<WalkingTimeInfo> walkingTimeInfos = chatRoom.getWalkingTimes().stream().map(WalkingTimeInfo::of)
@@ -29,11 +29,11 @@ public class ChatRoomInfo {
             .map(ChatroomMember::getMember).collect(Collectors.toList()).stream().map(ChatRoomMemberInfo::of)
             .collect(Collectors.toList());
         return ChatRoomInfo.builder()
-            .roomName(chatRoom.getName())
+            .name(chatRoom.getName())
             .roomKey(chatRoom.getRoomKey())
             .description(chatRoom.getDescription())
             .maxParticipant(chatRoom.getMaxParticipantCount())
             .walkingTimeInfos(walkingTimeInfos)
-            .participants(chatRoomMemberInfos).build();
+            .chatRoomMemberInfos(chatRoomMemberInfos).build();
     }
 }

@@ -131,15 +131,15 @@ class ChatServiceTest {
 
         //then
         assertThat(chaRoomInformation.getRoomKey()).isEqualTo(chatRoom.getRoomKey());
-        assertThat(chaRoomInformation.getRoomName()).isEqualTo(chatRoom.getName());
+        assertThat(chaRoomInformation.getName()).isEqualTo(chatRoom.getName());
         assertThat(chaRoomInformation.getDescription()).isEqualTo(chatRoom.getDescription());
         assertThat(chaRoomInformation.getMaxParticipant()).isEqualTo(chatRoom.getMaxParticipantCount());
         assertThat(chaRoomInformation.getWalkingTimeInfos().get(0).getDayOfWeek()).isEqualTo(
             walkingTime.getDayOfWeek());
         assertThat(chaRoomInformation.getWalkingTimeInfos().get(0).getTime()).isEqualTo(walkingTime.getTime());
-        assertThat(chaRoomInformation.getParticipants().get(0).getId()).isEqualTo(member.getId());
-        assertThat(chaRoomInformation.getParticipants().get(0).getNickname()).isEqualTo(member.getNickname());
-        assertThat(chaRoomInformation.getParticipants().get(0).getRepresentPetImageUrl()).isEqualTo(pet.getImageUrl());
+        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getId()).isEqualTo(member.getId());
+        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getNickname()).isEqualTo(member.getNickname());
+        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getRepresentPetImageUrl()).isEqualTo(pet.getImageUrl());
     }
 
     private static MakeChatRoomRequest getMakeChatRoomRequest() {
