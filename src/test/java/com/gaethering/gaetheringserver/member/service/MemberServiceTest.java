@@ -74,14 +74,14 @@ class MemberServiceTest {
         MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
             "test".getBytes());
 
-        given(s3Service.uploadImage(any()))
+        given(s3Service.uploadImage(any(), anyString()))
             .willReturn(file.getName());
 
         given(memberRepository.existsByEmail(anyString()))
             .willReturn(false);
 
         given(passwordEncoder.encode(anyString()))
-            .willReturn(anyString());
+            .willReturn("test");
 
         ArgumentCaptor<Member> captorMember = ArgumentCaptor.forClass(Member.class);
 
