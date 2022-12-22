@@ -13,7 +13,7 @@ public class MessageController {
 
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("chat.send")
+    @MessageMapping("/chat.send")
     public void send(@Valid ChatMessageRequest request) {
         chatMessageService.send(request);
     }
