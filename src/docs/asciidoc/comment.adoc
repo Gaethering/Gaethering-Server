@@ -1,5 +1,4 @@
 = Spring REST DOCS
-BE 오은정
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -236,3 +235,45 @@ include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/http-
 
 * Response Body
 include::{snippets}/boards/comments/delete-comment/failure/un-match-writer/response-body.adoc[]
+
+=== 댓글 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/comments/get-comments/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/get-comments/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/get-comments/success/request-headers.adoc[]
+
+* Request Parameters
+include::{snippets}/boards/comments/get-comments/success/request-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/get-comments/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/get-comments/success/response-body.adoc[]
+
+==== 실패 - 게시물이 없을 때
+
+* HTTP Request
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/request-headers.adoc[]
+
+* Request Parameters
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/request-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/comments/get-comments/failure/post-not-found/response-body.adoc[]
