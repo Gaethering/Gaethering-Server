@@ -343,3 +343,45 @@ include::{snippets}/boards/delete-post/failure/no-permission-update-post/http-re
 
 * Response Body
 include::{snippets}/boards/delete-post/failure/no-permission-update-post/response-body.adoc[]
+
+=== 카테고리별 게시판 목록 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/get-posts/success/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-posts/success/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-posts/success/path-parameters.adoc[]
+
+* Request Parameters
+include::{snippets}/boards/get-posts/success/request-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-posts/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-posts/success/response-body.adoc[]
+
+==== 실패 - 카테고리 찾지 못한 경우
+
+* HTTP Request
+include::{snippets}/boards/get-posts/failure/category-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-posts/failure/category-not-found/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-posts/failure/category-not-found/path-parameters.adoc[]
+
+* Request Parameters
+include::{snippets}/boards/get-posts/failure/category-not-found/request-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-posts/failure/category-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-posts/failure/category-not-found/response-body.adoc[]
