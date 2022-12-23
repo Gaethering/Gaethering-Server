@@ -18,6 +18,10 @@ public class ChatMessageResponse {
     private String content;
     private Timestamp createdAt;
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public static ChatMessageResponse makeResponseFromRequest(ChatMessageRequest chatMessageRequest) {
         return ChatMessageResponse.builder()
             .memberId(chatMessageRequest.getMemberId())
