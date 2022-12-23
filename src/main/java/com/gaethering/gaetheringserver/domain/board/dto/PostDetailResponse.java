@@ -25,11 +25,17 @@ public class PostDetailResponse {
 
     private long commentCnt;
 
+    private boolean hasHeart;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setHasHeart(boolean hasHeart) {
+        this.hasHeart = hasHeart;
     }
 
     public static PostDetailResponse fromEntity (Post post) {
