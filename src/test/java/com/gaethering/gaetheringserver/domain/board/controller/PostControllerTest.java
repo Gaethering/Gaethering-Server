@@ -7,15 +7,12 @@ import static com.gaethering.gaetheringserver.domain.board.exception.errorCode.P
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,11 +43,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -116,7 +111,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(multipart("/api/boards")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
@@ -176,7 +171,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(multipart("/api/boards")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
@@ -223,7 +218,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(multipart("/api/boards")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
@@ -260,7 +255,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+		mockMvc.perform(patch("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken")
 				.content(objectMapper.writeValueAsString(request)))
@@ -291,7 +286,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+		mockMvc.perform(patch("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken")
 				.content(objectMapper.writeValueAsString(request)))
@@ -322,7 +317,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+		mockMvc.perform(patch("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken")
 				.content(objectMapper.writeValueAsString(request)))
@@ -375,7 +370,7 @@ class PostControllerTest {
 
 		String requestString = objectMapper.writeValueAsString(request);
 
-		mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/boards/{postId}", 1)
+		mockMvc.perform(patch("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken")
 				.content(requestString))
@@ -427,7 +422,7 @@ class PostControllerTest {
 
 		//when
 		//then
-        mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/boards/{postId}/images", 1)
+        mockMvc.perform(multipart("/api/boards/{postId}/images", 1)
                 .file(file)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "accessToken"))
@@ -462,7 +457,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/boards/{postId}/images", 1)
+		mockMvc.perform(multipart("/api/boards/{postId}/images", 1)
 				.file(file)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
 				.header("Authorization", "accessToken"))
@@ -497,7 +492,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/boards/{postId}/images", 1)
+		mockMvc.perform(multipart("/api/boards/{postId}/images", 1)
 				.file(file)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
 				.header("Authorization", "accessToken"))
@@ -541,7 +536,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/boards/{postId}/images", 1)
+		mockMvc.perform(multipart("/api/boards/{postId}/images", 1)
 				.file(file)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
 				.header("Authorization", "accessToken"))
@@ -692,7 +687,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+		mockMvc.perform(delete("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken"))
 			.andExpect(status().is4xxClientError())
@@ -718,7 +713,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+		mockMvc.perform(delete("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken"))
 			.andExpect(status().is4xxClientError())
@@ -744,7 +739,7 @@ class PostControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+		mockMvc.perform(delete("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken"))
 			.andExpect(status().is4xxClientError())
@@ -769,7 +764,7 @@ class PostControllerTest {
 			.willReturn(true);
 
 		//then
-		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}", 1)
+		mockMvc.perform(delete("/api/boards/{postId}", 1)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "accessToken"))
 			.andExpect(status().isOk())
