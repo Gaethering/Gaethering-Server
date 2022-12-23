@@ -27,7 +27,10 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "chat_room_id", nullable = false)
     private Long id;
 
+    @Column(unique = true)
     private String roomKey;
+    private String name;
+    private int maxParticipantCount;
     private String description;
 
     @OneToMany(mappedBy = "chatRoom")
