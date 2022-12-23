@@ -1,9 +1,11 @@
 package com.gaethering.gaetheringserver.domain.chat.controller;
 
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
 import java.security.Principal;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,5 +35,11 @@ public class ChatController {
     public ResponseEntity<ChatRoomInfo> getChatRoomInfo(@PathVariable String roomKey) {
         ChatRoomInfo chaRoomInformation = chatService.getChaRoomInformation(roomKey);
         return ResponseEntity.ok(chaRoomInformation);
+    }
+
+    @GetMapping("/chat/room/{roomKey}/history")
+    public ResponseEntity<List<ChatMessageResponse>> getChatHistory(@PathVariable String roomKey) {
+        List<ChatMessageResponse> chatHistory = chatService.getChatHistory(roomKey);
+        return ResponseEntity.ok(chatHistory);
     }
 }
