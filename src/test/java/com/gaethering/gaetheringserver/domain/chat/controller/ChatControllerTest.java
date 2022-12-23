@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.domain.chat.controller;
 
+import static com.gaethering.gaetheringserver.domain.chat.exception.errorcode.ChatErrorCode.CHAT_ROOM_NOT_FOUND;
 import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.gaethering.gaetheringserver.domain.pet.exception.errorcode.PetErrorCode.REPRESENTATIVE_PET_NOT_FOUND;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
@@ -28,6 +29,7 @@ import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomMemberInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
+import com.gaethering.gaetheringserver.domain.chat.exception.ChatRoomNotFoundException;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.jwt.JwtAuthenticationFilter;
@@ -194,10 +196,10 @@ class ChatControllerTest {
 
     @Test
     @WithMockUser
-    public void getChatRoomInfoMemberNotFoundFailure() throws Exception {
+    public void getChatRoomInfoChatRoomNotFoundFailure() throws Exception {
         //given
         given(chatService.getChaRoomInformation(anyString()))
-            .willThrow(new MemberNotFoundException());
+            .willThrow(new ChatRoomNotFoundException());
 
         //when
         //then
@@ -206,11 +208,11 @@ class ChatControllerTest {
                 .contentType(APPLICATION_JSON)
                 .header("Authorization", "accessToken"))
             .andExpect(status().is4xxClientError())
-            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(CHAT_ROOM_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(CHAT_ROOM_NOT_FOUND.getMessage()))
 
             .andDo(print())
-            .andDo(document("chat/get-chat-information/failure/member-not-found",
+            .andDo(document("chat/get-chat-information/failure/chat-room-not-found",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 pathParameters(parameterWithName("roomKey").description("조회할 채팅방 키값")),
@@ -245,4 +247,5 @@ class ChatControllerTest {
                     headerWithName("Authorization").description("Access Token"))
             ));
     }
+
 }
