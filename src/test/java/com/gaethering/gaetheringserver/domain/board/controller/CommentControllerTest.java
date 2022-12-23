@@ -18,7 +18,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -80,7 +82,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -114,7 +116,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -145,7 +147,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/boards/{postId}/comments", 1L)
+        mockMvc.perform(post("/api/boards/{postId}/comments", 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -171,7 +173,7 @@ class CommentControllerTest {
         Mockito.when(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .thenReturn(true);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(status().isOk())
@@ -194,7 +196,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new MemberNotFoundException());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
@@ -219,7 +221,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new PostNotFoundException());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
@@ -244,7 +246,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new CommentNotFoundException());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(COMMENT_NOT_FOUND.getCode()))
@@ -269,7 +271,7 @@ class CommentControllerTest {
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new NoPermissionDeleteCommentException());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .with(csrf())
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.code").value(NO_PERMISSION_TO_DELETE_COMMENT.getCode()))
@@ -310,7 +312,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -346,7 +348,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -379,7 +381,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -412,7 +414,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -445,7 +447,7 @@ class CommentControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
+        mockMvc.perform(put("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
