@@ -671,7 +671,7 @@ class PostServiceTest {
         boolean result = postService.deletePost(member1.getEmail(), 1L);
 
         // then
-        verify(heartRepository).deleteHeartAllByPostId(eq(post));
+        verify(heartRepository).deleteHeartAllByPostId(eq(post.getId()));
         verify(commentRepository).deleteCommentsAllByPostId(eq(post.getId()));
         assertThat(result).isTrue();
         verify(postRepository, times(1)).delete(captorPost.capture());

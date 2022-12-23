@@ -10,15 +10,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface HeartRepository extends JpaRepository<Heart, Long> {
+public interface HeartRepository extends JpaRepository<Heart, Long>, CustomHeartRepository {
 
 	Long countByPost(Post post);
 
 	Optional<Heart> findByPostAndMember (Post post, Member member);
 
 	boolean existsByPostAndMember (Post post, Member member);
-  
-	@Modifying
-	@Query("delete from Heart h where h.post = :post")
-	void deleteHeartAllByPostId(@Param("post") Post post);
+
+	long deleteHeartAllByPostId(Long id);
 }
