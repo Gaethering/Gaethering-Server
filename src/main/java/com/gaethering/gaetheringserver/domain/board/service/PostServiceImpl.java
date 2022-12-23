@@ -213,10 +213,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostsGetResponse getPosts(Long categoryId, int size, long lastPostId) {
+    public PostsGetResponse getPosts(String email, Long categoryId, int size, long lastPostId) {
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException());
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
 
         PageRequest pageRequest = PageRequest.of(0, size + 1);
 
@@ -228,6 +231,8 @@ public class PostServiceImpl implements PostService {
         for(Post post : posts) {
 
             PostDetailResponse response = PostDetailResponse.fromEntity(post);
+
+            response.setHasHeart(heartRepository.existsByPostAndMember(post, member));
 
             Optional<PostImage> optionalPostImage
                     = postImageRepository.findByPostAndIsRepresentativeIsTrue(post);
