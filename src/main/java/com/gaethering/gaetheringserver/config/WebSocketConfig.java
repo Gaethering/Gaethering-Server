@@ -20,13 +20,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
-    public static final String APPLICATION_DESTINATION_PREFIX = "/app";
-    public static final String DESTINATION_PREFIX = "/topic";
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes(APPLICATION_DESTINATION_PREFIX);
-        registry.enableStompBrokerRelay(DESTINATION_PREFIX)
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
             .setAutoStartup(true)
             .setRelayHost(host)
             .setRelayPort(61613)
