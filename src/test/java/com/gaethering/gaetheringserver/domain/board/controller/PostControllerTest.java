@@ -81,9 +81,7 @@ class PostControllerTest {
 		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
-			.categoryId(1L)
 			.build();
-
 
 		PostWriteImageUrlResponse response1 = PostWriteImageUrlResponse.builder()
 				.imageUrl("https://test1")
@@ -108,7 +106,7 @@ class PostControllerTest {
 			.createdAt(date)
 			.build();
 
-		Mockito.when(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
+		Mockito.when(postService.writePost(anyString(), anyLong(), anyList(), any(PostWriteRequest.class)))
 			.thenReturn(response);
 
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -116,7 +114,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards?categoryId=1")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
@@ -165,10 +163,9 @@ class PostControllerTest {
 		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
-			.categoryId(1L)
 			.build();
 
-		given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
+		given(postService.writePost(anyString(), anyLong(), anyList(), any(PostWriteRequest.class)))
 			.willThrow(new MemberNotFoundException());
 
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -176,7 +173,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards?categoryId=1")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
@@ -212,10 +209,9 @@ class PostControllerTest {
 		PostWriteRequest request = PostWriteRequest.builder()
 			.title("제목입니다")
 			.content("내용입니다")
-			.categoryId(1L)
 			.build();
 
-		given(postService.writePost(anyString(), anyList(), any(PostWriteRequest.class)))
+		given(postService.writePost(anyString(), anyLong(), anyList(), any(PostWriteRequest.class)))
 			.willThrow(new CategoryNotFoundException());
 
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -223,7 +219,7 @@ class PostControllerTest {
 		MockPart data = new MockPart("data", requestJson.getBytes());
 		data.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards")
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/boards?categoryId=3")
 				.file("images", file1.getBytes())
 				.file("images", file2.getBytes())
 				.part(data)
