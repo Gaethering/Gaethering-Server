@@ -1,5 +1,6 @@
 package com.gaethering.gaetheringserver.domain.chat.service;
 
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
@@ -56,5 +57,13 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
             .orElseThrow(ChatRoomNotFoundException::new);
         return ChatRoomInfo.of(chatRoom);
+    }
+
+    @Override
+    public List<ChatMessageResponse> getChatHistory(String roomKey) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
+            .orElseThrow(ChatRoomNotFoundException::new);
+        return chatRoom.getChatMessages().stream().sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+            .map(ChatMessageResponse::of).collect(Collectors.toList());
     }
 }
