@@ -185,7 +185,7 @@ public class PostServiceImpl implements PostService {
         List<PostImage> postImages = postImageRepository.findAllByPost(post);
 
         heartRepository.deleteHeartAllByPostId(post);
-        commentRepository.deleteCommentsAllByPostId(post);
+        commentRepository.deleteCommentsAllByPostId(post.getId());
 
         if (!postImages.isEmpty()) {
             deletePostImages(postImages);

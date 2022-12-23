@@ -672,7 +672,7 @@ class PostServiceTest {
 
         // then
         verify(heartRepository).deleteHeartAllByPostId(eq(post));
-        verify(commentRepository).deleteCommentsAllByPostId(eq(post));
+        verify(commentRepository).deleteCommentsAllByPostId(eq(post.getId()));
         assertThat(result).isTrue();
         verify(postRepository, times(1)).delete(captorPost.capture());
     }
