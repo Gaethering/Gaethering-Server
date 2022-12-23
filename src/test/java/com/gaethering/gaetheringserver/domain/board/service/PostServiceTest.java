@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
 import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
+import com.gaethering.gaetheringserver.domain.board.entity.Heart;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
 import com.gaethering.gaetheringserver.domain.board.exception.CategoryNotFoundException;
@@ -686,6 +687,14 @@ class PostServiceTest {
         given(categoryRepository.findById(anyLong()))
                 .willReturn(Optional.of(category));
 
+        Member member = Member.builder()
+                .id(1L)
+                .email("test@gmail.com")
+                .build();
+
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member));
+
         PostImage image1 = PostImage.builder()
                 .id(1L)
                 .imageUrl("https://test1")
@@ -710,8 +719,18 @@ class PostServiceTest {
 
         post1.addImage(image1);
 
+        Heart heart1 = Heart.builder()
+                .member(member)
+                .post(post1)
+                .build();
+
+        post1.pushPostHeart(heart1);
+
         given(postImageRepository.findByPostAndIsRepresentativeIsTrue(post1))
                 .willReturn(Optional.of(image1));
+
+        given(heartRepository.existsByPostAndMember(post1, member))
+                .willReturn(true);
 
         Post post2 = Post.builder()
                 .id(2L)
@@ -742,7 +761,7 @@ class PostServiceTest {
         given(postRepository.findAllByCategoryAndIdIsLessThanOrderByIdDesc(any(Category.class), anyLong(), any(PageRequest.class)))
                 .willReturn(List.of(post1, post2, post3));
 
-        PostsGetResponse response = postService.getPosts( 1L, 5, 10);
+        PostsGetResponse response = postService.getPosts( "test@gmail.com",1L, 5, 10);
 
         assertEquals(3, response.getPosts().size());
         assertEquals(post1.getComments().size(), response.getPosts().get(0).getCommentCnt());
@@ -750,7 +769,9 @@ class PostServiceTest {
         assertEquals(post1.getTitle(), response.getPosts().get(0).getTitle());
         assertEquals(post1.getContent(), response.getPosts().get(0).getContent());
         assertEquals(post1.getPostImages().get(0).getImageUrl(), response.getPosts().get(0).getImageUrl());
+        assertEquals(true, response.getPosts().get(0).isHasHeart());
         assertEquals(null, response.getPosts().get(2).getImageUrl());
+        assertEquals(false, response.getPosts().get(2).isHasHeart());
     }
 
     @Test
@@ -761,7 +782,7 @@ class PostServiceTest {
                 .willThrow(new CategoryNotFoundException());
 
         CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
-                () -> postService.getPosts(1L, 5, 10));
+                () -> postService.getPosts("test@gmail.com", 1L, 5, 10));
 
         assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
