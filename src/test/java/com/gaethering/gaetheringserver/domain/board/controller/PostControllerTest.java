@@ -31,6 +31,7 @@ import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotF
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -779,4 +780,125 @@ class PostControllerTest {
 	}
 
 
+	@Test
+	@DisplayName("게시물 조회 성공")
+	@WithMockUser
+	void getPosts_Success() throws Exception {
+
+		LocalDateTime date1 = LocalDateTime.of(2022, 12, 31, 15, 59, 59);
+		LocalDateTime date2 = LocalDateTime.of(2022, 12, 31, 17, 59, 59);
+		LocalDateTime date3 = LocalDateTime.of(2022, 12, 31, 19, 59, 59);
+		LocalDateTime date4 = LocalDateTime.of(2022, 12, 31, 21, 59, 59);
+		LocalDateTime date5 = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
+
+		PostDetailResponse post1 = PostDetailResponse.builder()
+				.postId(1L)
+				.title("제목입니다1")
+				.content("내용입니다1")
+				.imageUrl("http://testImage1")
+				.createdAt(date1)
+				.commentCnt(5)
+				.heartCnt(10)
+				.build();
+
+		PostDetailResponse post2 = PostDetailResponse.builder()
+				.postId(2L)
+				.title("제목입니다2")
+				.content("내용입니다2")
+				.imageUrl("http://testImage2")
+				.createdAt(date2)
+				.commentCnt(2)
+				.heartCnt(0)
+				.build();
+
+		PostDetailResponse post3 = PostDetailResponse.builder()
+				.postId(3L)
+				.title("제목입니다3")
+				.content("내용입니다3")
+				.createdAt(date3)
+				.commentCnt(7)
+				.heartCnt(2)
+				.build();
+
+		PostDetailResponse post4 = PostDetailResponse.builder()
+				.postId(4L)
+				.title("제목입니다4")
+				.content("내용입니다4")
+				.imageUrl("http://testImage4")
+				.createdAt(date4)
+				.commentCnt(3)
+				.heartCnt(10)
+				.build();
+
+		PostDetailResponse post5 = PostDetailResponse.builder()
+				.postId(5L)
+				.title("제목입니다5")
+				.content("내용입니다5")
+				.createdAt(date5)
+				.commentCnt(8)
+				.heartCnt(3)
+				.build();
+
+		List<PostDetailResponse> postResponses = List.of(post5, post4, post3, post2, post1);
+
+		PostsGetResponse response = PostsGetResponse.builder()
+				.posts(postResponses)
+				.totalPostsCnt(5)
+				.nextCursor(-1)
+				.build();
+
+		given(postService.getPosts(anyLong(), anyInt(), anyLong()))
+				.willReturn(response);
+
+		mockMvc.perform((get("/api/boards/{categoryId}/list", 1L)
+				.param("size", "5")
+				.param("lastPostId", "9223372036854775807")
+				.header("Authorization", "accessToken")))
+				.andExpect(jsonPath("$.posts[0].postId").value(post5.getPostId()))
+				.andExpect(jsonPath("$.posts[0].title").value(post5.getTitle()))
+				.andExpect(jsonPath("$.posts[0].content").value(post5.getContent()))
+				.andExpect(jsonPath("$.posts[0].imageUrl").value(post5.getImageUrl()))
+				.andExpect(jsonPath("$.posts[0].createdAt").value(post5.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))))
+				.andExpect(jsonPath("$.posts[0].commentCnt").value(post5.getCommentCnt()))
+				.andExpect(jsonPath("$.posts[0].heartCnt").value(post5.getHeartCnt()))
+				.andExpect(status().isOk())
+				.andDo(print())
+				.andDo(document("boards/get-posts/success",
+						getDocumentRequest(),
+						getDocumentResponse(),
+						pathParameters(parameterWithName("categoryId").description("카테고리 id별 게시물 목록 조회")),
+						requestParameters(parameterWithName("size").description("한 번에 보여줄 게시물의 개수"),
+								parameterWithName("lastPostId").description("한 번에 읽은 게시물들의 가장 마지막 게시물 Id - 처음 조회할 경우 Long 타입의 최대값")),
+						requestHeaders(
+								headerWithName("Authorization").description("Access Token"))
+				));
+
+	}
+
+	@Test
+	@DisplayName("게시물 조회 실패 - 카테고리 없음")
+	@WithMockUser
+	void getPosts_Fail_NoCategory () throws Exception {
+
+		given(postService.getPosts(anyLong(), anyInt(), anyLong()))
+				.willThrow(new CategoryNotFoundException());
+
+		mockMvc.perform((get("/api/boards/{categoryId}/list", 1L)
+						.param("size", "5")
+						.param("lastPostId", "9223372036854775807")
+						.header("Authorization", "accessToken")))
+				.andExpect(status().is4xxClientError())
+				.andExpect(jsonPath("$.code").value(CATEGORY_NOT_FOUND.getCode()))
+				.andExpect(jsonPath("$.message").value(CATEGORY_NOT_FOUND.getMessage()))
+				.andDo(print())
+				.andDo(document("boards/get-posts/failure/category-not-found",
+						getDocumentRequest(),
+						getDocumentResponse(),
+						pathParameters(parameterWithName("categoryId").description("카테고리 id별 게시물 목록 조회")),
+						requestParameters(parameterWithName("size").description("한 번에 보여줄 게시물의 개수"),
+								parameterWithName("lastPostId").description("한 번에 읽은 게시물들의 가장 마지막 게시물 Id - 처음 조회할 경우 Long 타입의 최대값")),
+						requestHeaders(
+								headerWithName("Authorization").description("Access Token"))
+				));
+	}
 }
