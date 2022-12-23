@@ -91,3 +91,40 @@ include::{snippets}/chat/get-chat-information/failure/representative-pet-not-fou
 
 * Response Body
 include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/response-body.adoc[]
+
+
+=== 채팅 기록 가져오기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/success/response-body.adoc[]
+
+==== 실패 - 채팅 방 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/response-body.adoc[]

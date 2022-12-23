@@ -452,8 +452,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_채팅방_만들기_2">채팅방 만들기</a>
 <ul class="sectlevel3">
 <li><a href="#_성공_2">성공</a></li>
-<li><a href="#_실패_회원_못_찾았을_때">실패 - 회원 못 찾았을 때</a></li>
+<li><a href="#_실패_채팅_방_못_찾았을_때">실패 - 채팅 방 못 찾았을 때</a></li>
 <li><a href="#_실패_대표_반려동물이_지정되지_않은_회원이_있을_때">실패 - 대표 반려동물이 지정되지 않은 회원이 있을 때</a></li>
+</ul>
+</li>
+<li><a href="#_채팅_기록_가져오기">채팅 기록 가져오기</a>
+<ul class="sectlevel3">
+<li><a href="#_성공_3">성공</a></li>
+<li><a href="#_실패_채팅_방_못_찾았을_때_2">실패 - 채팅 방 못 찾았을 때</a></li>
 </ul>
 </li>
 </ul>
@@ -478,7 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/chat/room?_csrf=c13147bf-aa1e-4cf6-9ca5-6968645fd1cf HTTP/1.1
+<pre>POST /api/chat/room?_csrf=e61ac98c-7079-43b2-9624-491ff1f9f391 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
 Content-Length: 219
@@ -572,7 +578,7 @@ X-Frame-Options: DENY</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/chat/room?_csrf=00d57932-32c2-46fc-9c3b-254f4990e4fa HTTP/1.1
+<pre>POST /api/chat/room?_csrf=0e85383e-38f6-4864-99dc-854d115aa3e1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
 Content-Length: 219
@@ -811,7 +817,7 @@ Content-Length: 502
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_회원_못_찾았을_때"><a class="link" href="#_실패_회원_못_찾았을_때">실패 - 회원 못 찾았을 때</a></h4>
+<h4 id="_실패_채팅_방_못_찾았을_때"><a class="link" href="#_실패_채팅_방_못_찾았을_때">실패 - 채팅 방 못 찾았을 때</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -895,11 +901,11 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 75
+Content-Length: 85
 
 {
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
+  "code" : "E110",
+  "message" : "해당 채팅방은 존재하지 않습니다."
 }</pre>
 </div>
 </div>
@@ -913,8 +919,8 @@ Content-Length: 75
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E001",
-  "message" : "존재하지 않는 회원입니다."
+  "code" : "E110",
+  "message" : "해당 채팅방은 존재하지 않습니다."
 }</pre>
 </div>
 </div>
@@ -1029,12 +1035,251 @@ Content-Length: 89
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_채팅_기록_가져오기"><a class="link" href="#_채팅_기록_가져오기">채팅 기록 가져오기</a></h3>
+<div class="sect3">
+<h4 id="_성공_3"><a class="link" href="#_성공_3">성공</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>GET /api/chat/room/1/history HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: accessToken
+Host: localhost:8080</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameter
+./api/chat/room/{roomKey}/history</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roomKey</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 채팅방 키값</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 293
+
+[ {
+  "memberId" : 1,
+  "content" : "content1",
+  "createdAt" : "2022-12-23T01:11:53.518+00:00"
+}, {
+  "memberId" : 2,
+  "content" : "content2",
+  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+}, {
+  "memberId" : 3,
+  "content" : "content3",
+  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+} ]</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[ {
+  "memberId" : 1,
+  "content" : "content1",
+  "createdAt" : "2022-12-23T01:11:53.518+00:00"
+}, {
+  "memberId" : 2,
+  "content" : "content2",
+  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+}, {
+  "memberId" : 3,
+  "content" : "content3",
+  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+} ]</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_실패_채팅_방_못_찾았을_때_2"><a class="link" href="#_실패_채팅_방_못_찾았을_때_2">실패 - 채팅 방 못 찾았을 때</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>GET /api/chat/room/1/history HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: accessToken
+Host: localhost:8080</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameter
+./api/chat/room/{roomKey}/history</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roomKey</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 채팅방 키값</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Request Headers</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 85
+
+{
+  "code" : "E110",
+  "message" : "해당 채팅방은 존재하지 않습니다."
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "code" : "E110",
+  "message" : "해당 채팅방은 존재하지 않습니다."
+}</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-22 21:49:19 +0900
+Last updated 2022-12-23 10:10:18 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
