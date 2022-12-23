@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.config.SecurityConfig;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomMemberInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
@@ -34,6 +35,9 @@ import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.jwt.JwtAuthenticationFilter;
 import com.gaethering.gaetheringserver.domain.pet.exception.RepresentativePetNotFoundException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -240,6 +244,50 @@ class ChatControllerTest {
 
             .andDo(print())
             .andDo(document("chat/get-chat-information/failure/representative-pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("roomKey").description("조회할 채팅방 키값")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    public void getChatHistorySuccess() {
+        //given
+
+        //when
+
+        //then
+
+    }
+
+    @Test
+    @WithMockUser
+    public void getChatHistoryChatRoomNotFoundFailure() throws Exception {
+        //given
+        List<ChatMessageResponse> messageResponses = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            ChatMessageResponse messageResponse = ChatMessageResponse.builder().memberId((long) i).content("content" + i)
+                .createdAt(Timestamp.valueOf(LocalDateTime.now())).build();
+            messageResponses.add(messageResponse);
+        }
+        given(chatService.getChatHistory(anyString()))
+            .willReturn(messageResponses);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/chat/room/{roomKey}/history", 1)
+                .pathInfo("/api/chat/room/{roomKey}/history")
+                .contentType(APPLICATION_JSON)
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].memberId").value(String.valueOf(messageResponses.get(0).getMemberId())))
+            .andExpect(jsonPath("$[1].memberId").value(String.valueOf(messageResponses.get(1).getMemberId())))
+            .andExpect(jsonPath("$[2].memberId").value(String.valueOf(messageResponses.get(2).getMemberId())))
+
+            .andDo(print())
+            .andDo(document("chat/get-chat-history/success",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 pathParameters(parameterWithName("roomKey").description("조회할 채팅방 키값")),
