@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,12 +33,13 @@ public class PostController {
 
 	@PostMapping(value = "/boards")
 	public ResponseEntity<PostWriteResponse> writePost
-		(@RequestPart(value = "data") @Valid PostWriteRequest request,
+		(@RequestParam Long categoryId,
+			@RequestPart(value = "data") @Valid PostWriteRequest request,
 			@RequestPart(value = "images", required = false) List<MultipartFile> files,
 			Principal principal) {
 
 		String email = principal.getName();
-		PostWriteResponse response = postService.writePost(email, files, request);
+		PostWriteResponse response = postService.writePost(email, categoryId, files, request);
 
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.contentType(MediaType.APPLICATION_JSON).body(response);
