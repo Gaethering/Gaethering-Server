@@ -74,6 +74,14 @@ public class Post extends BaseTimeEntity {
         this.content = content;
     }
 
+    public void writeComment (Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void deleteComment (Comment comment) {
+        this.comments.remove(comment);
+    }
+
     public void pushPostHeart (Heart heart) {
         this.hearts.add(heart);
     }
