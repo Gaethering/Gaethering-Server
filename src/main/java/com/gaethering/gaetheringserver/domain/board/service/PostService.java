@@ -18,4 +18,6 @@ public interface PostService {
 	boolean deletePost(String email, Long postId);
 
 	PostsGetResponse getPosts (String email, Long categoryId, int size, long lastCommentId);
+
+	PostGetOneResponse getOnePost (Long categoryId, String email, Long postId);
 }

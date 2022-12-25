@@ -22,6 +22,7 @@ import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRep
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -249,5 +250,36 @@ public class PostServiceImpl implements PostService {
 
         ScrollPagingUtil<PostDetailResponse> postsCursor = ScrollPagingUtil.of(postResponses, size);
         return PostsGetResponse.of(postsCursor, postRepository.countByCategory(category));
+    }
+
+    @Override
+    public PostGetOneResponse getOnePost(Long categoryId, String email, Long postId) {
+
+        postRepository.updateViewCountByPostId(postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+
+        if(!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+
+        List<PostGetImageUrlResponse> imgUrls
+                = postImageRepository.findAllByPost(post)
+                .stream().map(PostGetImageUrlResponse:: fromEntity).collect(Collectors.toList());
+
+        PostGetOneResponse response = PostGetOneResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .heartCnt(post.getHearts().size())
+                .viewCnt(post.getViewCnt())
+                .createdAt(post.getCreatedAt())
+                .nickname(post.getMember().getNickname())
+                .images(imgUrls)
+                .build();
+
+        response.setOwner(email.equals(post.getMember().getEmail()));
+        return response;
     }
 }
