@@ -37,7 +37,7 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     @ColumnDefault("0")
-    private int viewCnt;
+    private long viewCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

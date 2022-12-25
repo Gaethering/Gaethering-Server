@@ -15,5 +15,5 @@ public class HeartResponse {
 
     private Long postId;
 
-    private int likeCnt;
+    private long heartCnt;
 }

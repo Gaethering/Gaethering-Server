@@ -22,9 +22,9 @@ public class PostWriteResponse {
 
     private String categoryName;
 
-    private int viewCnt;
+    private long viewCnt;
 
-    private int heartCnt;
+    private long heartCnt;
 
     private String nickname;
 
