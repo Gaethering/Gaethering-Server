@@ -405,3 +405,56 @@ include::{snippets}/boards/get-posts/failure/member-not-found/http-response.adoc
 
 * Response Body
 include::{snippets}/boards/get-posts/failure/member-not-found/response-body.adoc[]
+
+=== 게시물 상세 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/boards/get-one-post/success/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-one-post/success/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-one-post/success/path-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-one-post/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-one-post/success/response-body.adoc[]
+
+==== 실패 - 게시물이 존재하지 않는 경우
+
+* HTTP Request
+include::{snippets}/boards/get-one-post/failure/post-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-one-post/failure/post-not-found/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-one-post/failure/post-not-found/path-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-one-post/failure/post-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-one-post/failure/post-not-found/response-body.adoc[]
+
+==== 실패 - 카테고리 찾지 못한 경우
+
+* HTTP Request
+include::{snippets}/boards/get-one-post/failure/category-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-one-post/failure/category-not-found/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-one-post/failure/category-not-found/path-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-one-post/failure/category-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-one-post/failure/category-not-found/response-body.adoc[]
