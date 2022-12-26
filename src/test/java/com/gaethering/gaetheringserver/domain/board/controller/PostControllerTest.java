@@ -800,6 +800,7 @@ class PostControllerTest {
                 .createdAt(date1)
                 .commentCnt(5)
                 .heartCnt(10)
+                .hasHeart(true)
                 .build();
 
         PostDetailResponse post2 = PostDetailResponse.builder()
@@ -810,6 +811,7 @@ class PostControllerTest {
                 .createdAt(date2)
                 .commentCnt(2)
                 .heartCnt(0)
+                .hasHeart(false)
                 .build();
 
         PostDetailResponse post3 = PostDetailResponse.builder()
@@ -819,6 +821,7 @@ class PostControllerTest {
                 .createdAt(date3)
                 .commentCnt(7)
                 .heartCnt(2)
+                .hasHeart(true)
                 .build();
 
         PostDetailResponse post4 = PostDetailResponse.builder()
@@ -829,6 +832,7 @@ class PostControllerTest {
                 .createdAt(date4)
                 .commentCnt(3)
                 .heartCnt(10)
+                .hasHeart(true)
                 .build();
 
         PostDetailResponse post5 = PostDetailResponse.builder()
@@ -838,6 +842,7 @@ class PostControllerTest {
                 .createdAt(date5)
                 .commentCnt(8)
                 .heartCnt(3)
+                .hasHeart(false)
                 .build();
 
         List<PostDetailResponse> postResponses = List.of(post5, post4, post3, post2, post1);
@@ -848,7 +853,7 @@ class PostControllerTest {
                 .nextCursor(-1)
                 .build();
 
-        given(postService.getPosts(anyLong(), anyInt(), anyLong()))
+        given(postService.getPosts(anyString(), anyLong(), anyInt(), anyLong()))
                 .willReturn(response);
 
         mockMvc.perform((get("/api/boards/{categoryId}/list", 1L)
@@ -862,6 +867,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.posts[0].createdAt").value(post5.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))))
                 .andExpect(jsonPath("$.posts[0].commentCnt").value(post5.getCommentCnt()))
                 .andExpect(jsonPath("$.posts[0].heartCnt").value(post5.getHeartCnt()))
+                .andExpect(jsonPath("$.posts[0].hasHeart").value(post5.isHasHeart()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("boards/get-posts/success",
@@ -881,7 +887,7 @@ class PostControllerTest {
     @WithMockUser
     void getPosts_Fail_NoCategory () throws Exception {
 
-        given(postService.getPosts(anyLong(), anyInt(), anyLong()))
+        given(postService.getPosts(anyString(), anyLong(), anyInt(), anyLong()))
                 .willThrow(new CategoryNotFoundException());
 
         mockMvc.perform((get("/api/boards/{categoryId}/list", 1L)
@@ -893,6 +899,33 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.message").value(CATEGORY_NOT_FOUND.getMessage()))
                 .andDo(print())
                 .andDo(document("boards/get-posts/failure/category-not-found",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("categoryId").description("카테고리 id별 게시물 목록 조회")),
+                        requestParameters(parameterWithName("size").description("한 번에 보여줄 게시물의 개수"),
+                                parameterWithName("lastPostId").description("한 번에 읽은 게시물들의 가장 마지막 게시물 Id - 처음 조회할 경우 Long 타입의 최대값")),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
+
+    @Test
+    @DisplayName("게시물 목록 조회 실패 - 회원 없음")
+    @WithMockUser
+    void getPosts_Fail_NoUser () throws Exception {
+
+        given(postService.getPosts(anyString(), anyLong(), anyInt(), anyLong()))
+                .willThrow(new MemberNotFoundException());
+
+        mockMvc.perform((get("/api/boards/{categoryId}/list", 1L)
+                        .param("size", "5")
+                        .param("lastPostId", "9223372036854775807")
+                        .header("Authorization", "accessToken")))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+                .andDo(print())
+                .andDo(document("boards/get-posts/failure/member-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(parameterWithName("categoryId").description("카테고리 id별 게시물 목록 조회")),
