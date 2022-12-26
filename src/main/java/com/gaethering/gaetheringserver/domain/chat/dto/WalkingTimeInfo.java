@@ -21,4 +21,10 @@ public class WalkingTimeInfo {
             .time(walkingTimeInfo.getTime())
             .build();
     }
+
+    public static WalkingTimeInfo of(WalkingTime walkingTime) {
+        return WalkingTimeInfo.builder()
+            .dayOfWeek(walkingTime.getDayOfWeek())
+            .time(walkingTime.getTime()).build();
+    }
 }

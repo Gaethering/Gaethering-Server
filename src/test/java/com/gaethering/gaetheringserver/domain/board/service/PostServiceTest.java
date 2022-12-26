@@ -127,7 +127,7 @@ class PostServiceTest {
                 MediaType.IMAGE_PNG_VALUE, "test1".getBytes(StandardCharsets.UTF_8))
         );
 
-        given(s3Service.uploadImage(any()))
+        given(s3Service.uploadImage(any(), anyString()))
             .willReturn(imageFiles.get(0).getName());
 
         List<String> imgUrlList = postService.getImageUrlsInRequest(imageFiles);
@@ -426,7 +426,7 @@ class PostServiceTest {
 
         given(postRepository.findById(anyLong()))
             .willReturn(Optional.of(post));
-        given(s3Service.uploadImage(any()))
+        given(s3Service.uploadImage(any(), anyString()))
             .willReturn(file.getName());
 
         PostImage savedPostImage = PostImage.builder()

@@ -188,18 +188,17 @@ class PetServiceTest {
         given(petRepository.findById(anyLong()))
             .willReturn(Optional.of(pet));
 
-        willDoNothing().given(s3Service).removeImage(anyString());
-
         String filename = "test.txt";
         String contentType = "image/png";
 
         MockMultipartFile file = new MockMultipartFile("test", filename, contentType,
             "test".getBytes());
-        given(s3Service.uploadImage(file))
-            .willReturn(file.getName());
+
+        willDoNothing().given(s3Service).removeImage(anyString(), anyString());
+        given(s3Service.uploadImage(any(), anyString())).willReturn(file.getName());
 
         // when
-        PetImageUpdateResponse petImageUpdateResponse = petService.updatePetImage(anyLong(), file);
+        PetImageUpdateResponse petImageUpdateResponse = petService.updatePetImage(1L, any());
 
         // then
         assertThat(petImageUpdateResponse.getImageUrl()).isEqualTo(file.getName());
@@ -419,7 +418,7 @@ class PetServiceTest {
 
         given(memberRepository.findByEmail(anyString()))
             .willReturn(Optional.of(member));
-        willDoNothing().given(s3Service).removeImage(anyString());
+        willDoNothing().given(s3Service).removeImage(anyString(), anyString());
 
         // when
         boolean result = petService.deletePetProfile("test@test.com", 2L);
@@ -453,7 +452,7 @@ class PetServiceTest {
         MockMultipartFile file = new MockMultipartFile("test", "test.txt", "image/png",
             "test".getBytes());
 
-        given(s3Service.uploadImage(any()))
+        given(s3Service.uploadImage(any(), anyString()))
             .willReturn(file.getName());
 
         ArgumentCaptor<Pet> captor = ArgumentCaptor.forClass(Pet.class);

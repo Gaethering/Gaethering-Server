@@ -1,6 +1,10 @@
 package com.gaethering.gaetheringserver.member.controller;
 
-import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.*;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.DUPLICATED_EMAIL;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.INCORRECT_REFRESH_TOKEN;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.INVALID_REFRESH_TOKEN;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.gaethering.gaetheringserver.domain.member.exception.errorcode.MemberErrorCode.NOT_EXIST_REFRESH_TOKEN;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentRequest;
 import static com.gaethering.gaetheringserver.member.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,13 +31,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaethering.gaetheringserver.core.type.Gender;
-import com.gaethering.gaetheringserver.domain.member.dto.auth.*;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginInfoResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginRequest;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.LoginResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.ReissueTokenRequest;
+import com.gaethering.gaetheringserver.domain.member.dto.auth.ReissueTokenResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.MyPostsResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.mypage.PostInfo;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.ModifyMemberNicknameRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse;
-import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse.ProfilePetResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.profile.OwnProfileResponse;
+import com.gaethering.gaetheringserver.domain.member.dto.profile.ProfilePetResponse;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpRequest;
 import com.gaethering.gaetheringserver.domain.member.dto.signup.SignUpResponse;
 import com.gaethering.gaetheringserver.domain.member.exception.auth.TokenIncorrectException;
@@ -228,144 +236,143 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("로그인 성공")
-    public void login () throws Exception{
+    public void login() throws Exception {
 
         LoginResponse response = LoginResponse.builder()
-                .refreshToken("refresh-token")
-                .accessToken("access-token")
-                .build();
+            .refreshToken("refresh-token")
+            .accessToken("access-token")
+            .build();
 
         LoginRequest request = LoginRequest.builder()
-                .email("test-email")
-                .password("test-password")
-                .build();
+            .email("test-email")
+            .password("test-password")
+            .build();
 
         Mockito.when(authService.login(any(LoginRequest.class)))
-                .thenReturn(response);
+            .thenReturn(response);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
-                .andExpect(jsonPath("$.refreshToken").value(response.getRefreshToken()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
+            .andExpect(jsonPath("$.refreshToken").value(response.getRefreshToken()))
 
-                .andDo(print())
-                .andDo(document("member/auth/login/success",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
+            .andDo(print())
+            .andDo(document("member/auth/login/success",
+                getDocumentRequest(),
+                getDocumentResponse()
+            ));
 
     }
 
     @Test
     @WithMockUser
     @DisplayName("access token 재발급 성공")
-    public void reissueAccessToken_Success () throws Exception {
+    public void reissueAccessToken_Success() throws Exception {
 
         ReissueTokenResponse response = ReissueTokenResponse.builder()
-                .accessToken("new-access-token")
-                .build();
+            .accessToken("new-access-token")
+            .build();
 
         ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
+            .refreshToken("refresh-token")
+            .build();
 
         Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenReturn(response);
+            .thenReturn(response);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/success",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.accessToken").value(response.getAccessToken()))
+            .andDo(print())
+            .andDo(document("member/auth/reissue-token/success",
+                getDocumentRequest(),
+                getDocumentResponse()
+            ));
     }
 
     @Test
     @WithMockUser
     @DisplayName("access token 재발급 실패 - 유효하지 않은 refresh token")
-    public void reissueAccessToken_Failure_INVALID () throws Exception {
+    public void reissueAccessToken_Failure_INVALID() throws Exception {
 
         ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
+            .refreshToken("refresh-token")
+            .build();
 
         Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenInvalidException(INVALID_REFRESH_TOKEN));
+            .thenThrow(new TokenInvalidException(INVALID_REFRESH_TOKEN));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(INVALID_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(INVALID_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/invalid-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(INVALID_REFRESH_TOKEN.getCode()))
+            .andExpect(jsonPath("$.message").value(INVALID_REFRESH_TOKEN.getMessage()))
+            .andDo(print())
+            .andDo(document("member/auth/reissue-token/failure/invalid-refresh-token",
+                getDocumentRequest(),
+                getDocumentResponse()
+            ));
     }
 
     @Test
     @WithMockUser
     @DisplayName("access token 재발급 실패 - 존재하지 않은 refresh token")
-    public void reissueAccessToken_Failure_NOEXIST () throws Exception {
+    public void reissueAccessToken_Failure_NOEXIST() throws Exception {
 
         ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
+            .refreshToken("refresh-token")
+            .build();
 
         Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenNotExistException(NOT_EXIST_REFRESH_TOKEN));
+            .thenThrow(new TokenNotExistException(NOT_EXIST_REFRESH_TOKEN));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(NOT_EXIST_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(NOT_EXIST_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/not-exist-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(NOT_EXIST_REFRESH_TOKEN.getCode()))
+            .andExpect(jsonPath("$.message").value(NOT_EXIST_REFRESH_TOKEN.getMessage()))
+            .andDo(print())
+            .andDo(document("member/auth/reissue-token/failure/not-exist-refresh-token",
+                getDocumentRequest(),
+                getDocumentResponse()
+            ));
     }
 
     @Test
     @WithMockUser
     @DisplayName("access token 재발급 실패 - 일치하지 않은 refresh token")
-    public void reissueAccessToken_Failure_INCORRECT () throws Exception {
+    public void reissueAccessToken_Failure_INCORRECT() throws Exception {
 
         ReissueTokenRequest request = ReissueTokenRequest.builder()
-                .refreshToken("refresh-token")
-                .build();
+            .refreshToken("refresh-token")
+            .build();
 
         Mockito.when(authService.reissue(any(ReissueTokenRequest.class)))
-                .thenThrow(new TokenIncorrectException(INCORRECT_REFRESH_TOKEN));
+            .thenThrow(new TokenIncorrectException(INCORRECT_REFRESH_TOKEN));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/members/auth/reissue-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(INCORRECT_REFRESH_TOKEN.getCode()))
-                .andExpect(jsonPath("$.message").value(INCORRECT_REFRESH_TOKEN.getMessage()))
-                .andDo(print())
-                .andDo(document("member/auth/reissue-token/failure/incorrect-refresh-token",
-                        getDocumentRequest(),
-                        getDocumentResponse()
-                ));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(INCORRECT_REFRESH_TOKEN.getCode()))
+            .andExpect(jsonPath("$.message").value(INCORRECT_REFRESH_TOKEN.getMessage()))
+            .andDo(print())
+            .andDo(document("member/auth/reissue-token/failure/incorrect-refresh-token",
+                getDocumentRequest(),
+                getDocumentResponse()
+            ));
     }
-
 
 
     @Test
@@ -452,8 +459,8 @@ class MemberControllerTest {
     @WithMockUser
     public void getOwnProfile() throws Exception {
         //given
-        ProfilePetResponse petResponse = ProfilePetResponse.builder().id(1L).name("pet")
-            .isRepresentative(true).build();
+        ProfilePetResponse petResponse = ProfilePetResponse.builder().id(1L).name("pet").isRepresentative(true)
+            .imageUrl("imageUrl").build();
         OwnProfileResponse ownProfileResponse = OwnProfileResponse.builder().email("test@test.com")
             .nickname("nickname").phoneNumber("010-0000-0000").gender(Gender.MALE)
             .mannerDegree(36.5f).followerCount(10L).followingCount(10L).petCount(5)
@@ -529,8 +536,8 @@ class MemberControllerTest {
     @WithMockUser
     public void getOtherProfile() throws Exception {
         //given
-        ProfilePetResponse petResponse = ProfilePetResponse.builder().id(1L).name("pet")
-            .isRepresentative(true).build();
+        ProfilePetResponse petResponse = ProfilePetResponse.builder().id(1L).name("pet").isRepresentative(true)
+            .imageUrl("imageUrl").build();
         OtherProfileResponse otherProfile = OtherProfileResponse.builder().email("test@test.com")
             .nickname("nickname").gender(Gender.MALE).mannerDegree(36.5f).followerCount(10L)
             .followingCount(10L).petCount(5).pets(List.of(petResponse)).build();

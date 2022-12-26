@@ -48,7 +48,7 @@ public class S3ServiceTest {
         // when
         InvalidImageTypeException exception = Assertions.assertThrows(
             InvalidImageTypeException.class,
-            () -> s3Service.uploadImage(file));
+            () -> s3Service.uploadImage(file, "test-dir"));
 
         // then
         assertThat(exception.getErrorCode()).isEqualTo(PetErrorCode.INVALID_IMAGE_TYPE);
@@ -66,7 +66,7 @@ public class S3ServiceTest {
             "test".getBytes());
 
         // when
-        String urlPath = s3Service.uploadImage(file);
+        String urlPath = s3Service.uploadImage(file, "test-dir");
 
         // then
         assertThat(urlPath.substring(0, urlPath.lastIndexOf("/") + 1)).isEqualTo(path);

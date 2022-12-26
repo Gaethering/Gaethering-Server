@@ -39,6 +39,12 @@ spring :
       accessToken: 600000
       refreshToken: 600000
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+
 cloud:
   aws:
     credentials:

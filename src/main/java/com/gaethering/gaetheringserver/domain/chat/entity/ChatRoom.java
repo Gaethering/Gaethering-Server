@@ -27,14 +27,20 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "chat_room_id", nullable = false)
     private Long id;
 
+    @Column(unique = true)
     private String roomKey;
+    private String name;
     private String description;
+    private Integer maxParticipantCount;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<WalkingTime> walkingTimes = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatRoom")
+    private List<ChatroomMember> chatroomMembers = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;
@@ -48,5 +54,10 @@ public class ChatRoom extends BaseTimeEntity {
     public void addChatMessage(ChatMessage chatMessage) {
         chatMessages.add(chatMessage);
         chatMessage.setChatRoom(this);
+    }
+
+    public void addChatroomMember(ChatroomMember chatroomMember) {
+        chatroomMembers.add(chatroomMember);
+        chatroomMember.setChatRoom(this);
     }
 }

@@ -25,19 +25,16 @@ public class S3ServiceImpl implements S3Service {
 
     private final AmazonS3 amazonS3;
     private final String bucket;
-    private final String dir;
 
     @Autowired
     public S3ServiceImpl(AmazonS3 amazonS3,
-                         @Value("${cloud.aws.s3.bucket}") String bucket,
-                         @Value("${dir}") String dir) {
+                         @Value("${cloud.aws.s3.bucket}") String bucket) {
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
-        this.dir = dir;
     }
 
     @Override
-    public String uploadImage(MultipartFile multipartFile) {
+    public String uploadImage(MultipartFile multipartFile, String dir) {
 
         String fileName = createFileName(multipartFile.getOriginalFilename());
 
@@ -58,7 +55,7 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public void removeImage(String filename) {
+    public void removeImage(String filename, String dir) {
         amazonS3.deleteObject(bucket,
                 dir + "/" + filename.substring(filename.lastIndexOf("/") + 1));
     }

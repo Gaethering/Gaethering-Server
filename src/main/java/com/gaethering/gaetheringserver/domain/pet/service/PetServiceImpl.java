@@ -32,6 +32,7 @@ public class PetServiceImpl implements PetService {
 
     private static final int MIN_EXIST_PET = 1;
     private static final int MAX_REGISTRABLE_PET = 3;
+    private static final String DIR = "pet-profile";
 
     private final S3Service s3Service;
     private final PetRepository petRepository;
@@ -41,9 +42,9 @@ public class PetServiceImpl implements PetService {
     public PetImageUpdateResponse updatePetImage(Long id, MultipartFile multipartFile) {
         Pet pet = petRepository.findById(id).orElseThrow(PetNotFoundException::new);
 
-        s3Service.removeImage(pet.getImageUrl());
+        s3Service.removeImage(pet.getImageUrl(), DIR);
 
-        String newImageUrl = s3Service.uploadImage(multipartFile);
+        String newImageUrl = s3Service.uploadImage(multipartFile, DIR);
         pet.updateImage(newImageUrl);
 
         return PetImageUpdateResponse.builder().imageUrl(newImageUrl).build();
@@ -95,7 +96,7 @@ public class PetServiceImpl implements PetService {
             throw new FailedDeleteRepresentativeException();
         }
 
-        s3Service.removeImage(findPet.getImageUrl());
+        s3Service.removeImage(findPet.getImageUrl(), DIR);
 
         petRepository.delete(findPet);
 
@@ -114,7 +115,7 @@ public class PetServiceImpl implements PetService {
             throw new ExceedRegistrablePetException();
         }
 
-        String imageUrl = s3Service.uploadImage(multipartFile);
+        String imageUrl = s3Service.uploadImage(multipartFile, DIR);
 
         Pet newPet = Pet.builder()
                 .name(petRegisterRequest.getPetName())

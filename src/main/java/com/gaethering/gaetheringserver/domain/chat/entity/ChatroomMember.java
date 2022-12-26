@@ -37,4 +37,8 @@ public class ChatroomMember extends BaseCreatedTimeEntity {
     private Member member;
 
     private boolean isOwner;
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+    }
 }
