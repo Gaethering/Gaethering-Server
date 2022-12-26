@@ -11,7 +11,6 @@ import com.gaethering.gaetheringserver.domain.board.service.CommentService;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -79,7 +79,7 @@ class CommentControllerTest {
                 .createdAt(date)
                 .build();
 
-        Mockito.when(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
+        when(commentService.writeComment(anyString(), anyLong(), any(CommentRequest.class)))
                 .thenReturn(response);
 
         String requestJson = objectMapper.writeValueAsString(request);
@@ -174,7 +174,7 @@ class CommentControllerTest {
     @WithMockUser
     void deleteComment_Success() throws Exception {
 
-        Mockito.when(commentService.deleteComment(anyString(), anyLong(), anyLong()))
+        when(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .thenReturn(true);
 
         mockMvc.perform(delete("/api/boards/{postId}/comments/{commentId}", 1L, 1L)
@@ -311,7 +311,7 @@ class CommentControllerTest {
                 .createdAt(date)
                 .build();
 
-        Mockito.when(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
+        when(commentService.updateComment(anyString(), anyLong(), anyLong(), any(CommentRequest.class)))
                 .thenReturn(response);
 
         String requestJson = objectMapper.writeValueAsString(request);
