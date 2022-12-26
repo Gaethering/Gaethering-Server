@@ -1,6 +1,5 @@
 package com.gaethering.gaetheringserver.domain.chat.dto;
 
-import com.gaethering.gaetheringserver.domain.chat.entity.WalkingTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

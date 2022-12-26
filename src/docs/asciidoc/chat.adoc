@@ -1,5 +1,5 @@
 = Spring REST DOCS
-BE 김진호
+BE 김진호, BE 최영훈
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -39,46 +39,92 @@ include::{snippets}/chat/make-chatroom/failure/member-not-found/request-body.ado
 * Http Response
 include::{snippets}/chat/make-chatroom/failure/member-not-found/http-response.adoc[]
 
-=== 채팅방 삭제
+=== 채팅방 만들기
 
 ==== 성공
 
-* Http Request
-include::{snippets}/chat/delete-chatroom/success/http-request.adoc[]
+* HTTP Request
+include::{snippets}/chat/get-chat-information/success/http-request.adoc[]
 
-* Request Header
-include::{snippets}/chat/delete-chatroom/success/request-headers.adoc[]
+* Path Parameter
+include::{snippets}/chat/get-chat-information/success/path-parameters.adoc[]
 
-* Path Variable
-include::{snippets}/chat/delete-chatroom/success/path-parameters.adoc[]
+* Request Headers
+include::{snippets}/chat/get-chat-information/success/request-headers.adoc[]
 
-* Http Response
-include::{snippets}/chat/delete-chatroom/success/http-response.adoc[]
+* HTTP Response
+include::{snippets}/chat/get-chat-information/success/http-response.adoc[]
 
-==== 실패 - 사용자를 찾을 수 없는 경우
+* Response Body
+include::{snippets}/chat/get-chat-information/success/response-body.adoc[]
 
-* Http Request
-include::{snippets}/chat/delete-chatroom/failure/member-not-found/http-request.adoc[]
+==== 실패 - 채팅 방 못 찾았을 때
 
-* Request Header
-include::{snippets}/chat/delete-chatroom/failure/member-not-found/request-headers.adoc[]
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/http-request.adoc[]
 
-* Path Variable
-include::{snippets}/chat/delete-chatroom/failure/member-not-found/path-parameters.adoc[]
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/path-parameters.adoc[]
 
-* Http Response
-include::{snippets}/chat/delete-chatroom/failure/member-not-found/http-response.adoc[]
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/request-headers.adoc[]
 
-==== 실패 - 채팅방을 찾을 수 없는 경우
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/http-response.adoc[]
 
-* Http Request
-include::{snippets}/chat/delete-chatroom/failure/chat-room-not-found/http-request.adoc[]
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/response-body.adoc[]
 
-* Request Header
-include::{snippets}/chat/delete-chatroom/failure/chat-room-not-found/request-headers.adoc[]
+==== 실패 - 대표 반려동물이 지정되지 않은 회원이 있을 때
 
-* Path Variable
-include::{snippets}/chat/delete-chatroom/failure/chat-room-not-found/path-parameters.adoc[]
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-request.adoc[]
 
-* Http Response
-include::{snippets}/chat/delete-chatroom/failure/chat-room-not-found/http-response.adoc[]
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/response-body.adoc[]
+
+
+=== 채팅 기록 가져오기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/success/response-body.adoc[]
+
+==== 실패 - 채팅 방 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/response-body.adoc[]

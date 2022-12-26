@@ -50,10 +50,10 @@ public class PostServiceImpl implements PostService {
                                        List<MultipartFile> files, PostWriteRequest request) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
 
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException());
+                .orElseThrow(CategoryNotFoundException::new);
 
         Post post = Post.builder()
                 .title(request.getTitle())
