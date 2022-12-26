@@ -115,6 +115,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentsGetResponse getCommentsByPost(String email, Long postId, int size, long lastCommentId) {
 
         Post post = postRepository.findById(postId)
@@ -128,11 +129,7 @@ public class CommentServiceImpl implements CommentService {
 
         for(Comment comment : comments) {
             CommentDetailResponse response = CommentDetailResponse.fromEntity(comment);
-            if(email.equals(comment.getMember().getEmail())) {
-                response.setOwner(true);
-            } else {
-                response.setOwner(false);
-            }
+            response.setOwner(email.equals(comment.getMember().getEmail()));
             commentResponses.add(response);
         }
 
