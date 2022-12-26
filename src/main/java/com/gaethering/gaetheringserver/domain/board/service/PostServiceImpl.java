@@ -253,6 +253,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public PostGetOneResponse getOnePost(Long categoryId, String email, Long postId) {
 
         postRepository.updateViewCountByPostId(postId);
