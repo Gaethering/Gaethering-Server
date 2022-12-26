@@ -18,9 +18,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,7 +63,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 작성 성공")
     @WithMockUser
-    void writeComment_Success () throws Exception {
+    void writeComment_Success() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -102,10 +104,11 @@ class CommentControllerTest {
                                 headerWithName("Authorization").description("Access Token"))
                 ));
     }
+
     @Test
     @DisplayName("댓글 작성 실패 - 회원 없음")
     @WithMockUser
-    void write_Comment_fail_NoUser () throws Exception {
+    void write_Comment_fail_NoUser() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -133,10 +136,11 @@ class CommentControllerTest {
                                 headerWithName("Authorization").description("Access Token"))
                 ));
     }
+
     @Test
     @DisplayName("댓글 작성 실패 - 게시물 없음")
     @WithMockUser
-    void write_Comment_fail_NoPost () throws Exception {
+    void write_Comment_fail_NoPost() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -168,7 +172,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 성공")
     @WithMockUser
-    void deleteComment_Success () throws Exception {
+    void deleteComment_Success() throws Exception {
 
         Mockito.when(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .thenReturn(true);
@@ -191,7 +195,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 실패 - 회원 없음")
     @WithMockUser
-    void delete_Comment_fail_NoUser () throws Exception {
+    void delete_Comment_fail_NoUser() throws Exception {
 
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new MemberNotFoundException());
@@ -216,7 +220,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 실패 - 게시물 없음")
     @WithMockUser
-    void delete_Comment_fail_NoPost () throws Exception {
+    void delete_Comment_fail_NoPost() throws Exception {
 
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new PostNotFoundException());
@@ -241,7 +245,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 실패 - 댓글 없음")
     @WithMockUser
-    void delete_Comment_fail_NoComment () throws Exception {
+    void delete_Comment_fail_NoComment() throws Exception {
 
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new CommentNotFoundException());
@@ -266,7 +270,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 실패 - 삭제 권한 없음")
     @WithMockUser
-    void delete_Comment_fail_UNMATCH_writer () throws Exception {
+    void delete_Comment_fail_UNMATCH_writer() throws Exception {
 
         given(commentService.deleteComment(anyString(), anyLong(), anyLong()))
                 .willThrow(new NoPermissionDeleteCommentException());
@@ -291,7 +295,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정 성공")
     @WithMockUser
-    void updateComment_Success () throws Exception {
+    void updateComment_Success() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("수정 댓글입니다")
@@ -337,7 +341,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정 실패 - 회원 없음")
     @WithMockUser
-    void update_Comment_fail_NoUser () throws Exception {
+    void update_Comment_fail_NoUser() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -370,7 +374,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정 실패 - 게시물 없음")
     @WithMockUser
-    void update_Comment_fail_NoPost () throws Exception {
+    void update_Comment_fail_NoPost() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -403,7 +407,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정 실패 - 댓글 없음")
     @WithMockUser
-    void update_Comment_fail_NoComment () throws Exception {
+    void update_Comment_fail_NoComment() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
@@ -436,7 +440,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 수정 실패 - 수정 권한 없음")
     @WithMockUser
-    void update_Comment_fail_UNMATCH_writer () throws Exception {
+    void update_Comment_fail_UNMATCH_writer() throws Exception {
 
         CommentRequest request = CommentRequest.builder()
                 .content("댓글입니다")
