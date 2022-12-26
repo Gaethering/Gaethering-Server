@@ -19,7 +19,4 @@ public class PostWriteRequest {
 
     @NotBlank(message = "게시글 내용은 필수 입력사항입니다.")
     private String content;
-
-    private Long categoryId;
-
 }

@@ -79,12 +79,11 @@ class PostServiceTest {
         PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
-            .categoryId(1L)
             .build();
 
         MemberNotFoundException exception = assertThrows(
             MemberNotFoundException.class,
-            () -> postService.writePost(anyString(), null, request));
+            () -> postService.writePost(anyString(), 1L, null, request));
 
         assertEquals(MemberErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
     }
@@ -107,11 +106,10 @@ class PostServiceTest {
         PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
-            .categoryId(1L)
             .build();
 
         CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
-            () -> postService.writePost("test@gmail.com", null, request));
+            () -> postService.writePost("test@gmail.com", anyLong(), null, request));
 
         assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
@@ -157,13 +155,12 @@ class PostServiceTest {
         PostWriteRequest request = PostWriteRequest.builder()
             .title("제목입니다")
             .content("내용입니다")
-            .categoryId(1L)
             .build();
 
         ArgumentCaptor<Post> captor = ArgumentCaptor.forClass(Post.class);
 
         PostWriteResponse response
-            = postService.writePost(anyString(), new ArrayList<>(), request);
+            = postService.writePost(anyString(), 1L, new ArrayList<>(), request);
 
         assertEquals(0, response.getImageUrls().size());
         assertEquals("닉네임", response.getNickname());
@@ -669,8 +666,8 @@ class PostServiceTest {
         boolean result = postService.deletePost(member1.getEmail(), 1L);
 
         // then
-        verify(heartRepository).deleteHeartAllByPostId(eq(post));
-        verify(commentRepository).deleteCommentsAllByPostId(eq(post));
+        verify(heartRepository).deleteHeartAllByPostId(eq(post.getId()));
+        verify(commentRepository).deleteCommentsAllByPostId(eq(post.getId()));
         assertThat(result).isTrue();
         verify(postRepository, times(1)).delete(captorPost.capture());
     }

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface PostService {
 
-    PostWriteResponse writePost(String email, List<MultipartFile> files, PostWriteRequest request);
+    PostWriteResponse writePost(String email, Long categoryId, List<MultipartFile> files, PostWriteRequest request);
 
     PostUpdateResponse updatePost(String email, Long postId, PostUpdateRequest request);
 

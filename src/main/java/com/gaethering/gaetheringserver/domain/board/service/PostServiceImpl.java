@@ -46,13 +46,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostWriteResponse writePost(String email,
+    public PostWriteResponse writePost(String email, Long categoryId,
                                        List<MultipartFile> files, PostWriteRequest request) {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(CategoryNotFoundException::new);
 
         Post post = Post.builder()
@@ -184,8 +184,8 @@ public class PostServiceImpl implements PostService {
         }
         List<PostImage> postImages = postImageRepository.findAllByPost(post);
 
-        heartRepository.deleteHeartAllByPostId(post);
-        commentRepository.deleteCommentsAllByPostId(post);
+        heartRepository.deleteHeartAllByPostId(post.getId());
+        commentRepository.deleteCommentsAllByPostId(post.getId());
 
         if (!postImages.isEmpty()) {
             deletePostImages(postImages);
