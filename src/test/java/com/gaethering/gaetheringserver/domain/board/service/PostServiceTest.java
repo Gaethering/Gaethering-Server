@@ -13,11 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
@@ -46,6 +42,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -675,5 +672,97 @@ class PostServiceTest {
         verify(commentRepository).deleteCommentsAllByPostId(eq(post));
         assertThat(result).isTrue();
         verify(postRepository, times(1)).delete(captorPost.capture());
+    }
+
+    @Test
+    @DisplayName("게시물 목록 조회 성공")
+    void getPosts_Success () {
+
+        Category category = Category.builder()
+                .id(1L)
+                .categoryName("정보 공유")
+                .build();
+
+        given(categoryRepository.findById(anyLong()))
+                .willReturn(Optional.of(category));
+
+        PostImage image1 = PostImage.builder()
+                .id(1L)
+                .imageUrl("https://test1")
+                .isRepresentative(true)
+                .build();
+
+        PostImage image2 = PostImage.builder()
+                .id(2L)
+                .imageUrl("https://test2")
+                .isRepresentative(false)
+                .build();
+
+        Post post1 = Post.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .category(category)
+                .postImages(new ArrayList<>())
+                .comments(new ArrayList<>())
+                .hearts(new ArrayList<>())
+                .build();
+
+        post1.addImage(image1);
+
+        given(postImageRepository.findByPostAndIsRepresentativeIsTrue(post1))
+                .willReturn(Optional.of(image1));
+
+        Post post2 = Post.builder()
+                .id(2L)
+                .title("제목2")
+                .content("내용2")
+                .category(category)
+                .postImages(new ArrayList<>())
+                .comments(new ArrayList<>())
+                .hearts(new ArrayList<>())
+                .build();
+
+        post2.addImage(image2);
+
+        given(postImageRepository.findByPostAndIsRepresentativeIsTrue(post2))
+                .willReturn(Optional.of(image2));
+
+        Post post3 = Post.builder()
+                .id(3L)
+                .title("제목3")
+                .content("내용3")
+                .category(category)
+                .postImages(new ArrayList<>())
+                .comments(new ArrayList<>())
+                .hearts(new ArrayList<>())
+                .build();
+
+
+        given(postRepository.findAllByCategoryAndIdIsLessThanOrderByIdDesc(any(Category.class), anyLong(), any(PageRequest.class)))
+                .willReturn(List.of(post1, post2, post3));
+
+        PostsGetResponse response = postService.getPosts( 1L, 5, 10);
+
+        assertEquals(3, response.getPosts().size());
+        assertEquals(post1.getComments().size(), response.getPosts().get(0).getCommentCnt());
+        assertEquals(post1.getHearts().size(), response.getPosts().get(0).getHeartCnt());
+        assertEquals(post1.getTitle(), response.getPosts().get(0).getTitle());
+        assertEquals(post1.getContent(), response.getPosts().get(0).getContent());
+        assertEquals(post1.getPostImages().get(0).getImageUrl(), response.getPosts().get(0).getImageUrl());
+        assertEquals(null, response.getPosts().get(2).getImageUrl());
+    }
+
+    @Test
+    @DisplayName("게시물 목록 조회 실패 - 카테고리 없음")
+    void getPosts_Fail_NoCategory () {
+
+        given(categoryRepository.findById(anyLong()))
+                .willThrow(new CategoryNotFoundException());
+
+        CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
+                () -> postService.getPosts(1L, 5, 10));
+
+        assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
 }
