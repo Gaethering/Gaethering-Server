@@ -45,11 +45,13 @@ class MemberProfileServiceTest {
             .id(1L)
             .name("pet1")
             .isRepresentative(true)
+            .imageUrl("imageUrl1")
             .build();
         Pet pet2 = Pet.builder()
             .id(2L)
             .name("pet2")
             .isRepresentative(false)
+            .imageUrl("imageUrl2")
             .build();
         List<Pet> pets = List.of(pet1, pet2);
         MemberProfile memberProfile = MemberProfile.builder()
