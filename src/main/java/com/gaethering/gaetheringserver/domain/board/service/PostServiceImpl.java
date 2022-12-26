@@ -47,21 +47,21 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostWriteResponse writePost(String email, Long categoryId,
-                                       List<MultipartFile> files, PostWriteRequest request) {
+        List<MultipartFile> files, PostWriteRequest request) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(MemberNotFoundException::new);
+            .orElseThrow(MemberNotFoundException::new);
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(CategoryNotFoundException::new);
+            .orElseThrow(CategoryNotFoundException::new);
 
         Post post = Post.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .category(category)
-                .member(member)
-                .postImages(new ArrayList<>())
-                .build();
+            .title(request.getTitle())
+            .content(request.getContent())
+            .category(category)
+            .member(member)
+            .postImages(new ArrayList<>())
+            .build();
 
         postRepository.save(post);
 
@@ -72,32 +72,33 @@ public class PostServiceImpl implements PostService {
             boolean representative = true;
             for (String imgUrl : imgUrls) {
                 PostImage image = PostImage.builder()
-                        .imageUrl(imgUrl)
-                        .isRepresentative(representative)
-                        .post(post)
-                        .build();
+                    .imageUrl(imgUrl)
+                    .isRepresentative(representative)
+                    .post(post)
+                    .build();
 
                 post.addImage(postImageRepository.save(image));
 
                 imageUrlResponses.add(PostWriteImageUrlResponse.builder()
-                        .representative(representative)
-                        .imageUrl(image.getImageUrl())
-                        .build());
+                    .representative(representative)
+                    .imageUrl(image.getImageUrl())
+                    .build());
 
                 representative = false;
             }
         }
 
         return PostWriteResponse.builder()
-                .categoryName(post.getCategory().getCategoryName())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .imageUrls(imageUrlResponses)
-                .viewCnt(0)
-                .heartCnt(0)
-                .createdAt(post.getCreatedAt())
-                .nickname(post.getMember().getNickname())
-                .build();
+            .postId(post.getId())
+            .categoryName(post.getCategory().getCategoryName())
+            .title(post.getTitle())
+            .content(post.getContent())
+            .imageUrls(imageUrlResponses)
+            .viewCnt(0)
+            .heartCnt(0)
+            .createdAt(post.getCreatedAt())
+            .nickname(post.getMember().getNickname())
+            .build();
     }
 
     @Override
