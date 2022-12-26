@@ -484,13 +484,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/chat/room?_csrf=e61ac98c-7079-43b2-9624-491ff1f9f391 HTTP/1.1
+<pre>POST /api/chat/room?_csrf=ee416ca1-8d98-47b6-8394-71b61badc8aa HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
-Content-Length: 219
+Content-Length: 265
 Host: localhost:8080
 
 {
+  "name" : null,
+  "maxParticipantCount" : 0,
   "description" : "설명",
   "walkingTimes" : [ {
     "dayOfWeek" : "월",
@@ -537,6 +539,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre>{
+  "name" : null,
+  "maxParticipantCount" : 0,
   "description" : "설명",
   "walkingTimes" : [ {
     "dayOfWeek" : "월",
@@ -578,13 +582,15 @@ X-Frame-Options: DENY</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/chat/room?_csrf=0e85383e-38f6-4864-99dc-854d115aa3e1 HTTP/1.1
+<pre>POST /api/chat/room?_csrf=6c9d12d2-2914-410d-a287-e8a87a7f8130 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: accessToken
-Content-Length: 219
+Content-Length: 265
 Host: localhost:8080
 
 {
+  "name" : null,
+  "maxParticipantCount" : 0,
   "description" : "설명",
   "walkingTimes" : [ {
     "dayOfWeek" : "월",
@@ -631,6 +637,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre>{
+  "name" : null,
+  "maxParticipantCount" : 0,
   "description" : "설명",
   "walkingTimes" : [ {
     "dayOfWeek" : "월",
@@ -1127,15 +1135,15 @@ Content-Length: 293
 [ {
   "memberId" : 1,
   "content" : "content1",
-  "createdAt" : "2022-12-23T01:11:53.518+00:00"
+  "createdAt" : "2022-12-26T02:48:35.953+00:00"
 }, {
   "memberId" : 2,
   "content" : "content2",
-  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+  "createdAt" : "2022-12-26T02:48:35.955+00:00"
 }, {
   "memberId" : 3,
   "content" : "content3",
-  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+  "createdAt" : "2022-12-26T02:48:35.955+00:00"
 } ]</pre>
 </div>
 </div>
@@ -1151,15 +1159,15 @@ Content-Length: 293
 <pre>[ {
   "memberId" : 1,
   "content" : "content1",
-  "createdAt" : "2022-12-23T01:11:53.518+00:00"
+  "createdAt" : "2022-12-26T02:48:35.953+00:00"
 }, {
   "memberId" : 2,
   "content" : "content2",
-  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+  "createdAt" : "2022-12-26T02:48:35.955+00:00"
 }, {
   "memberId" : 3,
   "content" : "content3",
-  "createdAt" : "2022-12-23T01:11:53.520+00:00"
+  "createdAt" : "2022-12-26T02:48:35.955+00:00"
 } ]</pre>
 </div>
 </div>
@@ -1169,108 +1177,26 @@ Content-Length: 293
 <div class="ulist">
 <ul>
 <li>
-<p>HTTP Request</p>
+<p>HTTP Request
+Unresolved directive in chat.adoc - include::../../../build/generated-snippets/chat/get-chat-history/failure/chat-room-not-found/http-request.adoc[]</p>
 </li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>GET /api/chat/room/1/history HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: accessToken
-Host: localhost:8080</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
 <p>Path Parameter
-./api/chat/room/{roomKey}/history</p>
+Unresolved directive in chat.adoc - include::../../../build/generated-snippets/chat/get-chat-history/failure/chat-room-not-found/path-parameters.adoc[]</p>
 </li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roomKey</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 채팅방 키값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
 <li>
-<p>Request Headers</p>
+<p>Request Headers
+Unresolved directive in chat.adoc - include::../../../build/generated-snippets/chat/get-chat-history/failure/chat-room-not-found/request-headers.adoc[]</p>
 </li>
-</ul>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Access Token</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
 <li>
-<p>HTTP Response</p>
+<p>HTTP Response
+Unresolved directive in chat.adoc - include::../../../build/generated-snippets/chat/get-chat-history/failure/chat-room-not-found/http-response.adoc[]</p>
 </li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 400 Bad Request
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Length: 85
-
-{
-  "code" : "E110",
-  "message" : "해당 채팅방은 존재하지 않습니다."
-}</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
-<p>Response Body</p>
+<p>Response Body
+Unresolved directive in chat.adoc - include::../../../build/generated-snippets/chat/get-chat-history/failure/chat-room-not-found/response-body.adoc[]</p>
 </li>
 </ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>{
-  "code" : "E110",
-  "message" : "해당 채팅방은 존재하지 않습니다."
-}</pre>
-</div>
 </div>
 </div>
 </div>
@@ -1279,7 +1205,7 @@ Content-Length: 85
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-23 10:10:18 +0900
+Last updated 2022-12-26 11:33:04 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
