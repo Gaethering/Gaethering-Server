@@ -51,6 +51,8 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
+        post.writeComment(comment);
+
         return CommentResponse.builder()
                 .memberId(comment.getMember().getId())
                 .commentId(comment.getId())
@@ -94,9 +96,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public boolean deleteComment(String email, Long postId, Long commentId) {
 
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
@@ -108,6 +109,7 @@ public class CommentServiceImpl implements CommentService {
             throw new NoPermissionDeleteCommentException();
         }
         commentRepository.delete(comment);
+        post.deleteComment(comment);
 
         return true;
     }
