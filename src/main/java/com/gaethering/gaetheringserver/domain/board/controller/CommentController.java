@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.domain.board.controller;
 
 import com.gaethering.gaetheringserver.domain.board.dto.CommentRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.CommentsGetResponse;
 import com.gaethering.gaetheringserver.domain.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,4 +49,13 @@ public class CommentController {
         commentService.deleteComment(principal.getName(), postId, commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/boards/{postId}/comments")
+    public ResponseEntity<CommentsGetResponse> getCommentsList (@PathVariable Long postId,
+                                                                @RequestParam int size,
+                                                                @RequestParam Long lastCommentId, Principal principal) {
+
+        CommentsGetResponse response
+                = commentService.getCommentsByPost(principal.getName(), postId, size, lastCommentId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);    }
 }
