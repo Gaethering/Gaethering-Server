@@ -786,4 +786,100 @@ class PostServiceTest {
 
         assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
     }
+
+    @Test
+    @DisplayName("게시물 상세 조회 성공")
+    void getOnePost_Success () {
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("test@gmail.com")
+                .nickname("닉네임")
+                .build();
+
+        Category category = Category.builder()
+                .id(1L)
+                .categoryName("정보 공유")
+                .build();
+
+        given(categoryRepository.existsById(anyLong()))
+                .willReturn(true);
+
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .category(category)
+                .member(member)
+                .postImages(new ArrayList<>())
+                .hearts(new ArrayList<>())
+                .viewCnt(3)
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
+
+        PostImage image1 = PostImage.builder()
+                .isRepresentative(true)
+                .post(post)
+                .imageUrl("http://test1")
+                .build();
+
+        PostImage image2 = PostImage.builder()
+                .isRepresentative(false)
+                .post(post)
+                .imageUrl("http://test1")
+                .build();
+
+        post.addImage(image1);
+        post.addImage(image2);
+
+        given(postImageRepository.findAllByPost(any(Post.class)))
+                .willReturn(List.of(image1, image2));
+
+        PostGetOneResponse response = postService.getOnePost(1L, "test123@gmail.com", 1L);
+
+        assertEquals(post.getMember().getNickname(), response.getNickname());
+        assertEquals(post.getPostImages().size(), response.getImages().size());
+        assertEquals(false, response.isOwner());
+        assertEquals(post.getHearts().size(), response.getHeartCnt());
+    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 실패 - 게시물 없음")
+    void getOnePost_Fail_NoPost () {
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
+                () -> postService.getOnePost( 1L, "test@gmail.com",1L));
+
+        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
+    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 실패 - 카테고리 없음")
+    void getOnePost_Fail_NoCategory () {
+
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .postImages(new ArrayList<>())
+                .hearts(new ArrayList<>())
+                .viewCnt(3)
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
+
+        given(categoryRepository.existsById(anyLong()))
+                .willReturn(false);
+
+        CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class,
+                () -> postService.getOnePost( 1L, "test@gmail.com",1L));
+
+        assertEquals(PostErrorCode.CATEGORY_NOT_FOUND, exception.getPostErrorCode());
+    }
 }
