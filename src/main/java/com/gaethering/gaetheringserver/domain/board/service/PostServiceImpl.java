@@ -1,12 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.aws.s3.S3Service;
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteImageUrlResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.entity.Category;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.entity.PostImage;
@@ -20,12 +15,17 @@ import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository
 import com.gaethering.gaetheringserver.domain.board.repository.HeartRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostImageRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
+import com.gaethering.gaetheringserver.domain.board.util.ScrollPagingUtil;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -212,5 +212,77 @@ public class PostServiceImpl implements PostService {
         }
 
         return imgUrls;
+    }
+
+    @Override
+    @Transactional
+    public PostsGetResponse getPosts(String email, Long categoryId, int size, long lastPostId) {
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException());
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        PageRequest pageRequest = PageRequest.of(0, size + 1);
+
+        List<Post> posts
+                = postRepository.findAllByCategoryAndIdIsLessThanOrderByIdDesc(category, lastPostId, pageRequest);
+
+        List<PostDetailResponse> postResponses = new ArrayList<>();
+
+        for(Post post : posts) {
+
+            PostDetailResponse response = PostDetailResponse.fromEntity(post);
+
+            response.setHasHeart(heartRepository.existsByPostAndMember(post, member));
+
+            Optional<PostImage> optionalPostImage
+                    = postImageRepository.findByPostAndIsRepresentativeIsTrue(post);
+
+            if(optionalPostImage.isPresent()) {
+                PostImage representativeImg = optionalPostImage.get();
+
+                String imgUrl = representativeImg.getImageUrl();
+                response.setImageUrl(imgUrl);
+            }
+
+            postResponses.add(response);
+        }
+
+        ScrollPagingUtil<PostDetailResponse> postsCursor = ScrollPagingUtil.of(postResponses, size);
+        return PostsGetResponse.of(postsCursor, postRepository.countByCategory(category));
+    }
+
+    @Override
+    @Transactional
+    public PostGetOneResponse getOnePost(Long categoryId, String email, Long postId) {
+
+        postRepository.updateViewCountByPostId(postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+
+        if(!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+
+        List<PostGetImageUrlResponse> imgUrls
+                = postImageRepository.findAllByPost(post)
+                .stream().map(PostGetImageUrlResponse:: fromEntity).collect(Collectors.toList());
+
+        PostGetOneResponse response = PostGetOneResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .heartCnt(post.getHearts().size())
+                .viewCnt(post.getViewCnt())
+                .createdAt(post.getCreatedAt())
+                .nickname(post.getMember().getNickname())
+                .images(imgUrls)
+                .build();
+
+        response.setOwner(email.equals(post.getMember().getEmail()));
+        return response;
     }
 }

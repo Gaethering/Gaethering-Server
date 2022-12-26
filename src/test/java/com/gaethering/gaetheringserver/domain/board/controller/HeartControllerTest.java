@@ -52,7 +52,7 @@ class HeartControllerTest {
         HeartResponse response = HeartResponse.builder()
                 .postId(1L)
                 .memberId(2L)
-                .likeCnt(10)
+                .heartCnt(10)
                 .build();
 
         given(heartService.pushHeart(anyLong(), anyString()))
@@ -63,7 +63,7 @@ class HeartControllerTest {
                         .header("Authorization", "accessToken"))
                 .andExpect(jsonPath("$.postId").value(String.valueOf(response.getPostId())))
                 .andExpect(jsonPath("$.memberId").value(String.valueOf(response.getMemberId())))
-                .andExpect(jsonPath("$.likeCnt").value(String.valueOf(response.getLikeCnt())))
+                .andExpect(jsonPath("$.heartCnt").value(String.valueOf(response.getHeartCnt())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("boards/hearts/push-heart/success",

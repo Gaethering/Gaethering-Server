@@ -1,7 +1,9 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
+import com.gaethering.gaetheringserver.domain.board.dto.CommentDetailResponse;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.CommentsGetResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
@@ -10,13 +12,17 @@ import com.gaethering.gaetheringserver.domain.board.exception.NoPermissionUpdate
 import com.gaethering.gaetheringserver.domain.board.exception.PostNotFoundException;
 import com.gaethering.gaetheringserver.domain.board.repository.CommentRepository;
 import com.gaethering.gaetheringserver.domain.board.repository.PostRepository;
+import com.gaethering.gaetheringserver.domain.board.util.ScrollPagingUtil;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -44,6 +50,8 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         commentRepository.save(comment);
+
+        post.writeComment(comment);
 
         return CommentResponse.builder()
                 .memberId(comment.getMember().getId())
@@ -88,9 +96,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public boolean deleteComment(String email, Long postId, Long commentId) {
 
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
@@ -102,7 +109,33 @@ public class CommentServiceImpl implements CommentService {
             throw new NoPermissionDeleteCommentException();
         }
         commentRepository.delete(comment);
+        post.deleteComment(comment);
 
         return true;
+    }
+
+    @Override
+    @Transactional
+    public CommentsGetResponse getCommentsByPost(String email, Long postId, int size, long lastCommentId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+
+        PageRequest pageRequest = PageRequest.of(0, size + 1);
+        List<Comment> comments
+                = commentRepository.findAllByPostAndIdIsLessThanOrderByIdDesc(post, lastCommentId, pageRequest);
+
+        List<CommentDetailResponse> commentResponses = new ArrayList<>();
+
+        for(Comment comment : comments) {
+            CommentDetailResponse response = CommentDetailResponse.fromEntity(comment);
+            response.setOwner(email.equals(comment.getMember().getEmail()));
+            commentResponses.add(response);
+        }
+
+        ScrollPagingUtil<CommentDetailResponse> commentsCursor
+                = ScrollPagingUtil.of(commentResponses, size);
+
+        return CommentsGetResponse.of(commentsCursor, commentRepository.countByPost(post));
     }
 }

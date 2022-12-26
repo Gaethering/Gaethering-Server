@@ -1,5 +1,7 @@
 package com.gaethering.gaetheringserver.domain.chat.service;
 
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatRoom;
@@ -46,13 +48,27 @@ public class ChatServiceImpl implements ChatService {
             .build();
 
         List<WalkingTime> walkingTimes = makeChatRoomRequest.getWalkingTimes().stream()
-            .map(WalkingTimeInfo::toEntity).collect(
-                Collectors.toList());
+            .map(WalkingTimeInfo::toEntity).collect(Collectors.toList());
 
         walkingTimes.forEach(chatRoom::addWalkingTime);
 
         chatRoomRepository.save(chatRoom);
         walkingTimeRepository.saveAll(walkingTimes);
+    }
+
+    @Override
+    public ChatRoomInfo getChaRoomInformation(String roomKey) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
+            .orElseThrow(ChatRoomNotFoundException::new);
+        return ChatRoomInfo.of(chatRoom);
+    }
+
+    @Override
+    public List<ChatMessageResponse> getChatHistory(String roomKey) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
+            .orElseThrow(ChatRoomNotFoundException::new);
+        return chatRoom.getChatMessages().stream().sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+            .map(ChatMessageResponse::of).collect(Collectors.toList());
     }
 
     @Override

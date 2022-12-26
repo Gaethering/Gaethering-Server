@@ -556,6 +556,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -654,6 +657,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -765,6 +771,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -883,6 +892,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -994,6 +1006,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -1112,6 +1127,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -1223,6 +1241,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -1321,6 +1342,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -1429,6 +1453,9 @@ Host: localhost:8080</pre>
 <div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
@@ -1466,7 +1493,7 @@ Content-Length: 99
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-09 13:36:16 +0900
+Last updated 2022-12-22 21:48:01 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">

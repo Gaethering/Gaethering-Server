@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.domain.board.service;
 
 import com.gaethering.gaetheringserver.domain.board.dto.CommentRequest;
 import com.gaethering.gaetheringserver.domain.board.dto.CommentResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.CommentsGetResponse;
 import com.gaethering.gaetheringserver.domain.board.entity.Comment;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
 import com.gaethering.gaetheringserver.domain.board.exception.CommentNotFoundException;
@@ -23,16 +24,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.PageRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -67,6 +70,7 @@ class CommentServiceTest {
                 .id(1L)
                 .title("제목")
                 .content("내용")
+                .comments(new ArrayList<>())
                 .build();
 
         given(postRepository.findById(anyLong()))
@@ -288,10 +292,11 @@ class CommentServiceTest {
                 .id(1L)
                 .title("제목")
                 .content("내용")
+                .comments(new ArrayList<>())
                 .build();
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         Comment comment = Comment.builder()
                 .id(1L)
@@ -311,8 +316,8 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 게시물 없음")
     void deleteCommentFail_NoPost() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(false);
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
@@ -324,8 +329,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 회원 없음")
     void deleteCommentFail_NoUser() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
@@ -340,9 +351,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 댓글 없음")
     void deleteCommentFail_NoComment() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
 
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
         Member member = Member.builder()
                 .id(1L)
                 .email("test@gmail.com")
@@ -364,8 +380,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 삭제 권한 없음")
     void deleteCommentFail_UNMATCH_writer() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         Member member1 = Member.builder()
                 .id(1L)
@@ -384,6 +406,7 @@ class CommentServiceTest {
                 .id(1L)
                 .content("댓글입니다")
                 .member(member2)
+                .post(post)
                 .build();
 
         given(commentRepository.findById(anyLong()))
@@ -393,5 +416,65 @@ class CommentServiceTest {
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
 
         assertEquals(PostErrorCode.NO_PERMISSION_TO_DELETE_COMMENT, exception.getPostErrorCode());
+    }
+
+    @Test
+    @DisplayName("댓글 조회 성공")
+    void getCommentsByPost_Success () {
+
+        Member member1 = Member.builder()
+                .email("test111@gmail.com")
+                .nickname("닉네임11")
+                .build();
+
+        Member member2 = Member.builder()
+                .email("test222@gmail.com")
+                .nickname("닉네임22")
+                .build();
+
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
+
+        given(postRepository.findById(anyLong())).willReturn(Optional.of(post));
+
+        Comment comment1 = Comment.builder()
+                .id(1L)
+                .post(post)
+                .member(member1)
+                .content("첫번째 댓글")
+                .build();
+
+        Comment comment2 = Comment.builder()
+                .id(2L)
+                .post(post)
+                .member(member2)
+                .content("두번째 댓글")
+                .build();
+
+        given(commentRepository.findAllByPostAndIdIsLessThanOrderByIdDesc(any(), anyLong(), any(PageRequest.class)))
+                .willReturn(List.of(comment1, comment2));
+
+        CommentsGetResponse response = commentService.getCommentsByPost("test@gmail.com", 1L, 5, 10);
+
+        assertEquals(2, response.getComments().size());
+        assertEquals(comment1.getContent(), response.getComments().get(0).getContent());
+        assertEquals(comment2.getContent(), response.getComments().get(1).getContent());
+        assertEquals(comment1.getMember().getNickname(), response.getComments().get(0).getNickname());
+        assertEquals(comment2.getMember().getNickname(), response.getComments().get(1).getNickname());
+    }
+
+    @Test
+    @DisplayName("댓글 조회 실패 - 게시물 없음")
+    void getCommentsByPost_Fail_NoPost () {
+
+        given(postRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        PostNotFoundException exception = assertThrows(PostNotFoundException.class,
+                () -> commentService.getCommentsByPost("test@gmail.com", 1L, 5, 10));
+
+        assertEquals(PostErrorCode.POST_NOT_FOUND, exception.getPostErrorCode());
     }
 }

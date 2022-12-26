@@ -1,7 +1,6 @@
 package com.gaethering.gaetheringserver.domain.member.dto.profile;
 
 import com.gaethering.gaetheringserver.core.type.Gender;
-import com.gaethering.gaetheringserver.domain.member.dto.profile.OtherProfileResponse.ProfilePetResponse;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import java.util.List;
 import java.util.stream.Collectors;

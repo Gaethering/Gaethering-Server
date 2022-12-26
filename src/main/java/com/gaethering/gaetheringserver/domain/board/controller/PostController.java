@@ -1,10 +1,6 @@
 package com.gaethering.gaetheringserver.domain.board.controller;
 
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
 import com.gaethering.gaetheringserver.domain.board.service.PostService;
 import java.security.Principal;
 import java.util.List;
@@ -76,5 +72,21 @@ public class PostController {
 
 		postService.deletePost(principal.getName(), postId);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/boards/{categoryId}/list")
+	public ResponseEntity<PostsGetResponse> getPosts (@PathVariable Long categoryId, @RequestParam int size,
+									   @RequestParam Long lastPostId, Principal principal) {
+
+		PostsGetResponse response = postService.getPosts(principal.getName(), categoryId, size, lastPostId);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/boards/{categoryId}/{postId}")
+	public ResponseEntity<PostGetOneResponse> getOnePost (@PathVariable Long categoryId,
+														  @PathVariable Long postId, Principal principal) {
+
+		PostGetOneResponse response = postService.getOnePost(categoryId, principal.getName(), postId);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }

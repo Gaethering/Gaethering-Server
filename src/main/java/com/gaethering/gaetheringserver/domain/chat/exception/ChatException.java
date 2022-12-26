@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class ChatException extends BusinessException {
 
-    private final ChatErrorCode chatErrorCode;
+    private final ChatErrorCode errorCode;
 
     protected ChatException(ChatErrorCode chatErrorCode) {
         super(chatErrorCode);
-        this.chatErrorCode = chatErrorCode;
+        this.errorCode = chatErrorCode;
     }
 }

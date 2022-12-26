@@ -1,10 +1,7 @@
 package com.gaethering.gaetheringserver.domain.board.service;
 
-import com.gaethering.gaetheringserver.domain.board.dto.PostImageUploadResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostWriteResponse;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateRequest;
-import com.gaethering.gaetheringserver.domain.board.dto.PostUpdateResponse;
+import com.gaethering.gaetheringserver.domain.board.dto.*;
+
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +16,8 @@ public interface PostService {
 	boolean deletePostImage(String email, Long postId, Long imageId);
 
 	boolean deletePost(String email, Long postId);
+
+	PostsGetResponse getPosts (String email, Long categoryId, int size, long lastCommentId);
+
+	PostGetOneResponse getOnePost (Long categoryId, String email, Long postId);
 }
