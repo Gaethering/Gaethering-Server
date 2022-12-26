@@ -19,7 +19,7 @@ public class PostUpdateResponse {
 	private String title;
 	private String content;
 	private String categoryName;
-	private int viewCnt;
+	private long viewCnt;
 	private int heartCnt;
 	private String nickname;
 	private List<PostImageUrlResponse> imageUrls;

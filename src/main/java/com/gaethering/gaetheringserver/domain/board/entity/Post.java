@@ -37,7 +37,7 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     @ColumnDefault("0")
-    private int viewCnt;
+    private long viewCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -72,6 +72,14 @@ public class Post extends BaseTimeEntity {
     public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void writeComment (Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void deleteComment (Comment comment) {
+        this.comments.remove(comment);
     }
 
     public void pushPostHeart (Heart heart) {

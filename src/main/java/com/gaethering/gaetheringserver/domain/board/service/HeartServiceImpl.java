@@ -44,7 +44,7 @@ public class HeartServiceImpl implements HeartService {
             return HeartResponse.builder()
                     .memberId(member.getId())
                     .postId(post.getId())
-                    .likeCnt(heartRepository.countByPost(post).intValue())
+                    .heartCnt(heartRepository.countByPost(post).intValue())
                     .build();
         }
 
@@ -60,7 +60,7 @@ public class HeartServiceImpl implements HeartService {
         return HeartResponse.builder()
                 .memberId(member.getId())
                 .postId(post.getId())
-                .likeCnt(heartRepository.countByPost(post).intValue())
+                .heartCnt(heartRepository.countByPost(post).intValue())
                 .build();
     }
 }

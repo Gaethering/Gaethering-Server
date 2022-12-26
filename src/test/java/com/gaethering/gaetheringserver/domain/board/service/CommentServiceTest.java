@@ -34,6 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +70,7 @@ class CommentServiceTest {
                 .id(1L)
                 .title("제목")
                 .content("내용")
+                .comments(new ArrayList<>())
                 .build();
 
         given(postRepository.findById(anyLong()))
@@ -290,10 +292,11 @@ class CommentServiceTest {
                 .id(1L)
                 .title("제목")
                 .content("내용")
+                .comments(new ArrayList<>())
                 .build();
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         Comment comment = Comment.builder()
                 .id(1L)
@@ -313,8 +316,8 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 게시물 없음")
     void deleteCommentFail_NoPost() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(false);
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
         PostNotFoundException exception = assertThrows(PostNotFoundException.class,
                 () -> commentService.deleteComment("test@gmail.com", 1L, 1L));
@@ -326,8 +329,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 회원 없음")
     void deleteCommentFail_NoUser() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
@@ -342,9 +351,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 댓글 없음")
     void deleteCommentFail_NoComment() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
 
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
         Member member = Member.builder()
                 .id(1L)
                 .email("test@gmail.com")
@@ -366,8 +380,14 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제 실패 - 삭제 권한 없음")
     void deleteCommentFail_UNMATCH_writer() {
 
-        given(postRepository.existsById(anyLong()))
-                .willReturn(true);
+        Post post = Post.builder()
+                .id(1L)
+                .title("제목")
+                .content("내용")
+                .build();
+
+        given(postRepository.findById(anyLong()))
+                .willReturn(Optional.of(post));
 
         Member member1 = Member.builder()
                 .id(1L)
@@ -386,6 +406,7 @@ class CommentServiceTest {
                 .id(1L)
                 .content("댓글입니다")
                 .member(member2)
+                .post(post)
                 .build();
 
         given(commentRepository.findById(anyLong()))

@@ -51,6 +51,8 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
+        post.writeComment(comment);
+
         return CommentResponse.builder()
                 .memberId(comment.getMember().getId())
                 .commentId(comment.getId())
@@ -94,9 +96,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public boolean deleteComment(String email, Long postId, Long commentId) {
 
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
@@ -108,11 +109,13 @@ public class CommentServiceImpl implements CommentService {
             throw new NoPermissionDeleteCommentException();
         }
         commentRepository.delete(comment);
+        post.deleteComment(comment);
 
         return true;
     }
 
     @Override
+    @Transactional
     public CommentsGetResponse getCommentsByPost(String email, Long postId, int size, long lastCommentId) {
 
         Post post = postRepository.findById(postId)
@@ -126,11 +129,7 @@ public class CommentServiceImpl implements CommentService {
 
         for(Comment comment : comments) {
             CommentDetailResponse response = CommentDetailResponse.fromEntity(comment);
-            if(email.equals(comment.getMember().getEmail())) {
-                response.setOwner(true);
-            } else {
-                response.setOwner(false);
-            }
+            response.setOwner(email.equals(comment.getMember().getEmail()));
             commentResponses.add(response);
         }
 

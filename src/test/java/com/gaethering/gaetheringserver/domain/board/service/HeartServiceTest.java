@@ -145,6 +145,6 @@ class HeartServiceTest {
 
         HeartResponse response = heartService.pushHeart(1L, "test@gmail.com");
         assertEquals(1L, response.getPostId());
-        assertEquals(0, response.getLikeCnt());
+        assertEquals(0, response.getHeartCnt());
     }
 }
