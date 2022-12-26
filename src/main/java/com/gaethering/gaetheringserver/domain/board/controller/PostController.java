@@ -66,7 +66,7 @@ public class PostController {
 	}
 
 	@GetMapping("/boards/{categoryId}/list")
-	public ResponseEntity<?> getPosts (@PathVariable Long categoryId, @RequestParam int size,
+	public ResponseEntity<PostsGetResponse> getPosts (@PathVariable Long categoryId, @RequestParam int size,
 									   @RequestParam Long lastPostId) {
 
 		PostsGetResponse response = postService.getPosts(categoryId, size, lastPostId);
