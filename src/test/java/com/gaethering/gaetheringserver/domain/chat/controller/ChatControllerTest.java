@@ -14,6 +14,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -185,7 +186,8 @@ class ChatControllerTest {
             .andExpect(jsonPath("$.maxParticipant").value(String.valueOf(chatRoomInfo.getMaxParticipant())))
             .andExpect(jsonPath("$.walkingTimeInfos[0].dayOfWeek").value(walkingTimeInfos.get(0).getDayOfWeek()))
             .andExpect(jsonPath("$.walkingTimeInfos[0].time").value(walkingTimeInfos.get(0).getTime()))
-            .andExpect(jsonPath("$.chatRoomMemberInfos[0].id").value(String.valueOf(chatRoomMemberInfos.get(0).getId())))
+            .andExpect(
+                jsonPath("$.chatRoomMemberInfos[0].id").value(String.valueOf(chatRoomMemberInfos.get(0).getId())))
             .andExpect(jsonPath("$.chatRoomMemberInfos[0].nickname").value(chatRoomMemberInfos.get(0).getNickname()))
             .andExpect(jsonPath("$.chatRoomMemberInfos[0].representPetImageUrl").value(
                 chatRoomMemberInfos.get(0).getRepresentPetImageUrl()))
@@ -268,7 +270,8 @@ class ChatControllerTest {
         //given
         List<ChatMessageResponse> messageResponses = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
-            ChatMessageResponse messageResponse = ChatMessageResponse.builder().memberId((long) i).content("content" + i)
+            ChatMessageResponse messageResponse = ChatMessageResponse.builder().memberId((long) i)
+                .content("content" + i)
                 .createdAt(Timestamp.valueOf(LocalDateTime.now())).build();
             messageResponses.add(messageResponse);
         }
@@ -291,6 +294,83 @@ class ChatControllerTest {
                 getDocumentRequest(),
                 getDocumentResponse(),
                 pathParameters(parameterWithName("roomKey").description("조회할 채팅방 키값")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("채팅방 삭제 성공")
+    public void deleteChatRoom_Success() throws Exception {
+        //given
+        willDoNothing().given(chatService).deleteChatRoom(anyString(), anyString());
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/chat/room/{chatRoomKey}", "testKey")
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(document("chat/delete-chatroom/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("chatRoomKey").description("채팅방 키 값")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("채팅방 삭제 실패 - 사용자를 찾을 수 없음")
+    public void deleteChatRoom_ExceptionThrown_MemberNotFound() throws Exception {
+        //given
+        willThrow(new MemberNotFoundException()).given(chatService)
+            .deleteChatRoom(anyString(), anyString());
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/chat/room/{chatRoomKey}", "testKey")
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+
+            .andDo(print())
+            .andDo(document("chat/delete-chatroom/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("chatRoomKey").description("채팅방 키 값")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("채팅방 삭제 실패 - 채팅방을 찾을 수 없음")
+    public void deleteChatRoom_ExceptionThrown_ChatRoomNotFound() throws Exception {
+        //given
+        willThrow(new ChatRoomNotFoundException()).given(chatService)
+            .deleteChatRoom(anyString(), anyString());
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/chat/room/{chatRoomKey}", "wrong-chatroom-key")
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.code").value(CHAT_ROOM_NOT_FOUND.getCode()))
+            .andExpect(jsonPath("$.message").value(CHAT_ROOM_NOT_FOUND.getMessage()))
+
+            .andDo(print())
+            .andDo(document("chat/delete-chatroom/failure/chat-room-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("chatRoomKey").description("채팅방 키 값")),
                 requestHeaders(
                     headerWithName("Authorization").description("Access Token"))
             ));

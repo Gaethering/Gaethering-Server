@@ -12,4 +12,6 @@ public interface ChatService {
     ChatRoomInfo getChaRoomInformation(String roomKey);
 
     List<ChatMessageResponse> getChatHistory(String roomKey);
+
+    void deleteChatRoom(String email, String chatRoomKey);
 }

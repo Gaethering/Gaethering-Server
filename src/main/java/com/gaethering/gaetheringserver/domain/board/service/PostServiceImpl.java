@@ -34,6 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private static final String DIR = "post";
+
     private final S3Service s3Service;
     private final MemberRepository memberRepository;
     private final PostImageRepository postImageRepository;
@@ -48,10 +50,10 @@ public class PostServiceImpl implements PostService {
                                        List<MultipartFile> files, PostWriteRequest request) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
 
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException());
+                .orElseThrow(CategoryNotFoundException::new);
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -129,7 +131,7 @@ public class PostServiceImpl implements PostService {
             throw new NoPermissionUpdatePostException();
         }
 
-        String imageUrl = s3Service.uploadImage(file);
+        String imageUrl = s3Service.uploadImage(file, DIR);
 
         PostImage postImage = PostImage.builder()
                 .imageUrl(imageUrl)
@@ -163,7 +165,7 @@ public class PostServiceImpl implements PostService {
         PostImage postImage = postImageRepository.findById(imageId)
                 .orElseThrow(PostImageNotFoundException::new);
 
-        s3Service.removeImage(postImage.getImageUrl());
+        s3Service.removeImage(postImage.getImageUrl(), DIR);
         postImageRepository.delete(postImage);
 
         return true;
@@ -195,7 +197,7 @@ public class PostServiceImpl implements PostService {
 
     private void deletePostImages(List<PostImage> postImages) {
         for (PostImage postImage : postImages) {
-            s3Service.removeImage(postImage.getImageUrl());
+            s3Service.removeImage(postImage.getImageUrl(), DIR);
         }
     }
 
@@ -204,7 +206,7 @@ public class PostServiceImpl implements PostService {
 
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
-                String imgUrl = s3Service.uploadImage(file);
+                String imgUrl = s3Service.uploadImage(file, DIR);
                 imgUrls.add(imgUrl);
             }
         }

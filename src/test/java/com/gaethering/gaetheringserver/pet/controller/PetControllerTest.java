@@ -16,11 +16,11 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParts;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -57,11 +57,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 
 
 @WebMvcTest(controllers = PetController.class, excludeFilters = {
@@ -235,7 +235,8 @@ class PetControllerTest {
 
     @Test
     @WithMockUser
-    void updatePetImage() throws Exception {
+    @DisplayName("반려동물 프로필 이미지 수정 성공")
+    void updatePetImage_Success() throws Exception {
         // given
         String filename = "test.png";
         String contentType = "image/png";
@@ -250,21 +251,29 @@ class PetControllerTest {
 
         // when
         // then
-        MockMultipartHttpServletRequestBuilder builder =
-            multipart("/api/mypage/pets/1/image");
-
-        builder.with(request -> {
-            request.setMethod("PATCH");
-            return request;
-        });
-
         mockMvc.perform(
-                builder
+                RestDocumentationRequestBuilders.multipart("/api/mypage/pets/{petId}/image", 1)
                     .file(image)
                     .with(csrf())
-            ).andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
+                    .header("Authorization", "accessToken")
+                    .with(request -> {
+                        request.setMethod("PATCH");
+                        return request;
+                    }))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andDo(document("pet/update-pet-image/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("반려동물 프로필 Id")),
+                relaxedRequestParts(
+                    partWithName("image").description("펫 프로필 사진")
+                ),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
     }
 
     @Test
@@ -281,29 +290,36 @@ class PetControllerTest {
         given(petService.updatePetImage(1L, image))
             .willThrow(new PetNotFoundException());
 
-        // when
-        // then
-        MockMultipartHttpServletRequestBuilder builder =
-            multipart("/api/mypage/pets/1/image");
-
-        builder.with(request -> {
-            request.setMethod("PATCH");
-            return request;
-        });
-
         mockMvc.perform(
-                builder
+                RestDocumentationRequestBuilders.multipart("/api/mypage/pets/{petId}/image", 1)
                     .file(image)
                     .with(csrf())
-            ).andExpect(status().isBadRequest())
+                    .header("Authorization", "accessToken")
+                    .with(request -> {
+                        request.setMethod("PATCH");
+                        return request;
+                    }))
+            .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
             .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
-            .andDo(print());
+            .andDo(print())
+            .andDo(document("pet/update-pet-image/failure/pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("반려동물 프로필 Id")),
+                relaxedRequestParts(
+                    partWithName("image").description("펫 프로필 사진")
+                ),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token")
+                )
+            ));
     }
 
     @Test
     @WithMockUser
-    public void getPetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 조회 성공")
+    public void getPetProfile_Success() throws Exception {
         //given
         PetProfileResponse petProfile = PetProfileResponse.builder().name("해")
             .birth(LocalDate.parse("2021-12-01"))
@@ -317,8 +333,11 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/pets/{petId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value(petProfile.getName()))
             .andExpect(jsonPath("$.birth").value(String.valueOf(petProfile.getBirth())))
             .andExpect(jsonPath("$.gender").value(String.valueOf(petProfile.getGender())))
@@ -327,7 +346,14 @@ class PetControllerTest {
             .andExpect(jsonPath("$.weight").value(petProfile.getWeight()))
             .andExpect(jsonPath("$.description").value(petProfile.getDescription()))
             .andExpect(jsonPath("$.imageUrl").value(petProfile.getImageUrl()))
-            .andDo(print()).andExpect(status().isOk());
+            .andDo(print())
+            .andDo(document("pet/get-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("조회할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -339,17 +365,27 @@ class PetControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/pets/1/profile").contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/pets/{petId}/profile", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("pet/get-pet-profile/failure/pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("조회할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
     @WithMockUser
-    public void updatePetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 수정 성공")
+    public void updatePetProfile_Success() throws Exception {
         //given
         PetProfileUpdateRequest request = PetProfileUpdateRequest.builder()
             .weight(3.5f)
@@ -366,19 +402,35 @@ class PetControllerTest {
             .description("귀여워요")
             .imageUrl("https://test")
             .build();
-        given(petService.updatePetProfile(1L, request))
+        given(petService.updatePetProfile(anyLong(), any()))
             .willReturn(response);
 
         String requestString = objectMapper.writeValueAsString(request);
 
         //when
         //then
-        mockMvc.perform(patch("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
+                .header("Authorization", "accessToken")
                 .content(requestString))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value(response.getName()))
+            .andExpect(jsonPath("$.birth").value(String.valueOf(response.getBirth())))
+            .andExpect(jsonPath("$.gender").value(String.valueOf(response.getGender())))
+            .andExpect(jsonPath("$.breed").value(response.getBreed()))
+            .andExpect(jsonPath("$.isNeutered").value(response.isNeutered()))
+            .andExpect(jsonPath("$.weight").value(response.getWeight()))
+            .andExpect(jsonPath("$.description").value(response.getDescription()))
+            .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andDo(document("pet/update-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("수정할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -398,19 +450,28 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(patch("/api/mypage/pets/100")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
+                .header("Authorization", "accessToken")
                 .content(requestString))
-            .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(PET_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(PET_NOT_FOUND.getMessage()))
+            .andDo(print())
+            .andDo(document("pet/update-pet-profile/failure/pet-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("수정할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
     @WithMockUser
-    public void deletePetProfile() throws Exception {
+    @DisplayName("반려동물 프로필 삭제 성공")
+    public void deletePetProfile_Success() throws Exception {
         //given
         String email = "test@test.com";
         Principal principal = Mockito.mock(Principal.class);
@@ -421,11 +482,19 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .with(csrf())
+                .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
             .andDo(print())
-            .andExpect(status().isOk());
+            .andDo(document("pet/delete-pet-profile/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -442,13 +511,21 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
-            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()));
+            .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/member-not-found",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -465,13 +542,21 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(FAILED_DELETE_PET.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()));
+            .andExpect(jsonPath("$.message").value(FAILED_DELETE_PET.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/minimum-one-more-pet",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 
     @Test
@@ -488,12 +573,20 @@ class PetControllerTest {
 
         //when
         //then
-        mockMvc.perform(delete("/api/mypage/pets/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/pets/{petId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
-            .andDo(print())
+                .with(csrf())
+                .header("Authorization", "accessToken"))
             .andExpect(status().isBadRequest())
+            .andDo(print())
             .andExpect(jsonPath("$.code").value(FAILED_DELETE_REPRESENTATIVE.getCode()))
-            .andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()));
+            .andExpect(jsonPath("$.message").value(FAILED_DELETE_REPRESENTATIVE.getMessage()))
+            .andDo(document("pet/delete-pet-profile/failure/failed-delete-representative",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                pathParameters(parameterWithName("petId").description("삭제할 반려동물 프로필 Id")),
+                requestHeaders(
+                    headerWithName("Authorization").description("Access Token"))
+            ));
     }
 }

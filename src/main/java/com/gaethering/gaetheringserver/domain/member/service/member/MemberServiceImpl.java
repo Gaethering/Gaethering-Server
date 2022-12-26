@@ -39,6 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
+    private static final String DIR = "pet-profile";
+
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final MemberRepository memberRepository;
@@ -70,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public SignUpResponse signUp(MultipartFile file, SignUpRequest signUpRequest) {
 
-        String imageUrl = s3Service.uploadImage(file);
+        String imageUrl = s3Service.uploadImage(file, DIR);
 
         if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new DuplicatedEmailException();
