@@ -2,7 +2,6 @@ package com.gaethering.gaetheringserver.domain.member.dto.profile;
 
 import com.gaethering.gaetheringserver.core.type.Gender;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
-import com.gaethering.gaetheringserver.domain.pet.entity.Pet;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -36,23 +35,5 @@ public class OtherProfileResponse {
             .petCount(member.getPets().size())
             .pets(pets)
             .build();
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class ProfilePetResponse {
-
-        private Long id;
-        private String name;
-        private boolean isRepresentative;
-
-        public static ProfilePetResponse of(Pet pet) {
-            return ProfilePetResponse.builder()
-                .id(pet.getId())
-                .name(pet.getName())
-                .isRepresentative(pet.isRepresentative())
-                .build();
-        }
     }
 }
