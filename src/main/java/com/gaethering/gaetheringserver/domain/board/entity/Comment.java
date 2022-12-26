@@ -36,14 +36,6 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
     public void setComment(String content) {
         this.content = content;
     }
