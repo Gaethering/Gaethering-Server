@@ -385,3 +385,23 @@ include::{snippets}/boards/get-posts/failure/category-not-found/http-response.ad
 
 * Response Body
 include::{snippets}/boards/get-posts/failure/category-not-found/response-body.adoc[]
+
+==== 실패 - 회원 찾지 못한 경우
+
+* HTTP Request
+include::{snippets}/boards/get-posts/failure/member-not-found/http-request.adoc[]
+
+* Request Headers
+include::{snippets}/boards/get-posts/failure/member-not-found/request-headers.adoc[]
+
+* Path Parameter
+include::{snippets}/boards/get-posts/failure/member-not-found/path-parameters.adoc[]
+
+* Request Parameters
+include::{snippets}/boards/get-posts/failure/member-not-found/request-parameters.adoc[]
+
+* HTTP Response
+include::{snippets}/boards/get-posts/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/boards/get-posts/failure/member-not-found/response-body.adoc[]
