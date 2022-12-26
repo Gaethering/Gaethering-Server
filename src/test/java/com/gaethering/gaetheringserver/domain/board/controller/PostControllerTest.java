@@ -935,4 +935,106 @@ class PostControllerTest {
                                 headerWithName("Authorization").description("Access Token"))
                 ));
     }
+
+    @Test
+    @DisplayName("게시물 상세 조회 성공")
+    @WithMockUser
+    void getOnePost_Success () throws Exception{
+
+        LocalDateTime date = LocalDateTime.of(2022, 12, 31, 23, 59, 59);
+
+        PostGetImageUrlResponse imgUrlsResponse1 = PostGetImageUrlResponse.builder()
+                .imageId(1L)
+                .imageUrl("https://test1")
+                .build();
+
+        PostGetImageUrlResponse imgUrlsResponse2 = PostGetImageUrlResponse.builder()
+                .imageId(2L)
+                .imageUrl("https://test2")
+                .build();
+
+        PostGetOneResponse response = PostGetOneResponse.builder()
+                .postId(1L)
+                .title("제목입니다")
+                .content("내용입니다")
+                .nickname("닉네임")
+                .heartCnt(5)
+                .viewCnt(10)
+                .createdAt(date)
+                .owner(true)
+                .images(List.of(imgUrlsResponse1, imgUrlsResponse2))
+                .build();
+
+        given(postService.getOnePost(anyLong(), anyString(), anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform((get("/api/boards/{categoryId}/{postId}", 1L, 1L)
+                        .header("Authorization", "accessToken")))
+                .andExpect(jsonPath("$.postId").value(response.getPostId()))
+                .andExpect(jsonPath("$.title").value(response.getTitle()))
+                .andExpect(jsonPath("$.content").value(response.getContent()))
+                .andExpect(jsonPath("$.nickname").value(response.getNickname()))
+                .andExpect(jsonPath("$.images[0].imageUrl").value(response.getImages().get(0).getImageUrl()))
+                .andExpect(jsonPath("$.createdAt").value(response.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))))
+                .andExpect(jsonPath("$.viewCnt").value(response.getViewCnt()))
+                .andExpect(jsonPath("$.heartCnt").value(response.getHeartCnt()))
+                .andExpect(jsonPath("$.isOwner").value(response.isOwner()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("boards/get-one-post/success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("categoryId").description("조회하고자 하는 게시물의 카테고리 id"),
+                                parameterWithName("postId").description("조회하고자 하는 게시물의 id")),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 실패 - 카테고리 없음")
+    @WithMockUser
+    void getOnePost_Fail_NoCategory () throws Exception {
+        given(postService.getOnePost(anyLong(), anyString(), anyLong()))
+                .willThrow(new CategoryNotFoundException());
+
+        mockMvc.perform((get("/api/boards/{categoryId}/{postId}", 1L, 1L)
+                        .header("Authorization", "accessToken")))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(CATEGORY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(CATEGORY_NOT_FOUND.getMessage()))
+                .andDo(print())
+                .andDo(document("boards/get-one-post/failure/category-not-found",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("categoryId").description("조회하고자 하는 게시물의 카테고리 id"),
+                                parameterWithName("postId").description("조회하고자 하는 게시물의 id")),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 실패 - 게시물 없음")
+    @WithMockUser
+    void getOnePost_Fail_NoPost () throws Exception {
+
+        given(postService.getOnePost(anyLong(), anyString(), anyLong()))
+                .willThrow(new PostNotFoundException());
+
+        mockMvc.perform((get("/api/boards/{categoryId}/{postId}", 1L, 1L)
+                        .header("Authorization", "accessToken")))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(POST_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(POST_NOT_FOUND.getMessage()))
+                .andDo(print())
+                .andDo(document("boards/get-one-post/failure/post-not-found",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("categoryId").description("조회하고자 하는 게시물의 카테고리 id"),
+                                parameterWithName("postId").description("조회하고자 하는 게시물의 id")),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
 }
