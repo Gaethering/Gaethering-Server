@@ -14,6 +14,7 @@ services:
     depends_on:
       - database
       - redis
+      - rabbitmq
 
   database:
     image: mysql:8.0
@@ -36,3 +37,20 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    env_file:
+      - ".env"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-stream
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+    volumes:
+      - ".docker/rabbitmq/data/log:/data/log"
+      - ".docker/rabbitmq/data/mnesia:/data/mnesia"
+      - ".docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
+    restart: always
+    env_file:
+      - ".env"

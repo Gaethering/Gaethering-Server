@@ -79,7 +79,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             .antMatchers("/api/members/sign-up", "/api/members/auth/login",
                 "/api/members/auth/reissue-token", "/exception/accessDenied",
                 "/exception/authenticationFailed", "/docs/**", "/api/members/email-auth",
-                "/api/members/email-confirm").permitAll()
+                "/api/members/email-confirm", "/ws-connect").permitAll()
 
             .antMatchers("/**/admin/**").hasAuthority("ROLE_ADMIN")
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
