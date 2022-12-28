@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginInfoResponse {
 
+    private Long memberId;
     private String petName;
     private String imageUrl;
     private String nickname;
@@ -21,12 +22,11 @@ public class LoginInfoResponse {
     public static LoginInfoResponse of(Member member) {
         Pet pet = member.getPets().stream().filter(Pet::isRepresentative).findFirst()
             .orElseThrow(RepresentativePetNotFoundException::new);
-
         return LoginInfoResponse.builder()
+            .memberId(member.getId())
             .nickname(member.getNickname())
             .petName(pet.getName())
             .imageUrl(pet.getImageUrl())
             .build();
     }
-
 }
