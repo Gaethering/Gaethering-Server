@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.domain.board.repository.Impl;
+package com.gaethering.gaetheringserver.domain.board.repository.impl;
 
 import com.gaethering.gaetheringserver.core.repository.support.Querydsl4RepositorySupport;
 import com.gaethering.gaetheringserver.domain.board.entity.Post;
