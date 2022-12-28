@@ -2,7 +2,7 @@ package com.gaethering.gaetheringserver.domain.chat.controller;
 
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
-import com.gaethering.gaetheringserver.domain.chat.dto.LocalChatRoomResponse;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomListResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
@@ -30,7 +30,8 @@ public class ChatController {
     @PostMapping("/chat/room")
     public ResponseEntity<MakeChatRoomResponse> makeChatRoom(Principal principal,
         @RequestBody @Valid MakeChatRoomRequest makeChatRoomRequest) {
-        MakeChatRoomResponse response = chatService.makeChatRoom(principal.getName(), makeChatRoomRequest);
+        MakeChatRoomResponse response = chatService.makeChatRoom(principal.getName(),
+            makeChatRoomRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -54,8 +55,14 @@ public class ChatController {
     }
 
     @GetMapping("/chat/room/local/list")
-    public ResponseEntity<LocalChatRoomResponse> getLocalChatRooms(Principal principal) {
-        LocalChatRoomResponse localChatRooms = chatService.getLocalChatRooms(principal.getName());
+    public ResponseEntity<ChatRoomListResponse> getLocalChatRooms(Principal principal) {
+        ChatRoomListResponse localChatRooms = chatService.getLocalChatRooms(principal.getName());
         return ResponseEntity.ok(localChatRooms);
+    }
+
+    @GetMapping("/chat/room/list")
+    public ResponseEntity<ChatRoomListResponse> getMyChatRooms(Principal principal) {
+        ChatRoomListResponse myChatRooms = chatService.getMyChatRooms(principal.getName());
+        return ResponseEntity.ok(myChatRooms);
     }
 }
