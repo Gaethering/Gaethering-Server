@@ -2,6 +2,8 @@ package com.gaethering.gaetheringserver.domain.chat.service;
 
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomListInfo;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomListResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
@@ -11,6 +13,7 @@ import com.gaethering.gaetheringserver.domain.chat.exception.ChatRoomNotFoundExc
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatMessageRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatRoomRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.WalkingTimeRepository;
+import com.gaethering.gaetheringserver.domain.member.entity.Member;
 import com.gaethering.gaetheringserver.domain.member.exception.member.MemberNotFoundException;
 import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRepository;
 import java.util.ArrayList;
@@ -35,7 +38,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public MakeChatRoomResponse makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest) {
+    public MakeChatRoomResponse makeChatRoom(String email,
+        MakeChatRoomRequest makeChatRoomRequest) {
         memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         String roomKey = UUID.randomUUID().toString();
         ChatRoom chatRoom = makeChatRoom(makeChatRoomRequest, roomKey);
@@ -43,6 +47,7 @@ public class ChatServiceImpl implements ChatService {
             .map(WalkingTimeInfo::toEntity).collect(Collectors.toList());
         walkingTimes.forEach(chatRoom::addWalkingTime);
         chatRoomRepository.save(chatRoom);
+        walkingTimeRepository.saveAll(walkingTimes);
         return MakeChatRoomResponse.builder().roomKey(roomKey).build();
     }
 
@@ -67,7 +72,8 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatMessageResponse> getChatHistory(String roomKey) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
             .orElseThrow(ChatRoomNotFoundException::new);
-        return chatRoom.getChatMessages().stream().sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+        return chatRoom.getChatMessages().stream()
+            .sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
             .map(ChatMessageResponse::of).collect(Collectors.toList());
     }
 
@@ -82,5 +88,33 @@ public class ChatServiceImpl implements ChatService {
         chatMessageRepository.deleteAllByChatRoom(chatRoom);
         walkingTimeRepository.deleteAllByChatRoom(chatRoom);
         chatRoomRepository.delete(chatRoom);
+    }
+
+    @Override
+    public ChatRoomListResponse getLocalChatRooms(String email) {
+        memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+
+        List<ChatRoomListInfo> chatRoomInfos = chatRoomRepository.findAll().stream()
+            .map(ChatRoomListInfo::of).collect(Collectors.toList());
+
+        return ChatRoomListResponse.builder()
+            .numberOfChatRooms(chatRoomInfos.size())
+            .chatRooms(chatRoomInfos)
+            .build();
+    }
+
+    @Override
+    public ChatRoomListResponse getMyChatRooms(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
+
+        List<ChatRoomListInfo> chatRoomInfos = chatRoomRepository.findChatRoomsByMemberId(
+                member.getId())
+            .stream().map(ChatRoomListInfo::of).collect(Collectors.toList());
+
+        return ChatRoomListResponse.builder()
+            .numberOfChatRooms(chatRoomInfos.size())
+            .chatRooms(chatRoomInfos)
+            .build();
     }
 }
