@@ -794,6 +794,9 @@ class PostServiceTest {
                 .nickname("닉네임")
                 .build();
 
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member));
+
         Category category = Category.builder()
                 .id(1L)
                 .categoryName("정보 공유")
@@ -815,6 +818,16 @@ class PostServiceTest {
 
         given(postRepository.findById(anyLong()))
                 .willReturn(Optional.of(post));
+
+        Heart heart = Heart.builder()
+                .post(post)
+                .member(member)
+                .build();
+
+        post.pushPostHeart(heart);
+
+        given(heartRepository.existsByPostAndMember(post, member))
+                .willReturn(true);
 
         PostImage image1 = PostImage.builder()
                 .isRepresentative(true)
@@ -840,11 +853,24 @@ class PostServiceTest {
         assertEquals(post.getPostImages().size(), response.getImages().size());
         assertEquals(false, response.isOwner());
         assertEquals(post.getHearts().size(), response.getHeartCnt());
+        assertEquals(true, response.isHasHeart());
     }
 
     @Test
     @DisplayName("게시물 상세 조회 실패 - 게시물 없음")
     void getOnePost_Fail_NoPost () {
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("test@gmail.com")
+                .nickname("닉네임")
+                .build();
+
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member));
+
+        given(categoryRepository.existsById(anyLong()))
+                .willReturn(true);
 
         given(postRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
@@ -859,17 +885,14 @@ class PostServiceTest {
     @DisplayName("게시물 상세 조회 실패 - 카테고리 없음")
     void getOnePost_Fail_NoCategory () {
 
-        Post post = Post.builder()
+        Member member = Member.builder()
                 .id(1L)
-                .title("제목1")
-                .content("내용1")
-                .postImages(new ArrayList<>())
-                .hearts(new ArrayList<>())
-                .viewCnt(3)
+                .email("test@gmail.com")
+                .nickname("닉네임")
                 .build();
 
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.of(post));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member));
 
         given(categoryRepository.existsById(anyLong()))
                 .willReturn(false);
