@@ -20,6 +20,7 @@ public class ChatRoomRepositoryImpl extends Querydsl4RepositorySupport implement
         return selectFrom(chatRoom)
             .join(chatRoom.chatroomMembers, chatroomMember).fetchJoin()
             .where(chatroomMember.member.id.eq(memberId))
+            .orderBy(chatRoom.createdAt.desc())
             .fetch();
     }
 }
