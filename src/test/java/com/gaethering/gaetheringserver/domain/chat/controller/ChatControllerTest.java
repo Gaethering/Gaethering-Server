@@ -30,6 +30,7 @@ import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomMemberInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
+import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.exception.ChatRoomNotFoundException;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
@@ -40,6 +41,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,12 +104,14 @@ class ChatControllerTest {
     public void makeChatRoom_Success() throws Exception {
         //given
         MakeChatRoomRequest request = MakeChatRoomRequest.builder()
+            .name("name")
             .description("설명")
+            .maxParticipantCount(10)
             .walkingTimes(walkingTimeInfos)
             .build();
-
-        willDoNothing().given(chatService).makeChatRoom(anyString(),
-            any(MakeChatRoomRequest.class));
+        MakeChatRoomResponse response = MakeChatRoomResponse.builder().roomKey(UUID.randomUUID().toString()).build();
+        given(chatService.makeChatRoom(anyString(), any(MakeChatRoomRequest.class)))
+            .willReturn(response);
 
         //when
         //then
@@ -117,6 +121,7 @@ class ChatControllerTest {
                 .with(csrf())
                 .header("Authorization", "accessToken"))
             .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.roomKey").value(response.getRoomKey()))
 
             .andDo(print())
             .andDo(document("chat/make-chatroom/success",

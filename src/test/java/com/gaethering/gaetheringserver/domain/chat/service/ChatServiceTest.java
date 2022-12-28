@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
+import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatMessage;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatRoom;
@@ -74,16 +75,12 @@ class ChatServiceTest {
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         ArgumentCaptor<ChatRoom> chatRoomCaptor = ArgumentCaptor.forClass(ChatRoom.class);
-        ArgumentCaptor<Collection<WalkingTime>> walkingTimeCaptor = ArgumentCaptor.forClass(
-            Collection.class);
 
         //when
         chatService.makeChatRoom(anyString(), request);
 
         //then
         verify(chatRoomRepository, times(1)).save(chatRoomCaptor.capture());
-        verify(walkingTimeRepository, times(1)).saveAll(walkingTimeCaptor.capture());
-
     }
 
     @Test

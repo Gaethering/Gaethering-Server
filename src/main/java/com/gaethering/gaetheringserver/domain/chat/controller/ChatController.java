@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.domain.chat.controller;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
+import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
 import java.security.Principal;
 import java.util.List;
@@ -26,10 +27,10 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/chat/room")
-    public ResponseEntity<Void> makeChatRoom(Principal principal,
+    public ResponseEntity<MakeChatRoomResponse> makeChatRoom(Principal principal,
         @RequestBody @Valid MakeChatRoomRequest makeChatRoomRequest) {
-        chatService.makeChatRoom(principal.getName(), makeChatRoomRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        MakeChatRoomResponse response = chatService.makeChatRoom(principal.getName(), makeChatRoomRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/chat/room/{roomKey}")

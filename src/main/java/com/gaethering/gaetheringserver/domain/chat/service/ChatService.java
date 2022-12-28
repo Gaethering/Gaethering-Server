@@ -3,11 +3,12 @@ package com.gaethering.gaetheringserver.domain.chat.service;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
+import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import java.util.List;
 
 public interface ChatService {
 
-    void makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest);
+    MakeChatRoomResponse makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest);
 
     ChatRoomInfo getChaRoomInformation(String roomKey);
 

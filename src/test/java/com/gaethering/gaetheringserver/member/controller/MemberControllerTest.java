@@ -581,21 +581,32 @@ class MemberControllerTest {
     public void getLoginInfo() throws Exception {
         //given
         LoginInfoResponse response = LoginInfoResponse.builder()
+            .memberId(1L)
             .nickname("내캉")
             .petName("하울")
             .imageUrl("http://test.com")
             .build();
-
         given(memberService.getLoginInfo(anyString())).willReturn(response);
 
         //when
         //then
         mockMvc.perform(
-                get("/api/members/info").contentType(MediaType.APPLICATION_JSON).with(csrf()))
-            .andDo(print()).andExpect(status().isOk())
+                get("/api/members/info")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "accessToken"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.memberId").value(String.valueOf(response.getMemberId())))
             .andExpect(jsonPath("$.nickname").value(response.getNickname()))
             .andExpect(jsonPath("$.imageUrl").value(response.getImageUrl()))
-            .andExpect(jsonPath("$.petName").value(response.getPetName()));
+            .andExpect(jsonPath("$.petName").value(response.getPetName()))
+
+            .andDo(print())
+            .andDo(document("member/get-longin-info/success",
+                getDocumentRequest(),
+                getDocumentResponse(),
+            requestHeaders(
+                headerWithName("Authorization").description("Access Token"))
+        ));
     }
 
     @Test

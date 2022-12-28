@@ -3,6 +3,7 @@ package com.gaethering.gaetheringserver.domain.chat.service;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
+import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatRoom;
 import com.gaethering.gaetheringserver.domain.chat.entity.WalkingTime;
@@ -34,26 +35,25 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public void makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest) {
+    public MakeChatRoomResponse makeChatRoom(String email, MakeChatRoomRequest makeChatRoomRequest) {
         memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-
         String roomKey = UUID.randomUUID().toString();
+        ChatRoom chatRoom = makeChatRoom(makeChatRoomRequest, roomKey);
+        List<WalkingTime> walkingTimes = makeChatRoomRequest.getWalkingTimes().stream()
+            .map(WalkingTimeInfo::toEntity).collect(Collectors.toList());
+        walkingTimes.forEach(chatRoom::addWalkingTime);
+        chatRoomRepository.save(chatRoom);
+        return MakeChatRoomResponse.builder().roomKey(roomKey).build();
+    }
 
-        ChatRoom chatRoom = ChatRoom.builder()
+    private static ChatRoom makeChatRoom(MakeChatRoomRequest makeChatRoomRequest, String roomKey) {
+        return ChatRoom.builder()
             .roomKey(roomKey)
             .name(makeChatRoomRequest.getName())
             .maxParticipantCount(makeChatRoomRequest.getMaxParticipantCount())
             .description(makeChatRoomRequest.getDescription())
             .walkingTimes(new ArrayList<>())
             .build();
-
-        List<WalkingTime> walkingTimes = makeChatRoomRequest.getWalkingTimes().stream()
-            .map(WalkingTimeInfo::toEntity).collect(Collectors.toList());
-
-        walkingTimes.forEach(chatRoom::addWalkingTime);
-
-        chatRoomRepository.save(chatRoom);
-        walkingTimeRepository.saveAll(walkingTimes);
     }
 
     @Override
