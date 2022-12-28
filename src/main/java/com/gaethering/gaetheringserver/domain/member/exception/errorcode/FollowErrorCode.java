@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FollowErrorCode implements ErrorCode {
-    FOLLOW_NOT_FOUND("E002", "해당 하는 팔로우 관계가 존재하지 않습니다.");
+    FOLLOW_NOT_FOUND("E101", "해당 하는 팔로우 관계가 존재하지 않습니다.");
 
     private final String code;
     private final String message;
