@@ -2,6 +2,7 @@ package com.gaethering.gaetheringserver.domain.chat.controller;
 
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
+import com.gaethering.gaetheringserver.domain.chat.dto.LocalChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.service.ChatService;
@@ -50,5 +51,11 @@ public class ChatController {
     public ResponseEntity<List<ChatMessageResponse>> getChatHistory(@PathVariable String roomKey) {
         List<ChatMessageResponse> chatHistory = chatService.getChatHistory(roomKey);
         return ResponseEntity.ok(chatHistory);
+    }
+
+    @GetMapping("/chat/room/local/list")
+    public ResponseEntity<LocalChatRoomResponse> getLocalChatRooms(Principal principal) {
+        LocalChatRoomResponse localChatRooms = chatService.getLocalChatRooms(principal.getName());
+        return ResponseEntity.ok(localChatRooms);
     }
 }
