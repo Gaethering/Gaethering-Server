@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocalChatRoomResponse {
+public class ChatRoomListResponse {
 
     private int numberOfChatRooms;
 
