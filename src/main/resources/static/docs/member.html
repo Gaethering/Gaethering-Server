@@ -468,6 +468,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_실패_틀린_refresh_token">실패 (틀린 refresh token)</a></li>
 </ul>
 </li>
+<li><a href="#_로그인_정보_가져오기">로그인 정보 가져오기</a>
+<ul class="sectlevel3">
+<li><a href="#_성공_5">성공</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -733,7 +738,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Length: 68
 
 {
-  "code" : "E902",
+  "code" : "E003",
   "message" : "중복된 이메일입니다."
 }</pre>
 </div>
@@ -748,7 +753,7 @@ Content-Length: 68
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E902",
+  "code" : "E003",
   "message" : "중복된 이메일입니다."
 }</pre>
 </div>
@@ -1017,7 +1022,7 @@ Content-Length: 75
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/auth/login?_csrf=122edd39-cf0a-428a-a98d-22e181e08cb4 HTTP/1.1
+<pre>POST /api/members/auth/login?_csrf=16ec380f-2ff7-43ff-9868-9f73c3f1795c HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 60
 Host: localhost:8080
@@ -1086,7 +1091,7 @@ Content-Length: 72
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/auth/reissue-token?_csrf=60864596-78de-4b7a-9702-6ef7237279d6 HTTP/1.1
+<pre>POST /api/members/auth/reissue-token?_csrf=1f304c7a-0885-4dac-98cd-e77e140c29eb HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 38
 Host: localhost:8080
@@ -1149,7 +1154,7 @@ Content-Length: 40
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/auth/reissue-token?_csrf=45b60226-8b2b-47ac-a133-e04241c8c34f HTTP/1.1
+<pre>POST /api/members/auth/reissue-token?_csrf=b92a6fb7-b37b-43c6-943e-cde2793b0149 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 38
 Host: localhost:8080
@@ -1182,7 +1187,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Length: 121
 
 {
-  "code" : "E103",
+  "code" : "E009",
   "message" : "refresh token이 유효하지 않아 access token 재발급이 불가능합니다."
 }</pre>
 </div>
@@ -1197,7 +1202,7 @@ Content-Length: 121
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E103",
+  "code" : "E009",
   "message" : "refresh token이 유효하지 않아 access token 재발급이 불가능합니다."
 }</pre>
 </div>
@@ -1214,7 +1219,7 @@ Content-Length: 121
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/auth/reissue-token?_csrf=670fcae2-9f7d-43e5-a061-eb51b934a2ad HTTP/1.1
+<pre>POST /api/members/auth/reissue-token?_csrf=164b952a-396d-40dd-ba60-dbd93ea24506 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 38
 Host: localhost:8080
@@ -1247,7 +1252,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Length: 121
 
 {
-  "code" : "E105",
+  "code" : "E011",
   "message" : "refresh token이 존재하지 않아 access token 재발급이 불가능합니다."
 }</pre>
 </div>
@@ -1262,7 +1267,7 @@ Content-Length: 121
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E105",
+  "code" : "E011",
   "message" : "refresh token이 존재하지 않아 access token 재발급이 불가능합니다."
 }</pre>
 </div>
@@ -1279,7 +1284,7 @@ Content-Length: 121
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/members/auth/reissue-token?_csrf=2b758628-12a8-4b23-88f1-5146ca3d8518 HTTP/1.1
+<pre>POST /api/members/auth/reissue-token?_csrf=a4bfcf98-a4e6-4284-a0db-2106ecd7c1ca HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 38
 Host: localhost:8080
@@ -1312,7 +1317,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Length: 121
 
 {
-  "code" : "E104",
+  "code" : "E010",
   "message" : "refresh token이 일치하지 않아 access token 재발급이 불가능합니다."
 }</pre>
 </div>
@@ -1327,8 +1332,76 @@ Content-Length: 121
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "code" : "E104",
+  "code" : "E010",
   "message" : "refresh token이 일치하지 않아 access token 재발급이 불가능합니다."
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_로그인_정보_가져오기"><a class="link" href="#_로그인_정보_가져오기">로그인 정보 가져오기</a></h3>
+<div class="sect3">
+<h4 id="_성공_5"><a class="link" href="#_성공_5">성공</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Request</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>GET /api/members/info HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: accessToken
+Host: localhost:8080</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP Response</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: SAMEORIGIN
+Content-Length: 103
+
+{
+  "memberId" : 1,
+  "petName" : "하울",
+  "imageUrl" : "http://test.com",
+  "nickname" : "내캉"
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Response Body</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "memberId" : 1,
+  "petName" : "하울",
+  "imageUrl" : "http://test.com",
+  "nickname" : "내캉"
 }</pre>
 </div>
 </div>
@@ -1339,7 +1412,7 @@ Content-Length: 121
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-26 11:09:16 +0900
+Last updated 2022-12-28 21:47:02 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">

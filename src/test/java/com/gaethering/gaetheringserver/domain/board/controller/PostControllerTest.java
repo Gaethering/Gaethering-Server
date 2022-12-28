@@ -961,6 +961,7 @@ class PostControllerTest {
                 .createdAt(date)
                 .owner(true)
                 .images(List.of(imgUrlsResponse1, imgUrlsResponse2))
+                .hasHeart(false)
                 .build();
 
         given(postService.getOnePost(anyLong(), anyString(), anyLong()))
@@ -977,6 +978,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.viewCnt").value(response.getViewCnt()))
                 .andExpect(jsonPath("$.heartCnt").value(response.getHeartCnt()))
                 .andExpect(jsonPath("$.isOwner").value(response.isOwner()))
+                .andExpect(jsonPath("$.hasHeart").value(response.isHasHeart()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("boards/get-one-post/success",
@@ -1027,6 +1029,30 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.message").value(POST_NOT_FOUND.getMessage()))
                 .andDo(print())
                 .andDo(document("boards/get-one-post/failure/post-not-found",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("categoryId").description("조회하고자 하는 게시물의 카테고리 id"),
+                                parameterWithName("postId").description("조회하고자 하는 게시물의 id")),
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token"))
+                ));
+    }
+
+    @Test
+    @DisplayName("게시물 상세 조회 실패 - 회원 없음")
+    @WithMockUser
+    void getOnePost_Fail_NoUser () throws Exception {
+
+        given(postService.getOnePost(anyLong(), anyString(), anyLong()))
+                .willThrow(new MemberNotFoundException());
+
+        mockMvc.perform((get("/api/boards/{categoryId}/{postId}", 1L, 1L)
+                        .header("Authorization", "accessToken")))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(MEMBER_NOT_FOUND.getMessage()))
+                .andDo(print())
+                .andDo(document("boards/get-one-post/failure/member-not-found",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(parameterWithName("categoryId").description("조회하고자 하는 게시물의 카테고리 id"),

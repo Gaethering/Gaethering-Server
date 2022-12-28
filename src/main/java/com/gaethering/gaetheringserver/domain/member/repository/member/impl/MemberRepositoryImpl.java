@@ -1,4 +1,4 @@
-package com.gaethering.gaetheringserver.domain.member.repository.member.Impl;
+package com.gaethering.gaetheringserver.domain.member.repository.member.impl;
 
 import static com.gaethering.gaetheringserver.domain.member.entity.QMember.member;
 import static com.gaethering.gaetheringserver.domain.member.entity.QMemberProfile.memberProfile;
