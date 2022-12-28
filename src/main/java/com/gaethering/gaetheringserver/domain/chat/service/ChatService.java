@@ -2,7 +2,7 @@ package com.gaethering.gaetheringserver.domain.chat.service;
 
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
-import com.gaethering.gaetheringserver.domain.chat.dto.LocalChatRoomResponse;
+import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomListResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import java.util.List;
@@ -17,5 +17,7 @@ public interface ChatService {
 
     void deleteChatRoom(String email, String chatRoomKey);
 
-    LocalChatRoomResponse getLocalChatRooms(String email);
+    ChatRoomListResponse getLocalChatRooms(String email);
+
+    ChatRoomListResponse getMyChatRooms(String email);
 }
