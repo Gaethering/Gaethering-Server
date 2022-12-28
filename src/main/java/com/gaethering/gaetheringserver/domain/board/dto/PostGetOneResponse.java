@@ -32,9 +32,15 @@ public class PostGetOneResponse {
     @JsonProperty(value = "isOwner")
     private boolean owner;
 
+    private boolean hasHeart;
+
     private List<PostGetImageUrlResponse> images;
 
     public void setOwner(boolean owner) {
         this.owner = owner;
+    }
+
+    public void setHasHeart(boolean hasHeart) {
+        this.hasHeart = hasHeart;
     }
 }

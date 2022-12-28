@@ -259,14 +259,17 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostGetOneResponse getOnePost(Long categoryId, String email, Long postId) {
 
-        postRepository.updateViewCountByPostId(postId);
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException());
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
 
         if(!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException();
         }
+
+        postRepository.updateViewCountByPostId(postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
 
         List<PostGetImageUrlResponse> imgUrls
                 = postImageRepository.findAllByPost(post)
@@ -284,6 +287,7 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         response.setOwner(email.equals(post.getMember().getEmail()));
+        response.setHasHeart(heartRepository.existsByPostAndMember(post, member));
         return response;
     }
 }
