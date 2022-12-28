@@ -1,7 +1,6 @@
 package com.gaethering.gaetheringserver.domain.member.jwt.auth;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,8 +36,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        PrintWriter writer = response.getWriter();
-        writer.write(objectMapper.writeValueAsString(errorResponse));
-        writer.flush();
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        response.getWriter().flush();
     }
 }
