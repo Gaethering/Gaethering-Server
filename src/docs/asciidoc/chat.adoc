@@ -1,0 +1,130 @@
+= Spring REST DOCS
+BE 김진호, BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Chat Api
+
+=== 채팅방 만들기
+
+==== 성공
+
+* Http Request
+include::{snippets}/chat/make-chatroom/success/http-request.adoc[]
+
+* Request Header
+include::{snippets}/chat/make-chatroom/success/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/chat/make-chatroom/success/request-body.adoc[]
+
+* Http Response
+include::{snippets}/chat/make-chatroom/success/http-response.adoc[]
+
+==== 실패 - 사용자 찾을 수 없음
+
+* Http Request
+include::{snippets}/chat/make-chatroom/failure/member-not-found/http-request.adoc[]
+
+* Request Header
+include::{snippets}/chat/make-chatroom/failure/member-not-found/request-headers.adoc[]
+
+* Request Body
+include::{snippets}/chat/make-chatroom/failure/member-not-found/request-body.adoc[]
+
+* Http Response
+include::{snippets}/chat/make-chatroom/failure/member-not-found/http-response.adoc[]
+
+=== 채팅방 만들기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/success/response-body.adoc[]
+
+==== 실패 - 채팅 방 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/chat-room-not-found/response-body.adoc[]
+
+==== 실패 - 대표 반려동물이 지정되지 않은 회원이 있을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-information/failure/representative-pet-not-found/response-body.adoc[]
+
+
+=== 채팅 기록 가져오기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/success/response-body.adoc[]
+
+==== 실패 - 채팅 방 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/chat/get-chat-history/failure/chat-room-not-found/response-body.adoc[]

@@ -1,0 +1,150 @@
+= Spring REST DOCS
+BE 최영훈
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== Member Api
+
+=== 회원 가입
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/sign-up/success/http-request.adoc[]
+
+* HTTP Request Parts
+include::{snippets}/member/sign-up/success/request-parts.adoc[]
+
+* HTTP Request Parts Data
+include::{snippets}/member/sign-up/success/request-part-data-fields.adoc[]
+
+* HTTP Response
+include::{snippets}/member/sign-up/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/sign-up/success/response-body.adoc[]
+
+==== 실패 - 중복된 이메일인 경우
+
+* HTTP Request
+include::{snippets}/member/sign-up/failure/duplicated-email/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/sign-up/failure/duplicated-email/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/sign-up/failure/duplicated-email/response-body.adoc[]
+
+=== 회원(타인) 프로필 조회
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/get-profile/success/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/member/get-profile/success/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/member/get-profile/success/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/member/get-profile/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/get-profile/success/response-body.adoc[]
+
+==== 실패 - 회원 못 찾았을 때
+
+* HTTP Request
+include::{snippets}/member/get-profile/failure/member-not-found/http-request.adoc[]
+
+* Path Parameter
+include::{snippets}/member/get-profile/failure/member-not-found/path-parameters.adoc[]
+
+* Request Headers
+include::{snippets}/member/get-profile/failure/member-not-found/request-headers.adoc[]
+
+* HTTP Response
+include::{snippets}/member/get-profile/failure/member-not-found/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/get-profile/failure/member-not-found/response-body.adoc[]
+
+=== 로그인
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/auth/login/success/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/auth/login/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/auth/login/success/response-body.adoc[]
+
+=== Access Token 재발급
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/auth/reissue-token/success/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/auth/reissue-token/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/auth/reissue-token/success/response-body.adoc[]
+
+==== 실패 (유효하지 않은 refresh token)
+
+* HTTP Request
+include::{snippets}/member/auth/reissue-token/failure/invalid-refresh-token/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/auth/reissue-token/failure/invalid-refresh-token/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/auth/reissue-token/failure/invalid-refresh-token/response-body.adoc[]
+
+==== 실패 (존재하지 않은 refresh token)
+
+* HTTP Request
+include::{snippets}/member/auth/reissue-token/failure/not-exist-refresh-token/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/auth/reissue-token/failure/not-exist-refresh-token/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/auth/reissue-token/failure/not-exist-refresh-token/response-body.adoc[]
+
+
+==== 실패 (틀린 refresh token)
+
+* HTTP Request
+include::{snippets}/member/auth/reissue-token/failure/incorrect-refresh-token/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/auth/reissue-token/failure/incorrect-refresh-token/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/auth/reissue-token/failure/incorrect-refresh-token/response-body.adoc[]
+
+
+=== 로그인 정보 가져오기
+
+==== 성공
+
+* HTTP Request
+include::{snippets}/member/get-longin-info/success/http-request.adoc[]
+
+* HTTP Response
+include::{snippets}/member/get-longin-info/success/http-response.adoc[]
+
+* Response Body
+include::{snippets}/member/get-longin-info/success/response-body.adoc[]

@@ -1,0 +1,65 @@
+spring :
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gaethering@gmail.com
+    password: test
+    properties:
+      mail:
+        smtp:
+          starttls.enable: true
+          auth: true
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+  jwt:
+    secret: DIDtjrghks53qjsGJrudals13qjschldnjsWNS61eogksdkqjsghqkRnwlakfdjfk73sdfjhwe12S3kasetK7
+    valid:
+      accessToken: 600000
+      refreshToken: 600000
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: password
+
+cloud:
+  aws:
+    credentials:
+      access-key: test
+      secret-key: test
+    s3:
+      bucket: test-bucket
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+default:
+  image-url: http://127.0.0.1:8001/test-bucket/test-dir/4a95753d-1827-43c5-b9a0-2359186aedec.png
+
+dir: test-dir
+
+test-path: http://127.0.0.1:8001
+test-port: 8001
+
+api-prefix: /api
+api-prefix-comment: /api/boards
