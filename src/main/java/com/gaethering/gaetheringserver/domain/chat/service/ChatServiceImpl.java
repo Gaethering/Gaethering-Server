@@ -8,9 +8,11 @@ import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatRoom;
+import com.gaethering.gaetheringserver.domain.chat.entity.ChatroomMember;
 import com.gaethering.gaetheringserver.domain.chat.entity.WalkingTime;
 import com.gaethering.gaetheringserver.domain.chat.exception.ChatRoomNotFoundException;
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatMessageRepository;
+import com.gaethering.gaetheringserver.domain.chat.repository.ChatRoomMemberRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatRoomRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.WalkingTimeRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
@@ -34,18 +36,27 @@ public class ChatServiceImpl implements ChatService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final WalkingTimeRepository walkingTimeRepository;
 
     @Override
     @Transactional
     public MakeChatRoomResponse makeChatRoom(String email,
         MakeChatRoomRequest makeChatRoomRequest) {
-        memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
         String roomKey = UUID.randomUUID().toString();
         ChatRoom chatRoom = makeChatRoom(makeChatRoomRequest, roomKey);
         List<WalkingTime> walkingTimes = makeChatRoomRequest.getWalkingTimes().stream()
             .map(WalkingTimeInfo::toEntity).collect(Collectors.toList());
         walkingTimes.forEach(chatRoom::addWalkingTime);
+        ChatroomMember chatroomMember = ChatroomMember.builder()
+            .member(member)
+            .isOwner(true)
+            .chatRoom(chatRoom)
+            .build();
+        chatRoom.addChatroomMember(chatroomMember);
+        chatRoomMemberRepository.save(chatroomMember);
         chatRoomRepository.save(chatRoom);
         walkingTimeRepository.saveAll(walkingTimes);
         return MakeChatRoomResponse.builder().roomKey(roomKey).build();
@@ -58,6 +69,7 @@ public class ChatServiceImpl implements ChatService {
             .maxParticipantCount(makeChatRoomRequest.getMaxParticipantCount())
             .description(makeChatRoomRequest.getDescription())
             .walkingTimes(new ArrayList<>())
+            .chatroomMembers(new ArrayList<>())
             .build();
     }
 

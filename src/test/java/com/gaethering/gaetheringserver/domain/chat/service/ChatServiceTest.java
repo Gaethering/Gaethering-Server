@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatMessageResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.ChatRoomInfo;
 import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomRequest;
-import com.gaethering.gaetheringserver.domain.chat.dto.MakeChatRoomResponse;
 import com.gaethering.gaetheringserver.domain.chat.dto.WalkingTimeInfo;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatMessage;
 import com.gaethering.gaetheringserver.domain.chat.entity.ChatRoom;
@@ -21,6 +20,7 @@ import com.gaethering.gaetheringserver.domain.chat.entity.WalkingTime;
 import com.gaethering.gaetheringserver.domain.chat.exception.ChatRoomNotFoundException;
 import com.gaethering.gaetheringserver.domain.chat.exception.errorcode.ChatErrorCode;
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatMessageRepository;
+import com.gaethering.gaetheringserver.domain.chat.repository.ChatRoomMemberRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.ChatRoomRepository;
 import com.gaethering.gaetheringserver.domain.chat.repository.WalkingTimeRepository;
 import com.gaethering.gaetheringserver.domain.member.entity.Member;
@@ -30,7 +30,6 @@ import com.gaethering.gaetheringserver.domain.member.repository.member.MemberRep
 import com.gaethering.gaetheringserver.domain.pet.entity.Pet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +52,9 @@ class ChatServiceTest {
 
     @Mock
     private ChatMessageRepository chatMessageRepository;
+
+    @Mock
+    private ChatRoomMemberRepository chatRoomMemberRepository;
 
     @Mock
     private WalkingTimeRepository walkingTimeRepository;
@@ -109,14 +111,16 @@ class ChatServiceTest {
 
         //when
         //then
-        assertThrows(ChatRoomNotFoundException.class, () -> chatService.getChaRoomInformation(anyString()));
+        assertThrows(ChatRoomNotFoundException.class,
+            () -> chatService.getChaRoomInformation(anyString()));
     }
 
     @Test
     public void getChatRoomInformationSuccess() {
         //given
         Pet pet = Pet.builder().imageUrl("url").isRepresentative(true).build();
-        Member member = Member.builder().id(1L).nickname("nickname").pets(new ArrayList<>()).build();
+        Member member = Member.builder().id(1L).nickname("nickname").pets(new ArrayList<>())
+            .build();
         ChatroomMember chatroomMember = ChatroomMember.builder().member(member).build();
         member.addPet(pet);
         WalkingTime walkingTime = WalkingTime.builder().dayOfWeek("수").time("12 : 00").build();
@@ -140,13 +144,18 @@ class ChatServiceTest {
         assertThat(chaRoomInformation.getRoomKey()).isEqualTo(chatRoom.getRoomKey());
         assertThat(chaRoomInformation.getName()).isEqualTo(chatRoom.getName());
         assertThat(chaRoomInformation.getDescription()).isEqualTo(chatRoom.getDescription());
-        assertThat(chaRoomInformation.getMaxParticipant()).isEqualTo(chatRoom.getMaxParticipantCount());
+        assertThat(chaRoomInformation.getMaxParticipant()).isEqualTo(
+            chatRoom.getMaxParticipantCount());
         assertThat(chaRoomInformation.getWalkingTimeInfos().get(0).getDayOfWeek()).isEqualTo(
             walkingTime.getDayOfWeek());
-        assertThat(chaRoomInformation.getWalkingTimeInfos().get(0).getTime()).isEqualTo(walkingTime.getTime());
-        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getId()).isEqualTo(member.getId());
-        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getNickname()).isEqualTo(member.getNickname());
-        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getRepresentPetImageUrl()).isEqualTo(
+        assertThat(chaRoomInformation.getWalkingTimeInfos().get(0).getTime()).isEqualTo(
+            walkingTime.getTime());
+        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getId()).isEqualTo(
+            member.getId());
+        assertThat(chaRoomInformation.getChatRoomMemberInfos().get(0).getNickname()).isEqualTo(
+            member.getNickname());
+        assertThat(
+            chaRoomInformation.getChatRoomMemberInfos().get(0).getRepresentPetImageUrl()).isEqualTo(
             pet.getImageUrl());
     }
 
@@ -158,16 +167,19 @@ class ChatServiceTest {
 
         //when
         //then
-        assertThrows(ChatRoomNotFoundException.class, () -> chatService.getChatHistory(anyString()));
+        assertThrows(ChatRoomNotFoundException.class,
+            () -> chatService.getChatHistory(anyString()));
     }
 
     @Test
     public void getCharHistorySuccess() {
         //given
         Member member = Member.builder().id(1L).build();
-        ChatMessage message1 = ChatMessage.builder().content("content1").member(member).createdAt(LocalDateTime.MAX)
+        ChatMessage message1 = ChatMessage.builder().content("content1").member(member)
+            .createdAt(LocalDateTime.MAX)
             .build();
-        ChatMessage message2 = ChatMessage.builder().content("content2").member(member).createdAt(LocalDateTime.MIN)
+        ChatMessage message2 = ChatMessage.builder().content("content2").member(member)
+            .createdAt(LocalDateTime.MIN)
             .build();
         ChatRoom chatRoom = ChatRoom.builder()
             .chatMessages(new ArrayList<>()).build();
@@ -185,7 +197,8 @@ class ChatServiceTest {
         assertThat(chatHistory.get(0).getContent()).isEqualTo(message1.getContent());
         assertThat(chatHistory.get(1).getMemberId()).isEqualTo(member.getId());
         assertThat(chatHistory.get(1).getContent()).isEqualTo(message2.getContent());
-        assertThat(chatHistory.get(0).getCreatedAt().compareTo(chatHistory.get(1).getCreatedAt()) < 0).isTrue();
+        assertThat(chatHistory.get(0).getCreatedAt().compareTo(chatHistory.get(1).getCreatedAt())
+            < 0).isTrue();
     }
 
     @Test
