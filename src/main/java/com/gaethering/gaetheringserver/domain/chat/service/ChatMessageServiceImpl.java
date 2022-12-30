@@ -39,9 +39,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             .orElseThrow(MemberNotFoundException::new);
         ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
             .orElseThrow(ChatRoomNotFoundException::new);
-        Optional<ChatroomMember> optionalChatroomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom,
+        Optional<ChatroomMember> optionalChatroomMember = chatRoomMemberRepository.findByChatRoomAndMember(
+            chatRoom,
             member);
-        ChatMessageResponse response = ChatMessageResponse.makeResponseFromRequest(chatMessageRequest);
+        ChatMessageResponse response = ChatMessageResponse.makeResponseFromRequest(
+            chatMessageRequest);
         response.setContent(member.getNickname() + "님이 입장하였습니다.");
         checkMaxParticipantCountAndAddRoomMember(member, chatRoom, optionalChatroomMember);
         return saveAndSendChatMessage(chatMessageRequest, roomKey, member, chatRoom, response);
@@ -54,33 +56,41 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             .orElseThrow(MemberNotFoundException::new);
         ChatRoom chatRoom = chatRoomRepository.findByRoomKey(roomKey)
             .orElseThrow(ChatRoomNotFoundException::new);
-        ChatMessageResponse response = ChatMessageResponse.makeResponseFromRequest(chatMessageRequest);
+        ChatMessageResponse response = ChatMessageResponse.makeResponseFromRequest(
+            chatMessageRequest);
         return saveAndSendChatMessage(chatMessageRequest, roomKey, member, chatRoom, response);
     }
 
-    private ChatMessageResponse saveAndSendChatMessage(ChatMessageRequest chatMessageRequest, String roomKey,
+    private ChatMessageResponse saveAndSendChatMessage(ChatMessageRequest chatMessageRequest,
+        String roomKey,
         Member member, ChatRoom chatRoom, ChatMessageResponse response) {
         saveChatMessage(chatMessageRequest, member, chatRoom);
         messagingTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + roomKey, response);
         return response;
     }
 
-    private void checkMaxParticipantCountAndAddRoomMember(Member member, ChatRoom chatRoom, Optional<ChatroomMember> optionalChatroomMember) {
+    private void checkMaxParticipantCountAndAddRoomMember(Member member, ChatRoom chatRoom,
+        Optional<ChatroomMember> optionalChatroomMember) {
         if (optionalChatroomMember.isEmpty()) {
             if (chatRoom.getChatroomMembers().size() >= chatRoom.getMaxParticipantCount()) {
                 throw new ChatRoomOverCrowdException();
             }
-            chatRoom.addChatroomMember(ChatroomMember.builder().member(member).chatRoom(chatRoom).build());
+            ChatroomMember chatroomMember = ChatroomMember.builder().member(member)
+                .chatRoom(chatRoom).build();
+            chatRoom.addChatroomMember(chatroomMember);
+            chatRoomMemberRepository.save(chatroomMember);
         }
     }
 
-    private void saveChatMessage(ChatMessageRequest chatMessageRequest, Member member, ChatRoom chatRoom) {
+    private void saveChatMessage(ChatMessageRequest chatMessageRequest, Member member,
+        ChatRoom chatRoom) {
         ChatMessage chatMessage = makeChatMessage(chatMessageRequest, member, chatRoom);
         chatRoom.addChatMessage(chatMessage);
         chatMessageRepository.save(chatMessage);
     }
 
-    private static ChatMessage makeChatMessage(ChatMessageRequest chatMessageRequest, Member member, ChatRoom chatRoom) {
+    private static ChatMessage makeChatMessage(ChatMessageRequest chatMessageRequest, Member member,
+        ChatRoom chatRoom) {
         return ChatMessage.builder()
             .member(member)
             .chatRoom(chatRoom)
